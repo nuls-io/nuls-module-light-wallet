@@ -2,36 +2,38 @@
   <div class="txlist bg-gray">
     <div class="bg-white">
       <div class="w1200">
-        <!--<p class="bread  clicks font14"><i class="el-icon-arrow-left"></i>钱包</p>-->
-        <BackBar backTitle="钱包"></BackBar>
-        <h3 class="title">交易记录</h3>
+        <BackBar :backTitle="$t('nav.wallet')"></BackBar>
+        <h3 class="title">{{$t('home.home2')}}</h3>
       </div>
     </div>
 
     <div class="w1200">
       <div v-loading="txListDataLoading">
         <div class="filter">
-          <el-select v-model="assetsValue" @change="channgeAsesets" disabled>
+          <el-select v-model="assetsValue" @change="channgeAsesets" v-show="false">
             <el-option v-for="item in assetsOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="typeValue" @change="channgeType">
-            <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value">
+
+          <el-select :value="$t('type.'+typeValue)" @change="channgeType">
+            <el-option v-for="item in typeOptions" :key="item.value" :label="$t('type.'+item.value)"
+                       :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="inAndOutValue" @change="channgeInAndOut" :disabled="type !==2">
-            <el-option v-for="item in inAndOutOptions" :key="item.value" :label="item.label" :value="item.value">
+          <el-select :value="$t('budgetType.'+inAndOutValue)" @change="channgeInAndOut" :disabled="types !==2">
+            <el-option v-for="item in inAndOutOptions" :key="item.value" :label="$t('budgetType.'+item.value)" :value="item.value">
             </el-option>
           </el-select>
-          <el-switch v-model="isHide" active-text="" inactive-text="隐藏共识奖励" :width="35" @change="changeHide"
-                     v-show="type===0">
+          <el-switch v-model="isHide" active-text="" :inactive-text="$t('public.hideReward')" :width="35"
+                     @change="changeHide"
+                     v-show="types===0">
           </el-switch>
         </div>
         <el-table :data="txListData" stripe border>
-          <el-table-column label="资产" align="center" width="100">
+          <el-table-column :label="$t('tab.tab0')" align="center" width="100">
             <template><span>NULS</span></template>
           </el-table-column>
-          <el-table-column label="类型" align="center" width="100">
+          <el-table-column :label="$t('tab.tab1')" align="center" width="100">
             <template slot-scope="scope"><span>{{ $t('type.'+scope.row.type) }}</span></template>
           </el-table-column>
           <el-table-column label="TxID" align="center">
@@ -39,22 +41,22 @@
               <span class="click " @click="toUrl('transferInfo',scope.row.txHash)">{{scope.row.txid}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="createTime" label="时间" align="center">
+          <el-table-column prop="createTime" :label="$t('tab.tab5')" align="center">
           </el-table-column>
-          <el-table-column label="金额" align="center">
+          <el-table-column :label="$t('tab.tab6')" align="center">
             <template slot-scope="scope"><span :class="scope.row.transferType === -1 ? 'fred':'fCN'">{{scope.row.amount*scope.row.transferType}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="balance" label="余额" align="center">
+          <el-table-column prop="balance" :label="$t('tab.tab9')" align="center">
           </el-table-column>
-          <el-table-column label="状态" align="center" width="100">
+          <el-table-column :label="$t('tab.tab10')" align="center" width="120">
             <template slot-scope="scope"><span>{{ $t('transferStatus.'+scope.row.status) }}</span></template>
           </el-table-column>
         </el-table>
         <div class="pages">
           <div class="page-total">
-            显示 {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
-            共 {{pageTotal}}
+            {{$t('public.display')}} {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
+            {{$t('public.total')}} {{pageTotal}}
           </div>
           <el-pagination v-show="pageTotal > pageSize" @current-change="txListPages" class="fr"
                          :current-page="pageIndex"
@@ -101,20 +103,20 @@
           {value: '18', label: '合约转账'},
           {value: '19', label: '合约返还'},
         ], //交易类型
-        typeValue: '所有交易',
+        typeValue: '0',
         inAndOutOptions: [
           {value: '0', label: '收入/支出'},
           {value: '1', label: '收入'},
           {value: '2', label: '支出'},
         ], //收入/支出
-        inAndOutValue: '收入/支出',
+        inAndOutValue: '0',
         txListDataLoading: true,//资产加载动画
         txListData: [],//交易数据
         pageIndex: 1, //页码
         pageSize: 10, //每页条数
         pageTotal: 0,//总页数
         addressInfo: [], //账户信息
-        type: 0,//类型
+        types: 0,//类型
         isHide: true,//隐藏共识奖励
         txListSetInterval: null,//定时器
       };
@@ -126,10 +128,10 @@
       }, 500);
     },
     mounted() {
-      this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.type, this.isHide);
+      this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide);
       //10秒循环一次数据
       this.txListSetInterval = setInterval(() => {
-        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.type, this.isHide);
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide);
       }, 10000);
 
     },
@@ -184,8 +186,9 @@
        * * @param e
        **/
       channgeType(e) {
-        this.type = Number(e);
-        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.type, this.isHide);
+        this.types = Number(e);
+        this.typeValue = Number(e);
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide);
       },
 
       /**
@@ -193,7 +196,8 @@
        * * @param e
        **/
       channgeInAndOut(e) {
-        console.log(e)
+        //console.log(e)
+        this.inAndOutValue = Number(e);
       },
 
       /**
@@ -203,7 +207,7 @@
       changeHide(e) {
         this.isHide = e;
         this.pageIndex = 1;
-        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.type, this.isHide)
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide)
       },
 
       /**
@@ -213,7 +217,7 @@
       txListPages(val) {
         this.pageIndex = val;
         this.txListDataLoading = true;
-        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.type, this.isHide)
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide)
       },
 
       /**

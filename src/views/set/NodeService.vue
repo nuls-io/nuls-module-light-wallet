@@ -1,75 +1,80 @@
 <template>
-    <div class="node_service bg-gray" v-loading="loading"
-         element-loading-text="节点切换中....">
-        <h3 class="title">节点服务列表</h3>
+  <div class="node_service bg-gray" v-loading="loading" :element-loading-text="$t('nodeService.nodeService0')">
+    <h3 class="title">{{$t('nodeService.nodeService1')}}</h3>
 
-        <div class="w1200 mt_20" v-loading="nodeServiceLoading">
-            <div class="top_ico">
-                <i class="el-icon-plus click" @click="addNodeService"></i>
+    <div class="w1200 mt_20" v-loading="nodeServiceLoading">
+      <div class="top_ico">
+        <i class="el-icon-plus click" @click="addNodeService"></i>
+      </div>
+      <el-table :data="nodeServiceData" stripe border>
+        <el-table-column prop="name" :label="$t('nodeService.nodeService2')" align="center">
+        </el-table-column>
+        <el-table-column prop="urls" :label="$t('nodeService.nodeService3')" align="center">
+        </el-table-column>
+        <el-table-column :label="$t('nodeService.nodeService4')" align="center">
+          <template slot-scope="scope">
+            <span v-if="scope.row.delay === '-1'">{{ $t('nodeService.nodeService17') }}</span>
+            <span v-else-if="scope.row.delay === '-2'">{{ $t('nodeService.nodeService18') }}</span>
+            <span v-else>{{ scope.row.delay }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="state" :label="$t('nodeService.nodeService5')" align="center">
+          <template slot-scope="scope">
+            <span @click="editState(scope.$index)">
+              <i class="iconfont clicks"
+                 :class="scope.row.state === 0 ? 'iconduankailianjie flan' : 'iconziyuan fCN'"></i>
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('nodeService.nodeService6')" align="center">
+          <template slot-scope="scope">
+            <div v-if="scope.row.isDelete">
+              <label class="click tab_bn" @click="edit(scope.$index)">{{$t('nodeService.nodeService7')}}</label>
+              <span class="tab_line">|</span>
+              <label class="click tab_bn" @click="removeUrl(scope.$index)">{{$t('nodeService.nodeService8')}}</label>
             </div>
-            <el-table :data="nodeServiceData" stripe border>
-                <el-table-column prop="name" label="名称" align="center">
-                </el-table-column>
-                <el-table-column prop="urls" label="地址" align="center">
-                </el-table-column>
-                <el-table-column prop="delay" label="延迟" align="center">
-                </el-table-column>
-                <el-table-column prop="state" label="状态" align="center">
-                    <template slot-scope="scope">
-                        <span @click="editState(scope.$index)">
-                          <i class="iconfont clicks" :class="scope.row.state === 0 ? 'iconduankailianjie flan' : 'iconziyuan fCN'"></i>
-                        </span>
-                    </template>
-                </el-table-column>
-                <el-table-column label="操作" align="center">
-                    <template slot-scope="scope">
-                        <div v-if="scope.row.isDelete">
-                            <label class="click tab_bn" @click="edit(scope.$index)">修改</label>
-                            <span class="tab_line">|</span>
-                            <label class="click tab_bn" @click="removeUrl(scope.$index)">移除</label>
-                        </div>
-                    </template>
-                </el-table-column>
-            </el-table>
-        </div>
-
-        <el-dialog title="添加节点服务地址" width="40%"
-                   :visible.sync="nodeServiceDialog"
-                   :close-on-click-modal="false"
-                   :close-on-press-escape="false"
-                   v-loading="nodeServiceDialogLoading"
-        >
-            <span>您输入的非官方地址可能无法正常使用，因此造成的损失将由您自己承担</span>
-
-            <div class="bg-white">
-                <el-form :model="nodeServiceForm" status-icon :rules="nodeServiceRules" ref="nodeServiceForm">
-                    <el-form-item label="名称" prop="name">
-                        <el-input v-model.number="nodeServiceForm.name" maxlength="20">
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item label="服务地址" prop="urls">
-                        <el-input type="text" v-model="nodeServiceForm.urls" autocomplete="off" maxlength="50">
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item class="btns tl">
-                        <el-button type="success" class="fl" @click="testSubmitForm('nodeServiceForm')">测试连接</el-button>
-                        <div class="fl ml_50" v-show="testInfo">
-                            <i :class="testInfo === '0' ? 'el-icon-circle-check fCN' : 'el-icon-circle-close fred' "></i>&nbsp;
-                            <span v-show="testInfo !== '0'" class="fred font12">{{testInfo}}</span>
-                        </div>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-checkbox v-model="nodeServiceForm.resource">立即使用</el-checkbox>
-                    </el-form-item>
-                    <el-form-item class="btns tc">
-                        <el-button @click="resetForm('nodeServiceForm')">取 消</el-button>
-                        <el-button type="success" @click="submitForm('nodeServiceForm')">确 定</el-button>
-                    </el-form-item>
-                    <div class="cb"></div>
-                </el-form>
-            </div>
-        </el-dialog>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
+
+    <el-dialog :title="$t('nodeService.nodeService9')" width="40%"
+               :visible.sync="nodeServiceDialog"
+               :close-on-click-modal="false"
+               :close-on-press-escape="false"
+               v-loading="nodeServiceDialogLoading"
+    >
+      <span>{{$t('nodeService.nodeService10')}}</span>
+
+      <div class="bg-white">
+        <el-form :model="nodeServiceForm" status-icon :rules="nodeServiceRules" ref="nodeServiceForm">
+          <el-form-item :label="$t('nodeService.nodeService2')" prop="name">
+            <el-input v-model.number="nodeServiceForm.name" maxlength="20">
+            </el-input>
+          </el-form-item>
+          <el-form-item :label="$t('nodeService.nodeService3')" prop="urls">
+            <el-input type="text" v-model="nodeServiceForm.urls" autocomplete="off" maxlength="50">
+            </el-input>
+          </el-form-item>
+          <el-form-item class="btns tl">
+            <el-button type="success" class="fl" @click="testSubmitForm('nodeServiceForm')">{{$t('nodeService.nodeService11')}}</el-button>
+            <div class="fl ml_50" v-show="testInfo">
+              <i :class="testInfo === '0' ? 'el-icon-circle-check fCN' : 'el-icon-circle-close fred' "></i>&nbsp;
+              <span v-show="testInfo !== '0'" class="fred font12">{{testInfo}}</span>
+            </div>
+          </el-form-item>
+          <el-form-item>
+            <el-checkbox v-model="nodeServiceForm.resource">{{$t('nodeService.nodeService12')}}</el-checkbox>
+          </el-form-item>
+          <el-form-item class="btns tc">
+            <el-button @click="resetForm('nodeServiceForm')">{{$t('password.password2')}}</el-button>
+            <el-button type="success" @click="submitForm('nodeServiceForm')">{{$t('password.password3')}}</el-button>
+          </el-form-item>
+          <div class="cb"></div>
+        </el-form>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -79,7 +84,7 @@
     data() {
       let checkName = (rule, value, callback) => {
         if (!value) {
-          return callback(new Error('名称不能为空'));
+          return callback(new Error(this.$t('nodeService.nodeService13')));
         } else {
           callback();
         }
@@ -87,9 +92,9 @@
       let validateUrls = (rule, value, callback) => {
         let patrn = /(http|https):\/\/([\w.]+\/?)\S*/;
         if (value === '') {
-          callback(new Error('地址不能为空'));
+          callback(new Error(this.$t('nodeService.nodeService14')));
         } else if (!patrn.exec(value)) {
-          callback(new Error('请输入正确的连接地址'))
+          callback(new Error(this.$t('nodeService.nodeService15')))
         } else {
           callback();
         }
@@ -97,8 +102,8 @@
       return {
         loading: false,//切换时加载动画
         defaultData: [
-          {name: '官方', urls: 'http://apitn1.nulscan.io/', delay: '10ms', state: 0, isDelete: false},
-          {name: '官方', urls: 'http://apitn2.nulscan.io/', delay: '10ms', state: 1, isDelete: false},
+          {name: 'Official', urls: 'http://apitn1.nulscan.io/', delay: '10ms', state: 0, isDelete: false},
+          {name: 'Official', urls: 'http://apitn2.nulscan.io/', delay: '10ms', state: 1, isDelete: false},
         ],
         //节点列表
         nodeServiceData: [],
@@ -140,8 +145,8 @@
        * 连接或断开
        **/
       editState(index) {
-        if (this.nodeServiceData[index].delay === "连接失败" || this.nodeServiceData[index].delay === "请求超时") {
-          this.$message({message: "节点不可以连接", type: 'error', duration: 1000});
+        if (this.nodeServiceData[index].delay === "-1" || this.nodeServiceData[index].delay === "-2") {
+          this.$message({message: this.$t('nodeService.nodeService16'), type: 'error', duration: 1000});
         } else {
           if (this.nodeServiceData[index].state === 0) {
             this.loading = true;
@@ -177,11 +182,11 @@
                 endTime = (new Date()).valueOf();
                 item.delay = endTime - startTime + "ms";
               } else {
-                item.delay = "请求超时";
+                item.delay = "-1";
               }
             })
             .catch(function (error) {
-              item.delay = "连接失败";
+              item.delay = "-2";
               console.log(item.urls + " getBestBlockHeader:" + error);
             });
 
@@ -295,12 +300,12 @@
        * @param index
        **/
       removeUrl(index) {
-        this.$confirm('此操作将移除' + this.nodeServiceData[index].urls + '节点服务是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+        this.$confirm(this.$t('nodeService.nodeService19') + this.nodeServiceData[index].urls + this.$t('nodeService.nodeService20'), this.$t('nodeService.nodeService21'), {
+          confirmButtonText: this.$t('password.password3'),
+          cancelButtonText: this.$t('password.password2'),
           type: 'warning'
         }).then(() => {
-          this.$message({type: 'success', message: '移除成功!'});
+          this.$message({type: 'success', message: this.$t('nodeService.nodeService22')});
           this.nodeServiceData.splice(index, 1);
           localStorage.setItem("urlsData", JSON.stringify(this.nodeServiceData));
         }).catch(() => {
@@ -322,32 +327,32 @@
 </script>
 
 <style lang="less">
-    @import "./../../assets/css/style";
+  @import "./../../assets/css/style";
 
-    .node_service {
-        .el-dialog__wrapper {
-            .el-dialog__body {
-                padding-bottom: 50px;
-                .bg-white {
-                    margin: 20px auto 0;
-                    padding: 20px;
-                    .btns {
-                        .el-form-item__content {
-                            .el-button {
-                                width: 130px;
-                                span {
-                                    color: @Bcolour;
-                                }
-                            }
-                            .el-button--default {
-                                span {
-                                    color: @Fcolour;
-                                }
-                            }
-                        }
-                    }
+  .node_service {
+    .el-dialog__wrapper {
+      .el-dialog__body {
+        padding-bottom: 50px;
+        .bg-white {
+          margin: 20px auto 0;
+          padding: 20px;
+          .btns {
+            .el-form-item__content {
+              .el-button {
+                width: 130px;
+                span {
+                  color: @Bcolour;
                 }
+              }
+              .el-button--default {
+                span {
+                  color: @Fcolour;
+                }
+              }
             }
+          }
         }
+      }
     }
+  }
 </style>

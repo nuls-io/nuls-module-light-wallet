@@ -1,17 +1,17 @@
 <template>
   <div class="address bg-gray">
-    <h3 class="title">钱包管理</h3>
+    <h3 class="title">{{$t('address.address0')}}</h3>
 
     <div class="w1200 mt_20">
       <div class="top_ico">
         <i class="el-icon-plus click" @click="toUrl('newAddress')"></i>
       </div>
       <el-table :data="addressList" stripe border>
-        <el-table-column prop="address" label="账户" align="center" min-width="200">
+        <el-table-column prop="address" :label="$t('address.address1')" align="center" min-width="200">
         </el-table-column>
-        <el-table-column prop="balance" label="余额" align="center">
+        <el-table-column prop="balance" :label="$t('address.address2')" align="center">
         </el-table-column>
-        <el-table-column label="别名" align="center">
+        <el-table-column :label="$t('address.address3')" align="center">
           <template slot-scope="scope">
             <span v-show="scope.row.alias">{{scope.row.alias}}</span>
             <span v-show="!scope.row.alias" @click="addAlias(scope.row)">
@@ -19,7 +19,7 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="备注" align="center">
+        <el-table-column :label="$t('address.address4')" align="center">
           <template slot-scope="scope">
             <span v-show="scope.row.remark !=='' " @click="editRemark(scope.row)"
                   class="click">{{scope.row.remark}}</span>
@@ -28,18 +28,18 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="250">
+        <el-table-column :label="$t('address.address5')" align="center" width="300">
           <template slot-scope="scope">
-            <label class="click tab_bn" @click="editPassword(scope.row)">修改密码</label>
+            <label class="click tab_bn" @click="editPassword(scope.row)">{{$t('address.address6')}}</label>
             <span class="tab_line">|</span>
-            <label class="click tab_bn" @click="backAddress(scope.row)">备份</label>
+            <label class="click tab_bn" @click="backAddress(scope.row)">{{$t('address.address7')}}</label>
             <span class="tab_line">|</span>
-            <label class="click tab_bn" @click="deleteAddress(scope.row)">移除</label>
+            <label class="click tab_bn" @click="deleteAddress(scope.row)">{{$t('address.address8')}}</label>
           </template>
         </el-table-column>
       </el-table>
       <div class="pages">
-        <div class="page-total">共 {{addressList.length}} 条</div>
+        <div class="page-total">{{$t('public.total')}} {{addressList.length}}</div>
         <!--<div class="page-total">显示1-20 共 1000</div>-->
         <!-- <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" class="fr"
                         :current-page="currentPage4"
@@ -59,10 +59,10 @@
     >
 
       <div class="address-remark bg-white">
-        <el-input v-model.trim="remarkInfo" placeholder="请输入备注"></el-input>
+        <el-input v-model.trim="remarkInfo" :placeholder="$t('address.address9')"></el-input>
         <div class="btn-next">
-          <el-button @click="remarkDialog=false">取 消</el-button>
-          <el-button type="success" @click='addRemark'>确 定</el-button>
+          <el-button @click="remarkDialog=false">{{$t('address.address10')}}</el-button>
+          <el-button type="success" @click='addRemark'>{{$t('address.address11')}}</el-button>
         </div>
       </div>
     </el-dialog>
@@ -178,7 +178,7 @@
        **/
       addAlias(rowInfo) {
         if(rowInfo.balance  ===0){
-          this.$message({message: "对不起，账户余额不足!", type: 'error', duration: 1000});
+          this.$message({message: this.$t('address.address12'), type: 'error', duration: 1000});
         }else {
           this.toUrl('setAlias', rowInfo.address)
         }
@@ -228,7 +228,7 @@
           }
           this.getAddressList();
         } else {
-          this.$message({message: "密码错误", type: 'error', duration: 1000});
+          this.$message({message:this.$t('address.address13'), type: 'error', duration: 1000});
         }
       },
 

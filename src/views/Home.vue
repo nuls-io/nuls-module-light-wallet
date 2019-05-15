@@ -6,41 +6,41 @@
       <i class="iconfont iconfuzhi clicks" @click="copy(addressInfo.address)"></i>
     </h3>
     <el-tabs v-model="homeActive" @tab-click="handleClick" class="w1200">
-      <el-tab-pane label="主网资产" name="homeFirst" v-loading="assetsListLoading">
-        <el-select v-model="assetsValue" @change="channgeAsesets" disabled>
+      <el-tab-pane :label="$t('home.home0')" name="homeFirst" v-loading="assetsListLoading">
+        <el-select v-model="assetsValue" @change="channgeAsesets" v-show="false">
           <el-option v-for="item in assetsOptions" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
 
         <el-table :data="addressAssetsData" stripe border>
-          <el-table-column prop="account" label="资产" align="center">
+          <el-table-column prop="account" :label="$t('tab.tab0')" align="center">
           </el-table-column>
-          <el-table-column label="类型" align="center" width="150">
+          <el-table-column :label="$t('tab.tab1')" align="center" width="150">
             <template slot-scope="scope"><span>{{ $t('addressType.'+scope.row.type) }}</span></template>
           </el-table-column>
-          <el-table-column prop="total" label="总额">
+          <el-table-column prop="total" :label="$t('tab.tab2')">
           </el-table-column>
-          <el-table-column label="锁定">
+          <el-table-column :label="$t('tab.tab3')">
             <template slot-scope="scope">
               <span class="click td" @click="toUrl('frozenList')"
                     v-show="scope.row.locking !== '--' && scope.row.locking !==0 ">{{scope.row.locking}}</span>
               <span v-show="scope.row.locking === '--' || scope.row.locking ===0">{{scope.row.locking}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="balance" label="可用">
+          <el-table-column prop="balance" :label="$t('tab.tab4')">
           </el-table-column>
-          <el-table-column fixed="right" label="操作" align="center">
+          <el-table-column fixed="right" :label="$t('public.operation')" align="center" min-width="120">
             <template>
-              <label class="click tab_bn" @click="toUrl('transfer')">转账</label>
+              <label class="click tab_bn" @click="toUrl('transfer')">{{$t('nav.transfer')}}</label>
               <span class="tab_line">|</span>
-              <label class="click tab_bn" @click="toUrl('txList')">交易记录</label>
+              <label class="click tab_bn" @click="toUrl('txList')">{{$t('home.home2')}}</label>
             </template>
           </el-table-column>
         </el-table>
         <div class="pages">
           <div class="page-total">
-            显示 {{pageNumber-1 === 0 ? 1 : (pageNumber-1) *pageSize}}-{{pageNumber*pageSize}}
-            共 {{addressAssetsData.length}}
+            {{$t('public.display')}} {{pageNumber-1 === 0 ? 1 : (pageNumber-1) *pageSize}}-{{pageNumber*pageSize}}
+            {{$t('public.total')}} {{addressAssetsData.length}}
           </div>
           <el-pagination v-show="addressAssetsData.length > pageSize" class="fr" background
                          @current-change="addressAssetsListPages"
@@ -50,7 +50,7 @@
         </div>
 
       </el-tab-pane>
-      <el-tab-pane label="跨链资产" name="homeSecond" disabled>
+      <el-tab-pane :label="$t('home.home1')" name="homeSecond" disabled>
         <div v-loading="txListDataLoading">
           <div class="filter">
             <el-select v-model="assetsValue">
@@ -396,7 +396,7 @@
        **/
       copy(sting) {
         copys(sting);
-        this.$message({message: "已经复制完成", type: 'success', duration: 1000});
+        this.$message({message: this.$t('public.copySuccess'), type: 'success', duration: 1000});
       },
     }
   }

@@ -24,10 +24,10 @@
                         </el-menu-item>
                     </el-submenu>
                     <el-submenu index="set">
-                        <template slot="title">设置</template>
-                        <el-menu-item index="address" class="tc">地址管理</el-menu-item>
-                        <el-menu-item index="nodeService" class="tc">服务节点</el-menu-item>
-                        <el-menu-item index="address" class="tc" disabled>通讯录</el-menu-item>
+                        <template slot="title">{{$t('nav.set')}}</template>
+                        <el-menu-item index="address" class="tc">{{$t('nav.addressList')}}</el-menu-item>
+                        <el-menu-item index="nodeService" class="tc">{{$t('nav.nodeList')}}</el-menu-item>
+                        <el-menu-item index="address" class="tc" v-show="false">通讯录</el-menu-item>
                     </el-submenu>
                     <el-submenu index="lang">
                         <template slot="title">{{this.lang ==="en" ? "Eng":"中文"}}</template>
@@ -35,7 +35,7 @@
                         <el-menu-item index="en">English</el-menu-item>
                     </el-submenu>
                     <li class="el-menu-item">|</li>
-                    <el-menu-item index="24" disabled>帮助</el-menu-item>
+                    <el-menu-item index="24" disabled>{{$t('nav.help')}}</el-menu-item>
                 </el-menu>
 
             </div>
@@ -151,7 +151,6 @@
       /**
        * 连接跳转
        * @param name
-       * @param params
        */
       toUrl(name) {
         //console.log(name,params);

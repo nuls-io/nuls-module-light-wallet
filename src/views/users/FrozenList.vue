@@ -2,14 +2,14 @@
     <div class="frozen_list bg-gray">
         <div class="bg-white">
             <div class="w1200">
-                <BackBar backTitle="钱包"></BackBar>
-                <h3 class="title">冻结列表</h3>
+                <BackBar :backTitle="$t('nav.wallet')"></BackBar>
+                <h3 class="title">{{$t('frozenList.frozenList0')}}</h3>
             </div>
         </div>
 
         <div class="w1200 mt_20">
             <el-table :data="txListData" stripe border>
-                <el-table-column label="类型" align="center">
+                <el-table-column :label="$t('tab.tab1')" align="center">
                     <template slot-scope="scope"><span>{{ $t('frozenType.'+scope.row.type) }}</span></template>
                 </el-table-column>
                 <el-table-column label="txHash" align="center" min-width="150">
@@ -17,21 +17,21 @@
                         <span class="click" @click="toUrl('transferInfo',scope.row.txHash)">{{scope.row.txHashs}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="createTime" label="时间" align="center">
+                <el-table-column prop="createTime" :label="$t('tab.tab5')" align="center">
                 </el-table-column>
-                <el-table-column prop="values" label="金额" align="center">
+                <el-table-column prop="values" :label="$t('tab.tab6')" align="center">
                 </el-table-column>
-                <el-table-column prop="lockedValue" label="解冻高度/时间" align="center">
+                <el-table-column prop="lockedValue" :label=" $t('tab.tab7')" align="center">
                 </el-table-column>
-                <el-table-column label="冻结原因" align="center">
+                <el-table-column :label="$t('tab.tab8')" align="center">
                     <template slot-scope="scope"><span>{{scope.row.type === 3 ? $t('type.5'):  scope.row.reason}}</span>
                     </template>
                 </el-table-column>
             </el-table>
             <div class="pages">
                 <div class="page-total">
-                    显示 {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
-                    共 {{pageTotal}}
+                    {{$t('public.display')}} {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
+                    {{$t('public.total')}} {{pageTotal}}
                 </div>
                 <el-pagination @current-change="frozenListPages" class="fr" background
                                v-show="pageTotal>pageSize"

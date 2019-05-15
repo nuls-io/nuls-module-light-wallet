@@ -2,55 +2,55 @@
   <div class="transfer_info bg-gray" v-loading="txInfoLoading">
     <div class="bg-white">
       <div class="w1200">
-        <BackBar backTitle="交易记录"></BackBar>
+        <BackBar :backTitle="$t('home.home2')"></BackBar>
         <h3 class="title">{{hash}}
           <i class="iconfont icon-fuzhi clicks" @click="copy(hash)"></i></h3>
       </div>
     </div>
 
     <div class="card_long mt_20 w1200">
-      <h5 class="card-title font18">基础信息</h5>
+      <h5 class="card-title font18">{{$t('public.basicData')}}</h5>
       <ul>
-        <li>时间 <label>{{txInfo.createTime}}</label></li>
-        <li>金额 <label>{{txInfo.value}}<span class="fCN">NULS</span></label></li>
-        <li>高度 <label class="click"><u class="td">{{txInfo.height}}</u></label></li>
-        <li>手续费 <label>{{txInfo.fee}}<span class="fCN">NULS</span></label></li>
-        <li>类型 <label>{{$t('type.'+txInfo.type)}}</label></li>
-        <li>状态 <label>{{txInfo.status === 0 ? '已确认':'未确认'}}</label></li>
+        <li>{{$t('public.time')}} <label>{{txInfo.createTime}}</label></li>
+        <li>{{$t('public.amount')}} <label>{{txInfo.value}}<span class="fCN">NULS</span></label></li>
+        <li>{{$t('public.height')}} <label class="click"><u class="td">{{txInfo.height}}</u></label></li>
+        <li>{{$t('public.fee')}} <label>{{txInfo.fee}}<span class="fCN">NULS</span></label></li>
+        <li>{{$t('public.type')}} <label>{{$t('type.'+txInfo.type)}}</label></li>
+        <li>{{$t('public.status')}} <label>{{txInfo.status === 0 ? $t('transferStatus.1'):$t('transferStatus.0')}}</label></li>
         <li v-if="txInfo.type ===1">
-          节点ID
+          {{$t('public.nodeID')}}
           <label><u class="click td uppercase">{{txInfo.txData.agentId}}</u></label>
         </li>
         <li v-if="txInfo.type ===1">
-          轮次信息
-          <label>轮次
+          {{$t('public.roundInfo')}}
+          <label>{{$t('public.rotation')}}
             <u class=" click cd">{{txInfo.txData.roundIndex}}</u>
-            编号 {{txInfo.txData.packageIndex}}
+            {{$t('public.number')}} {{txInfo.txData.packageIndex}}
           </label>
         </li>
-        <li v-if="txInfo.type ===3">别名 <label>{{txInfo.txData.alias}}</label></li>
+        <li v-if="txInfo.type ===3">{{$t('public.alias')}} <label>{{txInfo.txData.alias}}</label></li>
         <li v-if="txInfo.type ===4 || txInfo.type ===5 || txInfo.type ===9">
-          创建地址
+          {{$t('public.createAddress')}}
           <label><u class="click td">{{txInfo.txData.agentAddress}}</u></label>
         </li>
         <li v-if="txInfo.type ===4 || txInfo.type ===5 || txInfo.type ===6 || txInfo.type ===9">
-          节点ID
+          {{$t('public.nodeID')}}
           <label><u class="click td uppercase">{{txInfo.txData.agentId}}</u></label>
         </li>
         <li v-if="txInfo.type ===4 || txInfo.type ===9">
-          打包地址
+          {{$t('public.packingAddress')}}
           <label><u class="click td">{{txInfo.txData.packingAddress}}</u></label>
         </li>
-        <li v-if="txInfo.type ===4 || txInfo.type ===9">佣金比例 <label>{{txInfo.txData.commissionRate}}%</label></li>
+        <li v-if="txInfo.type ===4 || txInfo.type ===9"> {{$t('public.commission')}} <label>{{txInfo.txData.commissionRate}}%</label></li>
         <li v-if="txInfo.type ===4 || txInfo.type ===9">
-          奖励地址
+          {{$t('public.rewardAddress')}}
           <label><u class="click td">{{txInfo.txData.rewardAddress}}</u></label>
         </li>
-        <li v-if="txInfo.type ===9">保证金 <label>{{txInfo.txData.deposit/100000000}}<span class="fCN">NULS</span></label>
+        <li v-if="txInfo.type ===9">{{$t('public.deposit')}} <label>{{txInfo.txData.deposit/100000000}}<span class="fCN">NULS</span></label>
         </li>
-        <li v-if="txInfo.type ===9">信用值 <label>{{txInfo.txData.creditValue}}</label></li>
+        <li v-if="txInfo.type ===9">{{$t('public.credit')}} <label>{{txInfo.txData.creditValue}}</label></li>
         <li v-if="txInfo.type !==3">
-          备注
+          {{$t('public.remarks')}}
           <label class="remark overflow tr" :title="txInfo.remark">{{txInfo.remark}}</label>
         </li>
         <li v-if="txInfo.type !==4 && txInfo.type !==6 && txInfo.type !==9"></li>
@@ -161,7 +161,7 @@
        **/
       copy(sting) {
         copys(sting);
-        this.$message({message: "已经复制完成", type: 'success', duration: 1000});
+        this.$message({message: this.$t('public.copySuccess'), type: 'success', duration: 1000});
       },
 
 

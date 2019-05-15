@@ -2,32 +2,32 @@
   <div class="consensus_list bg-gray">
     <div class="bg-white">
       <div class="w1200">
-        <BackBar backTitle="共识"></BackBar>
-        <h3 class="title">共识明细</h3>
+        <BackBar :backTitle="$t('nav.consensus')"></BackBar>
+        <h3 class="title">{{$t('consensusList.consensusList0')}}</h3>
       </div>
     </div>
 
     <div class="w1200 mt_20">
       <div class="top_total font12">
-        总委托量：{{totalAmount}} <span class="fCN">NULS</span>
+        {{$t('public.totalStake')}}：{{totalAmount}} <span class="fCN">NULS</span>
       </div>
       <el-table :data="consensusData" stripe border v-loading="consensusDataLoading">
-        <el-table-column prop="blockHeight" label="高度" align="center">
+        <el-table-column prop="blockHeight" :label="$t('public.height')" align="center">
         </el-table-column>
-        <el-table-column prop="createTime" label="加入时间" align="center">
+        <el-table-column prop="createTime" :label="$t('consensusList.consensusList1')" align="center">
         </el-table-column>
         <el-table-column label="Hash" align="center" min-width="200">
           <template slot-scope="scope">
             <span class="click " @click="toUrl('transferInfo',scope.row.txHash)">{{scope.row.txHashs}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="amount" label="金额(NULS)" align="center">
+        <el-table-column prop="amount" :label="$t('public.amount') + '(NULS)'" align="center">
         </el-table-column>
       </el-table>
       <div class="pages">
         <div class="page-total">
-          显示 {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
-          共 {{pageTotal}}
+          {{$t('public.display')}} {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
+          {{$t('public.total')}} {{pageTotal}}
         </div>
 
         <el-pagination v-show="pageTotal > pageSize" @current-change="consensusPages" class="fr" background

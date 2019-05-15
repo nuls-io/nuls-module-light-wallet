@@ -2,30 +2,32 @@
   <div class="consensus_info bg-gray">
     <div class="bg-white">
       <div class="w1200">
-        <BackBar backTitle="共识"></BackBar>
+        <BackBar :backTitle="$t('nav.consensus')"></BackBar>
         <h3 class="title uppercase">{{nodeInfo.agentId}}<i class="el-icon-star-off click"></i></h3>
       </div>
     </div>
 
     <div class="card_long mt_20 w1200 bg-white">
       <h5 class="card-title font18">
-        节点信息
+        {{$t('consensusInfo.consensusInfo6')}}
         <i class="iconfont" :class="nodeInfo.status === 0 ? 'icondaigongshi fred' : 'icongongshizhong fCN'"></i>
         <el-button class="fr fred" type="danger" @click="stopNode"
-                   v-show="addressInfo.address === nodeInfo.agentAddress">注销节点
+                   v-show="addressInfo.address === nodeInfo.agentAddress">{{$t('consensusInfo.consensusInfo5')}}
         </el-button>
       </h5>
       <ul>
-        <li>创建地址 <label>{{nodeInfo.agentAddress}}</label></li>
-        <li>保证金 <label>{{nodeInfo.deposits}}<span class="fCN">NULS</span></label></li>
-        <li>奖励地址 <label>{{nodeInfo.rewardAddress}}</label></li>
-        <li>总委托 <label>{{nodeInfo.totalDeposit}}<span class="fCN">NULS</span></label></li>
-        <li>打包地址 <label>{{nodeInfo.packingAddress}}</label></li>
-        <li>总奖励 <label>{{nodeInfo.totalReward}}<span class="fCN">NULS</span></label></li>
-        <li>创建者别名 <label>{{nodeInfo.agentAlias ? nodeInfo.agentAlias :'--' }}</label></li>
-        <li>参与人数 <label>{{nodeInfo.depositCount}}</label></li>
-        <li>创建时间 <label>{{nodeInfo.createTime}}</label></li>
-        <li>佣金比例
+        <li>{{$t('public.createAddress')}} <label>{{nodeInfo.agentAddress}}</label></li>
+        <li>{{$t('public.deposit')}} <label>{{nodeInfo.deposits}}<span class="fCN">NULS</span></label></li>
+        <li>{{$t('public.rewardAddress')}} <label>{{nodeInfo.rewardAddress}}</label></li>
+        <li>{{$t('public.totalStake')}} <label>{{nodeInfo.totalDeposit}}<span class="fCN">NULS</span></label></li>
+        <li>{{$t('public.packingAddress')}} <label>{{nodeInfo.packingAddress}}</label></li>
+        <li>{{$t('consensusInfo.consensusInfo7')}} <label>{{nodeInfo.totalReward}}<span class="fCN">NULS</span></label>
+        </li>
+        <li>{{$t('consensusInfo.consensusInfo8')}} <label>{{nodeInfo.agentAlias ? nodeInfo.agentAlias :'--' }}</label>
+        </li>
+        <li>{{$t('public.participants')}} <label>{{nodeInfo.depositCount}}</label></li>
+        <li>{{$t('consensusInfo.consensusInfo9')}} <label>{{nodeInfo.createTime}}</label></li>
+        <li>{{$t('public.commission')}}
           <label>{{nodeInfo.commissionRate}}%
             <!--<el-tooltip placement="top">
               <div slot="content">该手续费值是根据当前NULS网络预估的，实际消耗可能小于该值，多余部分将会通过共识奖励退回</div>
@@ -33,8 +35,9 @@
             </el-tooltip>-->
           </label>
         </li>
-        <li>节点惩罚 <label><u class="click td">{{nodeInfo.yellowCardCount}}黄牌</u></label></li>
-        <li>信用值 <label>{{nodeInfo.creditValue}}</label></li>
+        <li>{{$t('consensusInfo.consensusInfo10')}} <label><u class="click td">{{nodeInfo.yellowCardCount}}{{$t('consensusInfo.consensusInfo11')}}</u></label>
+        </li>
+        <li>{{$t('public.credit')}} <label>{{nodeInfo.creditValue}}</label></li>
         <p class="cb"></p>
       </ul>
     </div>
@@ -44,45 +47,47 @@
       <div class="entrust w1200 bg-white" v-show="jionNode">
         <div class="entrust_add w630">
           <el-form :model="jionNodeForm" status-icon :rules="jionNodeRules" ref="jionNodeForm">
-            <el-form-item label="委托金额(NULS):" prop="amount">
-              <span class="balance font12 fr">可用余额：{{addressInfo.balance}}</span>
+            <el-form-item :label="$t('consensusInfo.consensusInfo1') + '(NULS)'" prop="amount">
+              <span class="balance font12 fr">{{$t('consensus.consensus2')}}：{{addressInfo.balance}}</span>
               <el-input v-model="jionNodeForm.amount">
               </el-input>
             </el-form-item>
             <div class="font14">
-              手续费：{{fee}} <span class="fCN">NULS</span>
+              {{$t('public.fee')}}: {{fee}} <span class="fCN">NULS</span>
             </div>
             <el-form-item class="form-next">
-              <el-button type="success" @click="jionNodeSubmitForm('jionNodeForm')">确 定</el-button>
+              <el-button type="success" @click="jionNodeSubmitForm('jionNodeForm')">{{$t('password.password3')}}
+              </el-button>
             </el-form-item>
           </el-form>
         </div>
       </div>
       <div class="entrust_list w1200 bg-white" v-show="!jionNode">
         <div class="top_total font12">
-          总委托量：{{nodeInfo.totalDeposit}} <span class="fCN">NULS</span>
+          {{$t('public.totalStake')}}：{{nodeInfo.totalDeposit}} <span class="fCN">NULS</span>
         </div>
 
         <div class="top_ico">
           <i class="el-icon-plus click" @click="showNodeList"></i>
         </div>
         <el-table :data="nodeDepositData" stripe border>
-          <el-table-column prop="blockHeight" label="高度" align="center">
+          <el-table-column prop="blockHeight" :label="$t('public.height')" align="center">
           </el-table-column>
-          <el-table-column prop="createTime" label="加入时间" align="center">
+          <el-table-column prop="createTime" :label="$t('consensusList.consensusList1')" align="center">
           </el-table-column>
-          <el-table-column prop="amount" label="金额(NULS)" align="center">
+          <el-table-column prop="amount" :label="$t('public.amount') + '(NULS)'" align="center">
           </el-table-column>
-          <el-table-column label="操作" align="center">
+          <el-table-column :label="$t('public.operation')" align="center">
             <template slot-scope="scope">
-              <label class="click tab_bn" @click="cancelDeposit(scope.row)">退出</label>
+              <label class="click tab_bn"
+                     @click="cancelDeposit(scope.row)">{{$t('consensusInfo.consensusInfo0')}}</label>
             </template>
           </el-table-column>
         </el-table>
         <div class="pages">
           <div class="page-total">
-            显示 {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
-            共 {{pageTotal}}
+            {{$t('public.display')}} {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
+            {{$t('public.total')}} {{pageTotal}}
           </div>
           <el-pagination class="fr" background v-show="pageTotal>pageSize" @current-change="nodeDepositPages"
                          :page-size="pageSize"
@@ -110,17 +115,17 @@
     data() {
       let checkAmount = (rule, value, callback) => {
         let usable = 500000 - Number(this.nodeInfo.totalDeposit);
-        let balance = this.balanceInfo.balance - value*100000000;
+        let balance = this.balanceInfo.balance - value * 100000000;
         let re = /^\d+(?=\.{0,1}\d+$|$)/;
         let res = /^\d{1,8}(\.\d{1,8})?$/;
         if (!value) {
-          return callback(new Error('委托金额不能为空'));
+          return callback(new Error(this.$t('consensusInfo.consensusInfo2')));
         } else if (!re.exec(value) || !res.exec(value)) {
-          callback(new Error('请输入有效的委托金额数值'))
+          callback(new Error(this.$t('consensusInfo.consensusInfo3')))
         } else if (value < 2000 || value > usable) {
-          return callback(new Error('委托金额不小于2000并且总委托额小于500000'));
+          return callback(new Error(this.$t('consensusInfo.consensusInfo4')));
         } else if (balance < 0.001) {
-          return callback(new Error('对不起，账户余额不足'));
+          return callback(new Error(this.$t('newConsensus.newConsensus7')));
         } else {
           callback()
         }
@@ -258,15 +263,15 @@
        * 获取账户余额
        * @param address
        **/
-      getBalanceByAddress(address){
+      getBalanceByAddress(address) {
         getNulsBalance(address).then((response) => {
           if (response.success) {
             this.balanceInfo = response.data;
           } else {
-            this.$message({message: "获取账户余额失败:" + response, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err2') + response, type: 'error', duration: 1000});
           }
         }).catch((error) => {
-          this.$message({message: "获取账户余额失败：" + error, type: 'error', duration: 1000});
+          this.$message({message: this.$t('public.err3') + error, type: 'error', duration: 1000});
         });
       },
 
@@ -282,10 +287,10 @@
             this.$refs.password.showPassword(true);
             this.passwordType = 1;
           } else {
-            this.$message({message: "获取账户余额失败:" + response, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err2') + response, type: 'error', duration: 1000});
           }
         }).catch((error) => {
-          this.$message({message: "获取账户余额失败：" + error, type: 'error', duration: 1000});
+          this.$message({message: this.$t('public.err3') + error, type: 'error', duration: 1000});
         });
       },
 
@@ -299,10 +304,10 @@
             this.$refs.password.showPassword(true);
             this.passwordType = 2;
           } else {
-            this.$message({message: "获取账户余额失败:" + response, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err2') + response, type: 'error', duration: 1000});
           }
         }).catch((error) => {
-          this.$message({message: "获取账户余额失败：" + error, type: 'error', duration: 1000});
+          this.$message({message: this.$t('public.err3') + error, type: 'error', duration: 1000});
         });
       },
 
@@ -335,7 +340,7 @@
             txhex = await nuls.transactionSerialize(pri, pub, tAssemble);
             //txhex = await nuls.transactionSerialize(pri, pub, inOrOutputs.data.inputs, inOrOutputs.data.outputs, remark, 5, depositInfo);
           } else {
-            this.$message({message: "input和outputs组装错误：" + inOrOutputs.data, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err1') + inOrOutputs.data, type: 'error', duration: 1000});
           }
         } else if (this.passwordType === 1) { //退出共识
           transferInfo.amount = Number(Times(this.outInfo.amount, 100000000).toString());
@@ -345,7 +350,7 @@
             let tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, remark, 6, this.outInfo.txHash);
             txhex = await nuls.transactionSerialize(pri, pub, tAssemble);
           } else {
-            this.$message({message: "input和outputs组装错误：" + inOrOutputs.data, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err1') + inOrOutputs.data, type: 'error', duration: 1000});
           }
         } else if (this.passwordType === 2) { //注销节点
           transferInfo.amount = this.nodeInfo.deposit;
@@ -402,7 +407,7 @@
             txhex = await nuls.transactionSerialize(pri, pub, tAssemble);
           }
           else {
-            this.$message({message: "input和outputs组装错误：" + inOrOutputs.data, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err1') + inOrOutputs.data, type: 'error', duration: 1000});
           }
         } else {
           console.log("交易类型错误")
@@ -415,10 +420,10 @@
               name: "txList"
             })
           } else {
-            this.$message({message: "验证并广播交易错误：" + response.data, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err') + response.data, type: 'error', duration: 1000});
           }
         }).catch((err) => {
-          this.$message({message: "验证并广播交易异常：" + err, type: 'error', duration: 1000});
+          this.$message({message:this.$t('public.err0') + err, type: 'error', duration: 1000});
         });
       }
     },

@@ -2,8 +2,8 @@
   <div class="new_address bg-gray">
     <div class="bg-white">
       <div class="w1200">
-        <BackBar backTitle="账户管理" v-show="ifAddressInfo"></BackBar>
-        <h3 class="title"><font v-if="!isBackups">创建钱包</font><font v-else>备份账户</font></h3>
+        <BackBar :backTitle="$t('address.address0')" v-show="ifAddressInfo"></BackBar>
+        <h3 class="title"><font v-if="!isBackups">{{$t('newAddress.newAddress0')}}</font><font v-else>{{$t('newAddress.newAddress1')}}</font></h3>
       </div>
     </div>
     <div class="new w1200 mt_20 bg-white">
@@ -13,14 +13,14 @@
         </li>
         <li>
           <p class="ico"><i class="el-icon-view Ncolor"></i></p>
-          <h6 class="Ncolor">设置密码</h6>
+          <h6 class="Ncolor">{{$t('newAddress.newAddress2')}}</h6>
         </li>
         <li>
           <p class="dotted" :class="!isFirst ? 'Ndotted':''"></p>
         </li>
         <li>
           <p class="ico"><i class="el-icon-location-outline" :class="!isFirst ? 'Ncolor':''"></i></p>
-          <h6 :class="!isFirst ? 'Ncolor':''">备份</h6>
+          <h6 :class="!isFirst ? 'Ncolor':''">{{$t('newAddress.newAddress3')}}</h6>
         </li>
         <li>
           <p class="dotted"></p>
@@ -30,58 +30,58 @@
 
       <div class="w630" v-show="isFirst">
         <div class="tip bg-gray">
-          <p><i></i>请设置密码用以导入账户、转账、参与共识等重要行为验证</p>
-          <p><i></i>请认真保存钱包密码，NULS钱包不存储密码，也无法帮您找回，请务必牢记</p>
+          <p><i></i>{{$t('newAddress.newAddress4')}}</p>
+          <p><i></i>{{$t('newAddress.newAddress5')}}</p>
         </div>
         <div class="cb"></div>
         <el-form :model="passwordForm" status-icon :rules="passwordRules" ref="passwordForm" class="mb_20">
-          <el-form-item label="密码" prop="pass">
+          <el-form-item :label="$t('newAddress.newAddress6')" prop="pass">
             <el-input type="password" v-model="passwordForm.pass" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="确认密码" prop="checkPass">
+          <el-form-item :label="$t('newAddress.newAddress7')" prop="checkPass">
             <el-input type="password" v-model="passwordForm.checkPass" autocomplete="off"></el-input>
           </el-form-item>
-          <div class="font12">点击下一步，你已经同意了<span class="click">用户协议</span></div>
+          <div class="font12">{{$t('newAddress.newAddress8')}}<span class="click">{{$t('newAddress.newAddress9')}}</span></div>
           <el-form-item class="form-next">
-            <el-button type="success" @click="submitPasswordForm('passwordForm')">下一步</el-button>
-            <el-button type="text" @click="toUrl('importAddress')">导入钱包</el-button>
+            <el-button type="success" @click="submitPasswordForm('passwordForm')">{{$t('newAddress.newAddress10')}}</el-button>
+            <el-button type="text" @click="toUrl('importAddress')">{{$t('newAddress.newAddress11')}}</el-button>
           </el-form-item>
         </el-form>
       </div>
 
       <div class="step_tow w630" v-show="!isFirst">
         <h3 class="title">
-          您的账户地址：
+         {{$t('newAddress.newAddress12')}}：
           <span>{{newAddressInfo.address}}</span>
           <i class="iconfont iconfuzhi clicks" @click="copy(newAddressInfo.address)"></i>
         </h3>
         <div class="tip bg-gray">
-          <p>请勿遗失！ NULS将无法帮助您找回遗失的密钥</p>
-          <p>请勿向他人分享！ 如在恶意网站使用此文件，您的资金可能面临被盗窃的风险</p>
-          <p>请制作备份！ 以防您的电脑故障</p>
+          <p>{{$t('newAddress.newAddress13')}}</p>
+          <p>{{$t('newAddress.newAddress14')}}</p>
+          <p>{{$t('newAddress.newAddress15')}}</p>
         </div>
 
         <div class="btn mb_20">
-          <el-button type="success" @click="backKeystore" disabled>Keystore备份</el-button>
-          <el-button type="text" @click="backKey">明文私钥备份</el-button>
-          <el-button type="info" @click="goWallet" v-show="!isBackups">进入钱包</el-button>
+          <el-button type="success" @click="backKeystore" disabled>{{$t('newAddress.newAddress16')}}</el-button>
+          <el-button type="text" @click="backKey">{{$t('newAddress.newAddress17')}}</el-button>
+          <el-button type="info" @click="goWallet" v-show="!isBackups">{{$t('newAddress.newAddress18')}}</el-button>
         </div>
       </div>
 
     </div>
     <Password ref="password" @passwordSubmit="passSubmit">
     </Password>
-    <el-dialog title="安全警告" width="40%"
+    <el-dialog :title="$t('newAddress.newAddress19')" width="40%"
                :visible.sync="keyDialog"
                :close-on-click-modal="false"
                :close-on-press-escape="false"
     >
-      <span>私钥未经加密，备份存在风险，请保存到安全的地方，建议使用Keystore进行备份</span>
+      <span>{{$t('newAddress.newAddress20')}}</span>
       <p class="bg-white">
         {{newAddressInfo.pri}}
       </p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="success" @click="copy(newAddressInfo.pri)">复制</el-button>
+        <el-button type="success" @click="copy(newAddressInfo.pri)">{{$t('newAddress.newAddress21')}}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -98,9 +98,9 @@
       let validatePass = (rule, value, callback) => {
         let patrn = /^(?![\d]+$)(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{8,20}$/;
         if (value === '') {
-          callback(new Error('请输入密码'));
+          callback(new Error(this.$t('newAddress.newAddress22')));
         } else if (!patrn.exec(value)) {
-          callback(new Error('请输入由字母和数字组合的8-20位密码'));
+          callback(new Error(this.$t('newAddress.newAddress23')));
         } else {
           if (this.passwordForm.checkPass !== '') {
             this.$refs.passwordForm.validateField('checkPass');
@@ -110,9 +110,9 @@
       };
       let validatePassTwo = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('请再次输入密码'));
+          callback(new Error(this.$t('newAddress.newAddress24')));
         } else if (value !== this.passwordForm.pass) {
-          callback(new Error('两次输入密码不一致!'));
+          callback(new Error(this.$t('newAddress.newAddress25')));
         } else {
           callback();
         }
@@ -202,7 +202,7 @@
           this.newAddressInfo.pri = pri;
           this.keyDialog = true;
         } else {
-          this.$message({message: "密码错误", type: 'error', duration: 1000});
+          this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
         }
       },
 
@@ -230,7 +230,7 @@
        **/
       copy(sting) {
         copys(sting);
-        this.$message({message: "已经复制完成", type: 'success', duration: 1000});
+        this.$message({message: this.$t('public.copySuccess'), type: 'success', duration: 1000});
         this.keyDialog = false;
       },
     }

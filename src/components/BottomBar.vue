@@ -3,31 +3,31 @@
     <div class="bottom">
       <div class="w1200 font14">
         <div class="left fl">
-          <p class="fl">服务节点: <u class="clicks" @click="toUrl('nodeService')">{{serviceUrls}}</u></p>
-          <!--<p class="fr">高度:节点131000000/主网 {{heightInfo.height}}</p>-->
-          <p class="fr">主网/服务节点: {{mainHeightInfo.height}}/{{heightInfo.height}}</p>
+          <p class="fl">{{$t('bottom.serviceNode')}}: <u class="clicks"
+                                                         @click="toUrl('nodeService')">{{serviceUrls}}</u></p>
+          <p class="fr">{{$t('bottom.nodeHeight')}}: {{mainHeightInfo.height}}/{{heightInfo.height}}</p>
         </div>
         <div class="right fr">
-          <label class="clicks">服务协议</label>
-          <label class="clicks">隐私政策</label>
+          <label class="clicks">{{$t('bottom.agreement')}}</label>
+          <label class="clicks">{{$t('bottom.policy')}}</label>
           <!--<label>Alpha 2.0.1</label>-->
           <label class="click" @click="checkUpdate">Alpha 2.0.1</label>
         </div>
       </div>
     </div>
-    <el-dialog title="更新钱包" width="35rem"
+    <el-dialog :title="$t('bottom.updateWallet')" width="35rem"
                :visible.sync="updateDialogVisible"
                :show-close="tips.type===1 || tips.type===4"
                :close-on-press-escape="false"
                :close-on-click-modal="false">
       <div class="upload">
-        <div class="upload-tips">提示信息：{{tips.info}}</div>
+        <div class="upload-tips">{{$t('bottom.Tips')}}: {{$t('TipsType.'+tips.type) }}</div>
         <div class="upload-percent" v-if="downloadPercent !==0 ">
           <el-progress :text-inside="true" :stroke-width="18" :percentage="downloadPercent" status="success">
           </el-progress>
         </div>
         <div class="upload-bt" v-if="tips.type === 3">
-          <el-button type="info" @clcik="afterRun">后台运行</el-button>
+          <el-button type="info" @clcik="afterRun">{{$t('bottom.Backstage')}}</el-button>
         </div>
       </div>
     </el-dialog>
@@ -37,6 +37,7 @@
 
 <script>
   import axios from 'axios'
+
   export default {
     name: "bottom-bar",
     data() {
@@ -77,7 +78,7 @@
        * 获取主网最新高度（浏览器高度）
        */
       getMainHeader() {
-        const params = {"jsonrpc":"2.0", "method":"getBestBlockHeader", "params":[2], "id":5898};
+        const params = {"jsonrpc": "2.0", "method": "getBestBlockHeader", "params": [2], "id": 5898};
         axios.post('http://apitn1.nulscan.io', params)
           .then((response) => {
             //console.log(response);

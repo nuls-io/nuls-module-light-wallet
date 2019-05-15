@@ -3,78 +3,78 @@
 
     <div class="bg-white">
       <div class="w1200">
-        <BackBar backTitle="共识"></BackBar>
-        <h3 class="title">创建节点</h3>
+        <BackBar :backTitle="$t('nav.consensus')"></BackBar>
+        <h3 class="title">{{$t('newConsensus.newConsensus0')}}</h3>
       </div>
     </div>
 
     <div class="w1200 bg-white mt_20">
       <el-form :model="createrForm" :rules="createrRules" ref="createrForm">
-        <el-form-item label="创建地址:">
+        <el-form-item :label="$t('public.createAddress')">
           <el-input v-model.trim="addressInfo.address" disabled>
           </el-input>
         </el-form-item>
-        <el-form-item label="奖励地址:" prop="rewardAddress">
+        <el-form-item :label="$t('public.rewardAddress')" prop="rewardAddress">
           <el-input v-model.trim="createrForm.rewardAddress" maxlength="50">
           </el-input>
         </el-form-item>
-        <el-form-item label="出块地址:" prop="blockAddress">
+        <el-form-item :label="$t('public.packingAddress')" prop="blockAddress">
           <el-input v-model.trim="createrForm.blockAddress" maxlength="50">
           </el-input>
         </el-form-item>
-        <el-form-item label="保证金(NULS):" prop="amount">
-          <span class="balance font12 fr">可用余额：{{addressInfo.balance}}</span>
+        <el-form-item :label="$t('public.deposit') + '(NULS)'" prop="amount">
+          <span class="balance font12 fr">{{$t('consensus.consensus2')}}: {{addressInfo.balance}}</span>
           <el-input v-model.trim="createrForm.amount">
           </el-input>
         </el-form-item>
-        <el-form-item label="佣金比例(%):" prop="rate">
+        <el-form-item :label="$t('public.commission') + '(%)'" prop="rate">
           <el-input v-model.trim="createrForm.rate">
           </el-input>
         </el-form-item>
         <div class="font14">
           <el-tooltip placement="top">
-            <div slot="content">该手续费值是根据当前NULS网络预估的，实际消耗可能小于该值，多余部分将会通过共识奖励退回</div>
+            <div slot="content">{{$t('transfer.transfer5')}}</div>
             <i class="el-icon-warning"></i>
           </el-tooltip>
-          手续费：0.01 <span class="fCN">NULS</span>
+          {{$t('public.fee')}}: 0.01 <span class="fCN">NULS</span>
         </div>
         <el-form-item class="form-next">
-          <el-button type="success" @click="submitForm('createrForm')">确 定</el-button>
+          <el-button type="success" @click="submitForm('createrForm')">{{$t('password.password3')}}</el-button>
         </el-form-item>
       </el-form>
     </div>
     <Password ref="password" @passwordSubmit="passSubmit">
     </Password>
-    <el-dialog title="创建节点确认" :visible.sync="newConsensusVisible" width="40rem" class="confirm-dialog">
+    <el-dialog :title="$t('newConsensus.newConsensus1')" :visible.sync="newConsensusVisible" width="40rem" class="confirm-dialog">
       <div class="bg-white">
         <div class="div-data">
-          <p>创建地址：</p>
+          <p>{{$t('public.createAddress')}}:&nbsp;</p>
           <label>{{addressInfo.address}}</label>
         </div>
         <div class="div-data">
-          <p>奖励地址：</p>
+          <p>{{$t('public.rewardAddress')}}:&nbsp;</p>
           <label>{{createrForm.rewardAddress}}</label>
         </div>
         <div class="div-data">
-          <p>打包地址：</p>
+          <p>{{$t('public.packingAddress')}}:&nbsp;</p>
           <label>{{createrForm.blockAddress}}</label>
         </div>
         <div class="div-data">
-          <p>佣金比例：</p>
+          <p>{{$t('public.commission')}}:&nbsp;</p>
           <label class="yellow">{{createrForm.rate}}% <span class="fCN">NULS</span></label>
         </div>
         <div class="div-data">
-          <p>手续费：</p>
+          <p>{{$t('public.fee')}}:&nbsp;</p>
           <label>0.001 <span class="fCN">NULS</span></label>
         </div>
         <div class="div-data">
-          <p>保证金：</p>
+          <p>{{$t('public.deposit')}}:&nbsp;</p>
           <label class="yellow">{{createrForm.amount}} <span class="fCN">NULS</span></label>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="newConsensusVisible = false">取 消</el-button>
-        <el-button type="success" @click="confiremSubmit">确认提交</el-button>
+        <el-button @click="newConsensusVisible = false">{{$t('password.password2')}}</el-button>
+        <el-button type="success" @click="confiremSubmit">{{$t('transfer.transfer8')}}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -91,16 +91,16 @@
     data() {
       let checkRewardAddress = (rule, value, callback) => {
         if (!value) {
-          return callback(new Error('请输入奖励地址'));
+          return callback(new Error(this.$t('newConsensus.newConsensus2')));
         } else {
           callback();
         }
       };
       let checkBlockAddress = (rule, value, callback) => {
         if (!value) {
-          return callback(new Error('请输入出块地址'));
+          return callback(new Error(this.$t('newConsensus.newConsensus3')));
         } else if (value === this.addressInfo.address) {
-          return callback(new Error('打包地址不能为创建地址'));
+          return callback(new Error(this.$t('newConsensus.newConsensus4')));
         } else {
           callback();
         }
@@ -110,13 +110,13 @@
         let res = /^\d{1,8}(\.\d{1,8})?$/;
         let balance = this.balanceInfo.balance - value * 100000000;
         if (!value) {
-          return callback(new Error('请输入保证金'));
+          return callback(new Error(this.$t('newConsensus.newConsensus5')));
         } else if (!re.exec(value) || !res.exec(value)) {
-          callback(new Error('保证金必须数字值'));
+          callback(new Error(this.$t('newConsensus.newConsensus6')));
         } else if (balance < 0.001) {
-          callback(new Error('对不起，余额不足'));
+          callback(new Error(this.$t('newConsensus.newConsensus7')));
         } else if (value < 20000 || value > 500000) {
-          callback(new Error('保证金不小于20000并且不大于500000'));
+          callback(new Error(this.$t('newConsensus.newConsensus8')));
         } else {
           callback();
         }
@@ -125,11 +125,11 @@
         let re = /^\d+(?=\.{0,1}\d+$|$)/;
         let res = /^\d{1,8}(\.\d{1,8})?$/;
         if (!value) {
-          return callback(new Error('请输入佣金比例'));
+          return callback(new Error(this.$t('newConsensus.newConsensus9')));
         } else if (!re.exec(value) || !res.exec(value)) {
-          callback(new Error('佣金比例必须数字值'));
+          callback(new Error(this.$t('newConsensus.newConsensus10')));
         } else if (value < 10 || value > 100) {
-          callback(new Error('保证金不小于10并且不大于100'));
+          callback(new Error(this.$t('newConsensus.newConsensus11')));
         } else {
           callback();
         }
@@ -208,10 +208,10 @@
           if (response.success) {
             this.balanceInfo = response.data;
           } else {
-            this.$message({message: "获取账户余额失败:" + response, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err2') + response, type: 'error', duration: 1000});
           }
         }).catch((error) => {
-          this.$message({message: "获取账户余额失败：" + error, type: 'error', duration: 1000});
+          this.$message({message: this.$t('public.err3') + error, type: 'error', duration: 1000});
         });
       },
 
@@ -247,7 +247,7 @@
           let tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, '', 4, agent);
           txhex = await nuls.transactionSerialize(nuls.decrypteOfAES(this.addressInfo.aesPri, password), this.addressInfo.pub, tAssemble);
         } else {
-          this.$message({message: "input和outputs组装错误：" + inOrOutputs.data, type: 'error', duration: 1000});
+          this.$message({message: this.$t('public.err1') + inOrOutputs.data, type: 'error', duration: 1000});
         }
         //console.log(txhex);
         //验证并广播交易
@@ -258,10 +258,10 @@
               name: "txList"
             })
           } else {
-            this.$message({message: response.data, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err') + response.data, type: 'error', duration: 1000});
           }
         }).catch((err) => {
-          this.$message({message: "验证并广播交易异常：" + err, type: 'error', duration: 1000});
+          this.$message({message: this.$t('public.err0') + err, type: 'error', duration: 1000});
         });
       }
     }

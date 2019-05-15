@@ -1,18 +1,18 @@
 <template>
   <div class="transfer bg-gray">
-    <h3 class="title">NULS 转账</h3>
+    <h3 class="title">NULS {{$t('nav.transfer')}}</h3>
     <div class="w1200 bg-white">
       <el-form :model="transferForm" :rules="transferRules" ref="transferForm">
-        <el-form-item label="付款地址:">
+        <el-form-item :label="$t('transfer.transfer0')">
           <el-input v-model.trim="transferForm.fromAddress" disabled>
           </el-input>
         </el-form-item>
-        <el-form-item label="收款地址:" prop="toAddress">
+        <el-form-item :label="$t('transfer.transfer1')" prop="toAddress">
           <el-input v-model.trim="transferForm.toAddress">
-            <i class="iconfont iconlianxiren click" slot="suffix" @click="showBook"></i>
+            <i class="iconfont iconlianxiren click" slot="suffix" @click="showBook" v-show="false"></i>
           </el-input>
         </el-form-item>
-        <el-form-item label="资产类型:">
+        <el-form-item :label="$t('transfer.transfer2')">
           <el-select v-model="transferForm.type">
             <el-option label="NULS" value="NULS">
             </el-option>
@@ -20,56 +20,56 @@
              </el-option>-->
           </el-select>
         </el-form-item>
-        <el-form-item label="转账金额:" prop="amount">
-          <span class="balance font12 fr">可用余额：{{addressInfo.balance}}</span>
+        <el-form-item :label="$t('transfer.transfer3')" prop="amount">
+          <span class="balance font12 fr">{{$t('public.usableBalance')}}: {{addressInfo.balance}}</span>
           <el-input v-model="transferForm.amount">
           </el-input>
         </el-form-item>
-        <el-form-item label.trim="备注:">
-          <el-input type="textarea" v-model="transferForm.remarks" @change="countFee">
+        <el-form-item :label="$t('transfer.transfer4')">
+          <el-input type="textarea" v-model.trim="transferForm.remarks" @change="countFee">
           </el-input>
         </el-form-item>
         <div class="font14">
           <el-tooltip placement="top">
-            <div slot="content">该手续费值是根据当前NULS网络预估的，实际消耗可能小于该值，多余部分将会通过共识奖励退回</div>
+            <div slot="content">{{$t('transfer.transfer5')}}</div>
             <i class="el-icon-warning"></i>
           </el-tooltip>
-          手续费：{{fee}} <span class="fCN">NULS</span>
+          {{$t('public.fee')}}: {{fee}} <span class="fCN">NULS</span>
         </div>
         <el-form-item class="form-next">
-          <el-button type="success" @click="submitForm('transferForm')">下一步</el-button>
+          <el-button type="success" @click="submitForm('transferForm')">{{$t('public.next')}}</el-button>
         </el-form-item>
       </el-form>
     </div>
 
     <Password ref="password" @passwordSubmit="passSubmit">
     </Password>
-    <el-dialog title="转账确认" :visible.sync="transferVisible" width="40rem" class="confirm-dialog">
+    <el-dialog :title="$t('transfer.transfer6')" :visible.sync="transferVisible" width="40rem" class="confirm-dialog">
       <div class="bg-white">
         <div class="div-data">
-          <p>付款地址：</p>
+          <p>{{$t('transfer.transfer0')}}&nbsp;</p>
           <label>{{transferForm.fromAddress}}</label>
         </div>
         <div class="div-data">
-          <p>收款地址：</p>
+          <p>{{$t('transfer.transfer1')}}&nbsp;</p>
           <label>{{transferForm.toAddress}}</label>
         </div>
         <div class="div-data">
-          <p>手续费：</p>
+          <p>{{$t('public.fee')}}: &nbsp;</p>
           <label>{{fee}} <span class="fCN">NULS</span></label>
         </div>
         <div class="div-data">
-          <p>金额：</p>
+          <p>{{$t('tab.tab6')}}:&nbsp;</p>
           <label class="yellow">{{transferForm.amount}} <span class="fCN">NULS</span></label>
         </div>
         <div class="div-data">
-          <p>备注：</p>
+          <p>{{$t('transfer.transfer4')}}&nbsp;</p>
           <label>{{transferForm.remarks}}</label>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="transferVisible = false">取 消</el-button>
-        <el-button type="success" @click="confirmTraanser">确认提交</el-button>
+        <el-button @click="transferVisible = false">{{$t('transfer.transfer7')}}</el-button>
+        <el-button type="success" @click="confirmTraanser">{{$t('transfer.transfer8')}}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -87,9 +87,9 @@
       let validateToAddress = (rule, value, callback) => {
         let patrn = /^(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{20,50}$/;
         if (value === '') {
-          callback(new Error('请输入收款地址'))
+          callback(new Error(this.$t('transfer.transfer9')))
         } else if (!patrn.exec(value)) {
-          callback(new Error('请输入正确的收款地址'))
+          callback(new Error(this.$t('transfer.transfer10')))
         } else {
           callback()
         }
@@ -97,15 +97,15 @@
       let validateAmount = (rule, value, callback) => {
         let patrn = /^([1-9][\d]{0,72}|0)(\.[\d]{1,72})?$/;
         if (value === '') {
-          callback(new Error('请输入金额'))
+          callback(new Error(this.$t('transfer.transfer11')))
         } else if (!patrn.exec(value)) {
-          callback(new Error('金额必须为数字'))
+          callback(new Error(this.$t('transfer.transfer12')))
         } else if (parseFloat(value) < 0.001) {
-          callback(new Error('金额必须大于0.001'))
+          callback(new Error(this.$t('transfer.transfer13')))
         } else {
           setTimeout(() => {
             if (parseInt(RightShiftEight(value).toString()) > parseInt(RightShiftEight(this.addressInfo.balance).toString())) {
-              callback(new Error('金额不能大于可用余额'))
+              callback(new Error(this.$t('transfer.transfer14')))
             } else {
               callback()
             }
@@ -210,13 +210,13 @@
                 return tAssemble
               }
             } else {
-              this.$message({message: "input和outputs组装错误：" + inOrOutputs.data, type: 'error', duration: 1000});
+              this.$message({message:this.$t('public.err1') + inOrOutputs.data, type: 'error', duration: 1000});
             }
           } else {
-            this.$message({message: "获取账户余额失败:" + response, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err2') + response, type: 'error', duration: 1000});
           }
         }).catch((error) => {
-          this.$message({message: "获取账户余额失败：" + error, type: 'error', duration: 1000});
+          this.$message({message: this.$t('public.err3') + error, type: 'error', duration: 1000});
         });
 
       },
@@ -246,10 +246,10 @@
             this.balanceInfo = response.data;
             this.$refs.password.showPassword(true)
           } else {
-            this.$message({message: "获取账户余额失败:" + response, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err') + response, type: 'error', duration: 1000});
           }
         }).catch((error) => {
-          this.$message({message: "获取账户余额失败：" + error, type: 'error', duration: 1000});
+          this.$message({message: this.$t('public.err0') + error, type: 'error', duration: 1000});
         });
       },
 
@@ -266,11 +266,11 @@
               this.balanceInfo = {'balance': response.result.balance, 'nonce': response.result.nonce};
               this.$refs.password.showPassword(true);
             } else {
-              this.$message({message: "获取账户余额失败:" + response, type: 'error', duration: 1000});
+              this.$message({message: this.$t('public.err') + response, type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
-            this.$message({message: "获取账户余额失败：" + error, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err0') + error, type: 'error', duration: 1000});
           });
       },
 
@@ -318,10 +318,10 @@
               this.$message({message: response.data, type: 'error', duration: 1000});
             }
           }).catch((err) => {
-            this.$message({message: "验证并广播交易异常：" + err, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err1') + err, type: 'error', duration: 1000});
           });
         }else {
-          this.$message({message: "对不起，密码错误", type: 'error', duration: 1000});
+          this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
         }
       },
 
