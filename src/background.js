@@ -69,7 +69,7 @@ if (isDevelopment) {
     updateAva: {type: 3, info: '检测到新版本，正在下载……'},
     updateNotAva: {type: 4, info: '现在使用的就是最新版本，不用更新'},
   };
-  const uploadUrl = "http://192.168.1.119:8000/"; // 下载地址，不加后面的**.exe
+  const uploadUrl = "http://file.wallet.nuls.io/download/"; // 下载地址，不加后面的**.exe http://192.168.1.119:8000/
   autoUpdater.setFeedURL(uploadUrl);
   autoUpdater.on('error', function (error) {
     console.log(error);
@@ -80,7 +80,6 @@ if (isDevelopment) {
     sendUpdateMessage(message.checking)
   });
   autoUpdater.on('update-available', function (info) {
-    console.log("检测到新版本，正在下载:****");
     console.log(info);
     sendUpdateMessage(message.updateAva)
   });

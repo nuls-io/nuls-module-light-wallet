@@ -15,3 +15,10 @@ setInterval(() => {
 //export const API_ROOT = IS_DEV ? 'http://apitn2.nulscan.io/' : API_URL;
 //Request response time
 export const API_TIME = IS_DEV ? '9000' : '8000';
+
+//默认节点服务列表
+export const defaultData= [
+  {name: 'Official', urls: 'https://alpha.wallet.nuls.io/api', delay: '10ms', state: 1, isDelete: false},
+  {name: 'Official', urls: 'http://apitn1.nulscan.io/', delay: '10ms', state: 0, isDelete: false},
+  {name: 'Official', urls: 'http://apitn2.nulscan.io/', delay: '10ms', state: 0, isDelete: false},
+]

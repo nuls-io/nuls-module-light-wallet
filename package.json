@@ -69,7 +69,7 @@
   "publish": [
     {
       "provider": "generic",
-      "url": "http://192.168.1.119:8000/"
+      "url": "http://file.wallet.nuls.io/download/"
     }
   ],
   "main": "background.js"

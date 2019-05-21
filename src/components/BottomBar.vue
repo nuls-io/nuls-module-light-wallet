@@ -44,7 +44,7 @@
       return {
         mainHeightInfo: [],//最新主网高度
         heightInfo: [],//最新高度
-        serviceUrls: localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/',
+        serviceUrls: localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'https://alpha.wallet.nuls.io/api',
         updateDialogVisible: false,//更新弹框
         tips: {},//提示信息
         downloadPercent: 0,//下载进度
@@ -53,14 +53,15 @@
     created() {
       this.getBestBlockHeader();
       this.getMainHeader();
-      this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/';
+      this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'https://alpha.wallet.nuls.io/api';
       setInterval(() => {
-        this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/';
+        this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'https://alpha.wallet.nuls.io/api';
       }, 500);
     },
     mounted() {
       setInterval(() => {
         this.getBestBlockHeader();
+        this.getMainHeader();
       }, 10000);
     },
     watch: {
@@ -79,7 +80,7 @@
        */
       getMainHeader() {
         const params = {"jsonrpc": "2.0", "method": "getBestBlockHeader", "params": [2], "id": 5898};
-        axios.post('http://apitn1.nulscan.io', params)
+        axios.post('http://apitn1.nulscan.io/', params)
           .then((response) => {
             //console.log(response);
             if (response.data.hasOwnProperty("result")) {
@@ -89,7 +90,7 @@
             }
           })
           .catch((error) => {
-            this.heightInfo = {height: 0};
+            this.mainHeightInfo = {height: 0};
             console.log("getBestBlockHeader:" + error)
           })
       },

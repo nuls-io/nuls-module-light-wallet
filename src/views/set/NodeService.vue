@@ -57,7 +57,9 @@
             </el-input>
           </el-form-item>
           <el-form-item class="btns tl">
-            <el-button type="success" class="fl" @click="testSubmitForm('nodeServiceForm')">{{$t('nodeService.nodeService11')}}</el-button>
+            <el-button type="success" class="fl" @click="testSubmitForm('nodeServiceForm')">
+              {{$t('nodeService.nodeService11')}}
+            </el-button>
             <div class="fl ml_50" v-show="testInfo">
               <i :class="testInfo === '0' ? 'el-icon-circle-check fCN' : 'el-icon-circle-close fred' "></i>&nbsp;
               <span v-show="testInfo !== '0'" class="fred font12">{{testInfo}}</span>
@@ -79,6 +81,7 @@
 
 <script>
   import axios from 'axios'
+  import {defaultData} from '@/config'
 
   export default {
     data() {
@@ -101,10 +104,7 @@
       };
       return {
         loading: false,//切换时加载动画
-        defaultData: [
-          {name: 'Official', urls: 'http://apitn1.nulscan.io/', delay: '10ms', state: 0, isDelete: false},
-          {name: 'Official', urls: 'http://apitn2.nulscan.io/', delay: '10ms', state: 1, isDelete: false},
-        ],
+
         //节点列表
         nodeServiceData: [],
         nodeServiceLoading: true,//节点列表加载动画
@@ -131,10 +131,11 @@
     },
 
     created() {
-      this.nodeServiceData = localStorage.hasOwnProperty('urlsData') ? JSON.parse(localStorage.getItem('urlsData')) : this.defaultData;
-      setInterval(() => {
-        this.nodeServiceData = localStorage.hasOwnProperty('urlsData') ? JSON.parse(localStorage.getItem('urlsData')) : this.defaultData;
-      }, 500);
+      if (localStorage.hasOwnProperty('customUrlsData')) {
+        this.nodeServiceData = Object.assign(defaultData, JSON.parse(localStorage.getItem('customUrlsData')));
+      } else {
+        this.nodeServiceData = defaultData
+      }
     },
     mounted() {
       this.getDelay();
@@ -183,11 +184,13 @@
                 item.delay = endTime - startTime + "ms";
               } else {
                 item.delay = "-1";
+                item.state = 0;
               }
             })
             .catch(function (error) {
               item.delay = "-2";
-              console.log(item.urls + " getBestBlockHeader:" + error);
+              item.state = 0;
+              console.log(error);
             });
 
           newData.push(item);
