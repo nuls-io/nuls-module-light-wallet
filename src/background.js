@@ -8,7 +8,12 @@ let win;
 protocol.registerStandardSchemes(['app'], {secure: true});
 
 function createWindow() {
-  win = new BrowserWindow({width: 2000, height: 1000, minWidth: 1500, minHeight: 1000});
+  win = new BrowserWindow({
+    width: 2000,
+    height: 1000,
+    minWidth: 1500,
+    minHeight: 1000,
+    });
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
     if (!process.env.IS_TEST) win.webContents.openDevTools();

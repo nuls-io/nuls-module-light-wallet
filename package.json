@@ -1,5 +1,5 @@
 {
-  "name": "wallet_2.0",
+  "name": "NULS-Wallet",
   "version": "2.0.1",
   "private": true,
   "scripts": {
@@ -72,5 +72,6 @@
       "url": "http://file.wallet.nuls.io/download/"
     }
   ],
+
   "main": "background.js"
 }

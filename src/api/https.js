@@ -1,9 +1,9 @@
 import axios from 'axios'
 import * as config from '../config.js'
-axios.defaults.timeout = config.API_TIME;
-axios.defaults.baseURL = config.API_ROOT;
+axios.defaults.timeout = config.API_URL;
+axios.defaults.baseURL = config.API_URL;
 setInterval(() => {
-  axios.defaults.baseURL = config.API_ROOT;
+  axios.defaults.baseURL = config.API_URL;
 }, 500);
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 

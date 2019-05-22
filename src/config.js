@@ -1,24 +1,21 @@
-const IS_DEV = process.env.NODE_ENV !== 'production';
+//开发模式
+export const IS_DEV = process.env.NODE_ENV !== 'production';
+//链ID
 export const API_CHAIN_ID = 2;
 //运行环境（true:正式环境，false:测试环境）
 export const RUN_DEV = false;
 //正式、测试网络的api
-//const API_URL = RUN_DEV ? 'http://192.168.1.192:18003/' : 'http://192.168.1.37:18003/';
-let API_URL = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/';
-//Request url
-export let API_ROOT = API_URL;
+export let API_URL = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/';
 setInterval(() => {
   API_URL = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/';
-  API_ROOT = API_URL;
 }, 500);
-
-//export const API_ROOT = IS_DEV ? 'http://apitn2.nulscan.io/' : API_URL;
-//Request response time
+//请求最迟时间
 export const API_TIME = IS_DEV ? '9000' : '8000';
-
 //默认节点服务列表
 export const defaultData= [
   {name: 'Official', urls: 'https://alpha.wallet.nuls.io/api', delay: '10ms', state: 1, isDelete: false},
   {name: 'Official', urls: 'http://apitn1.nulscan.io/', delay: '10ms', state: 0, isDelete: false},
   {name: 'Official', urls: 'http://apitn2.nulscan.io/', delay: '10ms', state: 0, isDelete: false},
-]
+];
+//浏览器地址
+export const explorerUrl = 'http://alpha.nulscan.io/';

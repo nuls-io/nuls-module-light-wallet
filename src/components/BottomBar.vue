@@ -3,8 +3,10 @@
     <div class="bottom">
       <div class="w1200 font14">
         <div class="left fl">
-          <p class="fl">{{$t('bottom.serviceNode')}}: <u class="clicks"
-                                                         @click="toUrl('nodeService')">{{serviceUrls}}</u></p>
+          <p class="fl">
+            {{$t('bottom.serviceNode')}}:
+            <u class="click" @click="toUrl('nodeService')">{{serviceUrls}}</u>
+          </p>
           <p class="fr">{{$t('bottom.nodeHeight')}}: {{mainHeightInfo.height}}/{{heightInfo.height}}</p>
         </div>
         <div class="right fr">
@@ -37,6 +39,7 @@
 
 <script>
   import axios from 'axios'
+  import {IS_DEV} from '@/config.js'
 
   export default {
     name: "bottom-bar",
@@ -79,8 +82,9 @@
        * 获取主网最新高度（浏览器高度）
        */
       getMainHeader() {
+        const url = IS_DEV ? 'http://apitn1.nulscan.io/' : 'https://alpha.wallet.nuls.io/api';
         const params = {"jsonrpc": "2.0", "method": "getBestBlockHeader", "params": [2], "id": 5898};
-        axios.post('http://apitn1.nulscan.io/', params)
+        axios.post(url, params)
           .then((response) => {
             //console.log(response);
             if (response.data.hasOwnProperty("result")) {

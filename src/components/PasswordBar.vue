@@ -48,7 +48,7 @@
       passwordVisible(val) {
         if (val) {
           setTimeout(() => {
-            //this.$refs['inpus'].focus()
+            this.$refs['inpus'].focus()
           }, 200)
         }
       }

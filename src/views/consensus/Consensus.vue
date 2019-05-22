@@ -9,7 +9,7 @@
       <div class="card-info left fl">
         <h5 class="card-title font18">{{$t('consensus.consensus0')}}</h5>
         <ul>
-          <li>{{$t('consensus.consensus1')}} <label><u class="td click" @click="toUrl('consensusList')">{{addressInfo.consensusLock}}</u><span
+          <li>{{$t('consensus.consensus1')}} <label><u class="click" @click="toUrl('consensusList')">{{addressInfo.consensusLock}}</u><span
                   class="fCN">NULS</span></label></li>
           <li>{{$t('consensus.consensus2')}} <label>{{addressInfo.balance}}<span class="fCN">NULS</span></label></li>
           <li>{{$t('consensus.consensus3')}} <label>{{addressInfo.totalReward}}<span class="fCN">NULS</span></label>
@@ -148,9 +148,10 @@
     mounted() {
       this.getConsensusNodes(this.pageIndex, this.pageSize, this.nodeTypeRegion);
       this.getConsensusInfoByAddress(this.pageIndex, this.pageSize, this.addressInfo.address);
-      this.setInterval = setInterval(() => {
-        this.getAddressInfoByNode(this.addressInfo)
-      }, 10000)
+      this.getAddressInfoByNode(this.addressInfo);
+      /*this.setInterval = setInterval(() => {
+        //this.getAddressInfoByNode(this.addressInfo)
+      }, 10000)*/
 
     },
     destroyed() {
@@ -300,9 +301,11 @@
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
-              this.myNodeData = response.result.list;
               //循环获取节点列表判断是否有地址创建列表
               for (let item of response.result.list) {
+                item.deposit = timesDecimals(item.deposit);
+                item.totalDeposit = timesDecimals(item.totalDeposit);
+                item.totalReward = timesDecimals(item.totalReward);
                 if (item.agentAddress === this.addressInfo.address) {
                   item.isNew = true;//创建的节点
                   this.isNew = true;
@@ -311,6 +314,7 @@
                   this.isNew = false;
                 }
               }
+              this.myNodeData = response.result.list;
             }
           })
           .catch((error) => {

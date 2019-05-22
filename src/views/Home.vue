@@ -22,7 +22,7 @@
           </el-table-column>
           <el-table-column :label="$t('tab.tab3')">
             <template slot-scope="scope">
-              <span class="click td" @click="toUrl('frozenList')"
+              <span class="click" @click="toUrl('frozenList')"
                     v-show="scope.row.locking !== '--' && scope.row.locking !==0 ">{{scope.row.locking}}</span>
               <span v-show="scope.row.locking === '--' || scope.row.locking ===0">{{scope.row.locking}}</span>
             </template>

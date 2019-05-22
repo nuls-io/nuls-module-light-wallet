@@ -145,7 +145,7 @@
         addressInfo.totalReward = 0;
         await this.$post('/', 'getAccount', [addressInfo.address])
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             if (response.hasOwnProperty("result")) {
               addressInfo.alias = response.result.alias;
               addressInfo.balance = timesDecimals(response.result.balance);

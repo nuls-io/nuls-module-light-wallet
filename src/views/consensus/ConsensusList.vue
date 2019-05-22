@@ -114,12 +114,15 @@
       /**
        * 连接跳转
        * @param name
+       * @param params
        */
-      toUrl(name) {
+      toUrl(name, params) {
         //console.log(name)
+        let newQuery = {hash: params};
         this.$router.push({
-          name: name
-        })
+          name: name,
+          query: newQuery
+        });
       },
     }
   }
