@@ -227,6 +227,7 @@ const cn = {
     "consensusInfo9":"创建时间",
     "consensusInfo10":"节点惩罚",
     "consensusInfo11":"黄牌",
+    "consensusInfo12":"节点创建人需要向该节点的委托人收取一定比例的共识出块奖励，即佣金。举例：若某时某委托人的全部共识奖励为10 NULS，佣金比例设置为10%，则创建人收取10*10%=1 NULS佣金，委托人实际得到NULS共识奖励",
   },
 
   "nodeService":{
@@ -301,7 +302,11 @@ const cn = {
     "newAddress23":"请输入由字母和数字组合的8-20位密码",
     "newAddress24":"请再次输入密码",
     "newAddress25":"两次输入密码不一致",
+    "newAddress26":"keystore保存失败，请重启再试一次 ",
+    "newAddress27":"文件保存完成，位置:",
+    "newAddress28":"请选择keystore文件的保存位置",
     "newAddress":"",
+
   },
 
   "editPassword":{
@@ -336,6 +341,10 @@ const cn = {
     "importAddress11":"请输入由字母和数字组合的8-20位密码",
     "importAddress12":"请再次输入密码",
     "importAddress13":"两次输入密码不一致",
+    "importAddress14":"请选择导入的keystore文件",
+    "importAddress15":"keystore导入失败，请重启再试一次 ",
+    "importAddress16":"请选择正确的keystore文件",
+    "importAddress17":"请选择一个要导入keystore文件",
   },
 
   "setAlias":{

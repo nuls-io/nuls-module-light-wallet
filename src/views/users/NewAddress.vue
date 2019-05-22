@@ -3,11 +3,12 @@
     <div class="bg-white">
       <div class="w1200">
         <BackBar :backTitle="$t('address.address0')" v-show="ifAddressInfo"></BackBar>
-        <h3 class="title"><font v-if="!isBackups">{{$t('newAddress.newAddress0')}}</font><font v-else>{{$t('newAddress.newAddress1')}}</font></h3>
+        <h3 class="title"><font v-if="!isBackups">{{$t('newAddress.newAddress0')}}</font><font v-else>{{$t('newAddress.newAddress1')}}</font>
+        </h3>
       </div>
     </div>
     <div class="new w1200 mt_20 bg-white">
-      <ul class="step" v-show="!isBackups">
+      <ul class="step" v-show="false">
         <li>
           <p class="dotted Ndotted"></p>
         </li>
@@ -41,9 +42,11 @@
           <el-form-item :label="$t('newAddress.newAddress7')" prop="checkPass">
             <el-input type="password" v-model="passwordForm.checkPass" autocomplete="off"></el-input>
           </el-form-item>
-          <div class="font12">{{$t('newAddress.newAddress8')}}<span class="click">{{$t('newAddress.newAddress9')}}</span></div>
+          <div class="font12">{{$t('newAddress.newAddress8')}}<span
+                  class="click">{{$t('newAddress.newAddress9')}}</span></div>
           <el-form-item class="form-next">
-            <el-button type="success" @click="submitPasswordForm('passwordForm')">{{$t('newAddress.newAddress10')}}</el-button>
+            <el-button type="success" @click="submitPasswordForm('passwordForm')">{{$t('newAddress.newAddress10')}}
+            </el-button>
             <el-button type="text" @click="toUrl('importAddress')">{{$t('newAddress.newAddress11')}}</el-button>
           </el-form-item>
         </el-form>
@@ -51,7 +54,7 @@
 
       <div class="step_tow w630" v-show="!isFirst">
         <h3 class="title">
-         {{$t('newAddress.newAddress12')}}：
+          {{$t('newAddress.newAddress12')}}：
           <span>{{newAddressInfo.address}}</span>
           <i class="iconfont iconfuzhi clicks" @click="copy(newAddressInfo.address)"></i>
         </h3>
@@ -62,7 +65,7 @@
         </div>
 
         <div class="btn mb_20">
-          <el-button type="success" @click="backKeystore" disabled>{{$t('newAddress.newAddress16')}}</el-button>
+          <el-button type="success" @click="backKeystore">{{$t('newAddress.newAddress16')}}</el-button>
           <el-button type="text" @click="backKey">{{$t('newAddress.newAddress17')}}</el-button>
           <el-button type="info" @click="goWallet" v-show="!isBackups">{{$t('newAddress.newAddress18')}}</el-button>
         </div>
@@ -135,6 +138,7 @@
           ]
         },
         newAddressInfo: {}, //新建的地址信息
+        backType: 0,//备份类型 0：keystore备份 1：明文私钥备份
       };
     },
     created() {
@@ -181,13 +185,15 @@
        * 备份keystore
        **/
       backKeystore() {
-        //TODO 待完善
+        this.backType = 0;
+        this.$refs.password.showPassword(true);
       },
 
       /**
        * 备份私钥
        **/
       backKey() {
+        this.backType = 1;
         this.$refs.password.showPassword(true)
       },
 
@@ -196,11 +202,41 @@
        * @param password
        **/
       passSubmit(password) {
+        let that = this;
         const pri = nuls.decrypteOfAES(this.newAddressInfo.aesPri, password);
         const newAddressInfo = nuls.importByKey(2, pri, password);
         if (newAddressInfo.address === this.newAddressInfo.address) {
-          this.newAddressInfo.pri = pri;
-          this.keyDialog = true;
+          if (this.backType === 0) {
+            const {dialog} = require('electron').remote;
+            //console.log(dialog);
+            dialog.showOpenDialog({
+              title: that.$t('address.address28'),
+              properties: ['openFile', 'openDirectory']
+            }, function (files) {
+              //console.log(files);
+              if (files) {
+                let fileName = files + '/' + newAddressInfo.address + '.keystore';
+                let fileInfo = {
+                  address: newAddressInfo.address,
+                  encryptedPrivateKey: newAddressInfo.aesPri,
+                  pubKey: newAddressInfo.pubKey,
+                  priKey: null
+                };
+                //console.log(JSON.stringify(fileInfo));
+                let fs = require("fs");
+                fs.writeFile(fileName, JSON.stringify(fileInfo), 'utf8', function (error) {
+                  if (error) {
+                    that.$message({message: that.$t('address.address26') + error, type: 'error', duration: 1000});
+                    return false;
+                  }
+                  that.$message({message: that.$t('address.address27') + files, type: 'success', duration: 3000});
+                })
+              }
+            });
+          } else {
+            this.newAddressInfo.pri = pri;
+            this.keyDialog = true;
+          }
         } else {
           this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
         }
@@ -210,7 +246,37 @@
        * 进入钱包
        */
       goWallet() {
-        this.toUrl('address')
+        this.getAddressList();
+        this.toUrl('home')
+      },
+
+      /**
+       * 获取账户列表
+       */
+      getAddressList() {
+        let addressList = [];
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          if (localStorage.getItem(localStorage.key(i)) !== 'SILENT' && localStorage.key(i).length > 10) {
+            addressList.push(JSON.parse(localStorage.getItem(localStorage.key(i))))
+          }
+        }
+        //循环账户智能有一个是选中的账户
+        let countSelection = 0;
+        for (let item  of addressList) {
+          if (item.selection) {
+            countSelection++;
+            sessionStorage.setItem(item.address, JSON.stringify(item));
+            if (countSelection > 1) {
+              item.selection = false;
+              localStorage.setItem(item.address, JSON.stringify(item))
+            }
+          }
+        }
+        //一个选中的都没就默认第一个
+        if (countSelection === 0) {
+          this.addressList[0].selection = true;
+          localStorage.setItem(this.addressList[0].address, JSON.stringify(this.addressList[0]))
+        }
       },
 
       /**

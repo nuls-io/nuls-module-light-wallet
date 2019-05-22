@@ -227,6 +227,7 @@ const en = {
     "consensusInfo9":"Creation time",
     "consensusInfo10":"Node penalty",
     "consensusInfo11":"Yellow card",
+    "consensusInfo12":"The creator of a node needs to collect a certain percentage of consensus block reward, namely commission, from the client of the node. For example, if the total consensus reward of a client is 10 NULS and the commission ratio is set to 10%, the founder charges 10*10%=1 NULS commission, and the client actually receives the NULS consensus reward.",
   },
 
   "nodeService":{
@@ -301,6 +302,9 @@ const en = {
     "newAddress23":"Please enter an 8-20-bit password composed of letters and numbers",
     "newAddress24":"Please enter your password again.",
     "newAddress25":"Two inconsistencies in password input",
+    "newAddress26":"Keystore save failed, please restart and try again ",
+    "newAddress27":"File save completed, location:",
+    "newAddress28":"Select the location where the keystore file is saved",
     "newAddress":"",
   },
 
@@ -336,6 +340,10 @@ const en = {
     "importAddress11":"Please enter an 8-20-bit password composed of letters and numbers",
     "importAddress12":"Please enter your password again.",
     "importAddress13":"Two inconsistencies in password input",
+    "importAddress14":"Select the imported keystore file",
+    "importAddress15":"Keystore import failed, please restart and try again ",
+    "importAddress16":"Please select the correct keystore file",
+    "importAddress17":"Please select a keystore file to import",
   },
 
   "setAlias":{

@@ -29,10 +29,12 @@
         <li>{{$t('consensusInfo.consensusInfo9')}} <label>{{nodeInfo.createTime}}</label></li>
         <li>{{$t('public.commission')}}
           <label>{{nodeInfo.commissionRate}}%
-            <!--<el-tooltip placement="top">
-              <div slot="content">该手续费值是根据当前NULS网络预估的，实际消耗可能小于该值，多余部分将会通过共识奖励退回</div>
+            <el-tooltip placement="top">
+              <div slot="content">
+                {{$t('consensusInfo.consensusInfo12')}}
+              </div>
               <i class="el-icon-warning"></i>
-            </el-tooltip>-->
+            </el-tooltip>
           </label>
         </li>
         <li>{{$t('consensusInfo.consensusInfo10')}} <label><u class="click td">{{nodeInfo.yellowCardCount}}{{$t('consensusInfo.consensusInfo11')}}</u></label>
@@ -423,7 +425,7 @@
             this.$message({message: this.$t('public.err') + response.data, type: 'error', duration: 1000});
           }
         }).catch((err) => {
-          this.$message({message:this.$t('public.err0') + err, type: 'error', duration: 1000});
+          this.$message({message: this.$t('public.err0') + err, type: 'error', duration: 1000});
         });
       }
     },
