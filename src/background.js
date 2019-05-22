@@ -1,5 +1,5 @@
 'use strict';
-import {app, protocol, BrowserWindow, ipcMain} from 'electron'
+import {app, protocol, BrowserWindow, ipcMain,Menu,MenuItem} from 'electron'
 import {createProtocol, installVueDevtools} from 'vue-cli-plugin-electron-builder/lib'
 import {autoUpdater} from 'electron-updater'
 
@@ -8,6 +8,28 @@ let win;
 protocol.registerStandardSchemes(['app'], {secure: true});
 
 function createWindow() {
+
+  if (process.platform === 'darwin') {
+    const template = [
+      {
+        label: "Application",
+        submenu: [
+          { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
+        ]
+      },
+      {
+        label: "Edit",
+        submenu: [
+          { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+          { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+        ]
+      }
+    ];
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template))
+  } else {
+    Menu.setApplicationMenu(null)
+  }
+
   win = new BrowserWindow({
     width: 2000,
     height: 1000,
@@ -21,6 +43,7 @@ function createWindow() {
     createProtocol('app');
     win.loadURL('app://./index.html')
   }
+
   win.on('closed', () => {
     win = null
   });
