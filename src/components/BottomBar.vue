@@ -13,7 +13,7 @@
           <label class="clicks">{{$t('bottom.agreement')}}</label>
           <label class="clicks">{{$t('bottom.policy')}}</label>
           <!--<label>Alpha 2.0.1</label>-->
-          <label class="click" @click="checkUpdate">Alpha 2.0.1</label>
+          <label class="click" @click="checkUpdate">Alpha 2.0.2</label>
         </div>
       </div>
     </div>
@@ -56,9 +56,9 @@
     created() {
       this.getBestBlockHeader();
       this.getMainHeader();
-      this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'https://alpha.wallet.nuls.io/api';
+      this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/';
       setInterval(() => {
-        this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'https://alpha.wallet.nuls.io/api';
+        this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/';
       }, 500);
     },
     mounted() {
@@ -82,7 +82,7 @@
        * 获取主网最新高度（浏览器高度）
        */
       getMainHeader() {
-        const url = IS_DEV ? 'http://apitn1.nulscan.io/' : 'https://apitn1.nulscan.io/';
+        const url = IS_DEV ? 'http://apitn1.nulscan.io/' : 'http://apitn1.nulscan.io/';
         const params = {"jsonrpc": "2.0", "method": "getBestBlockHeader", "params": [2], "id": 5898};
         axios.post(url, params)
           .then((response) => {

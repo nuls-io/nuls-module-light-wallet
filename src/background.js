@@ -31,10 +31,10 @@ function createWindow() {
   }
 
   win = new BrowserWindow({
-    width: 2000,
-    height: 1000,
-    minWidth: 1500,
-    minHeight: 1000,
+    width: 1600,
+    height: 900,
+    minWidth: 1300,
+    minHeight: 800,
     });
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);

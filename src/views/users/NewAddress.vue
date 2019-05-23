@@ -293,8 +293,8 @@
         }
         //一个选中的都没就默认第一个
         if (countSelection === 0) {
-          this.addressList[0].selection = true;
-          localStorage.setItem(this.addressList[0].address, JSON.stringify(this.addressList[0]))
+          addressList[0].selection = true;
+          sessionStorage.setItem(addressList[0].address, JSON.stringify(addressList[0]))
         }
       },
 
