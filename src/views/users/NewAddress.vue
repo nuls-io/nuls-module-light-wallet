@@ -43,7 +43,7 @@
             <el-input type="password" v-model="passwordForm.checkPass" autocomplete="off"></el-input>
           </el-form-item>
           <div class="font12">{{$t('newAddress.newAddress8')}}<span
-                  class="click">{{$t('newAddress.newAddress9')}}</span></div>
+                  class="click" @click="userDialog=true">{{$t('newAddress.newAddress9')}}</span></div>
           <el-form-item class="form-next">
             <el-button type="success" @click="submitPasswordForm('passwordForm')">{{$t('newAddress.newAddress10')}}
             </el-button>
@@ -87,6 +87,24 @@
         <el-button type="success" @click="copy(newAddressInfo.pri)">{{$t('newAddress.newAddress21')}}</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog title="用户协议" width="40%" :visible.sync="userDialog" class="userDiolog">
+      <div class="bg-white userInfo">
+        <p>在前些日子举办的Google IO 2019 年度开发者大会上，Flutter web作为一个很亮眼的技术受到了开发者的追捧。这是继Flutter支持Android</p>
+        <p>IOS等设备之后，又一个里程碑式的版本，后续还会支持windows、linux、Macos、chroms等其他嵌入式设备。Flutter本身是一个类似于RN、WEEX、hHybrid等多端</p>
+        <p>统一跨平台解决方案，真正做到了一次编写，多处运行，它的发展超出了很多人的想象，值得前端开发者去关注，今天我们来体验一下Flutter Web</p>
+        <p>在前些日子举办的Google IO 2019 年度开发者大会上，Flutter web作为一个很亮眼的技术受到了开发者的追捧。这是继Flutter支持Android</p>
+        <p>IOS等设备之后，又一个里程碑式的版本，后续还会支持windows、linux、Macos、chroms等其他嵌入式设备。Flutter本身是一个类似于RN、WEEX、hHybrid等多端</p>
+        <p>统一跨平台解决方案，真正做到了一次编写，多处运行，它的发展超出了很多人的想象，值得前端开发者去关注，今天我们来体验一下Flutter Web</p>
+        <p>在前些日子举办的Google IO 2019 年度开发者大会上，Flutter web作为一个很亮眼的技术受到了开发者的追捧。这是继Flutter支持Android</p>
+        <p>IOS等设备之后，又一个里程碑式的版本，后续还会支持windows、linux、Macos、chroms等其他嵌入式设备。Flutter本身是一个类似于RN、WEEX、hHybrid等多端</p>
+        <p>统一跨平台解决方案，真正做到了一次编写，多处运行，它的发展超出了很多人的想象，值得前端开发者去关注，今天我们来体验一下Flutter Web</p>
+        <p>在前些日子举办的Google IO 2019 年度开发者大会上，Flutter web作为一个很亮眼的技术受到了开发者的追捧。这是继Flutter支持Android</p>
+        <p>IOS等设备之后，又一个里程碑式的版本，后续还会支持windows、linux、Macos、chroms等其他嵌入式设备。Flutter本身是一个类似于RN、WEEX、hHybrid等多端</p>
+        <p>统一跨平台解决方案，真正做到了一次编写，多处运行，它的发展超出了很多人的想象，值得前端开发者去关注，今天我们来体验一下Flutter Web</p>
+      </div>
+
+    </el-dialog>
   </div>
 </template>
 
@@ -123,7 +141,8 @@
       return {
         isFirst: true,//第一步
         isBackups: false,//备份账户
-        keyDialog: false, //弹框
+        keyDialog: false, //key弹框
+        userDialog:false,//用户协议弹框
         ifAddressInfo: sessionStorage.hasOwnProperty(sessionStorage.key(0)),//判断是否账户地址
         passwordForm: {
           pass: '',
@@ -210,7 +229,7 @@
             const {dialog} = require('electron').remote;
             //console.log(dialog);
             dialog.showOpenDialog({
-              title: that.$t('address.address28'),
+              title: that.$t('newAddress.newAddress28'),
               properties: ['openFile', 'openDirectory']
             }, function (files) {
               //console.log(files);
@@ -226,10 +245,10 @@
                 let fs = require("fs");
                 fs.writeFile(fileName, JSON.stringify(fileInfo), 'utf8', function (error) {
                   if (error) {
-                    that.$message({message: that.$t('address.address26') + error, type: 'error', duration: 1000});
+                    that.$message({message: that.$t('newAddress.newAddress26') + error, type: 'error', duration: 1000});
                     return false;
                   }
-                  that.$message({message: that.$t('address.address27') + files, type: 'success', duration: 3000});
+                  that.$message({message: that.$t('newAddress.newAddress27') + files, type: 'success', duration: 3000});
                 })
               }
             });

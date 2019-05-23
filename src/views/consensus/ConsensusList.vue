@@ -16,9 +16,9 @@
         </el-table-column>
         <el-table-column prop="createTime" :label="$t('consensusList.consensusList1')" align="center">
         </el-table-column>
-        <el-table-column label="Hash" align="center" min-width="200">
+        <el-table-column label="节点ID" align="center" min-width="200">
           <template slot-scope="scope">
-            <span class="click " @click="toUrl('transferInfo',scope.row.txHash)">{{scope.row.txHashs}}</span>
+            <span class="click uppercase" @click="toUrl('consensusInfo',scope.row.agentHash)">{{scope.row.agendID}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="amount" :label="$t('public.amount') + '(NULS)'" align="center">
@@ -44,7 +44,7 @@
 <script>
 
   import moment from 'moment'
-  import {timesDecimals, getLocalTime, superLong,} from '@/api/util'
+  import {timesDecimals, getLocalTime,} from '@/api/util'
   import BackBar from '@/components/BackBar'
 
   export default {
@@ -76,7 +76,6 @@
        * @param pageIndex
        * @param pageSize
        * @param address
-       * @param hash
        **/
       getNodeDepositByHash(pageIndex, pageSize, address) {
         this.totalAmount = 0;
@@ -86,7 +85,8 @@
             if (response.hasOwnProperty("result")) {
               for (let itme of response.result.list) {
                 itme.amount = timesDecimals(itme.amount);
-                itme.txHashs = superLong(itme.txHash, 20);
+                //itme.txHashs = superLong(itme.txHash, 20);
+                itme.agendID = itme.agentHash.substr(-8);
                 itme.createTime = moment(getLocalTime(itme.createTime)).format('YYYY-MM-DD HH:mm:ss');
                 this.totalAmount = this.totalAmount + Number(itme.amount);
               }

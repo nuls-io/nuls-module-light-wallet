@@ -39,13 +39,14 @@
           {{$t('public.fee')}}: 0.01 <span class="fCN">NULS</span>
         </div>
         <el-form-item class="form-next">
-          <el-button type="success" @click="submitForm('createrForm')">{{$t('password.password3')}}</el-button>
+          <el-button type="success" @click="submitForm('createrForm')" :disabled="isRed">{{$t('password.password3')}}</el-button>
         </el-form-item>
       </el-form>
     </div>
     <Password ref="password" @passwordSubmit="passSubmit">
     </Password>
-    <el-dialog :title="$t('newConsensus.newConsensus1')" :visible.sync="newConsensusVisible" width="40rem" class="confirm-dialog">
+    <el-dialog :title="$t('newConsensus.newConsensus1')" :visible.sync="newConsensusVisible" width="40rem"
+               class="confirm-dialog">
       <div class="bg-white">
         <div class="div-data">
           <p>{{$t('public.createAddress')}}:&nbsp;</p>
@@ -90,17 +91,26 @@
   export default {
     data() {
       let checkRewardAddress = (rule, value, callback) => {
+        let patrn = /^(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{20,50}$/;
         if (!value) {
           return callback(new Error(this.$t('newConsensus.newConsensus2')));
+        } else if (!patrn.exec(value)) {
+          return callback(new Error(this.$t('transfer.transfer10')))
         } else {
+          this.$refs.createrForm.validateField('blockAddress');
           callback();
         }
       };
       let checkBlockAddress = (rule, value, callback) => {
+        let patrn = /^(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{20,50}$/;
         if (!value) {
           return callback(new Error(this.$t('newConsensus.newConsensus3')));
         } else if (value === this.addressInfo.address) {
           return callback(new Error(this.$t('newConsensus.newConsensus4')));
+        } else if (!patrn.exec(value)) {
+          return callback(new Error(this.$t('transfer.transfer10')))
+        } else if (value === this.createrForm.rewardAddress) {
+          return callback(new Error("打包地址不能为奖励地址"))
         } else {
           callback();
         }
@@ -137,6 +147,7 @@
       return {
         addressInfo: {},//账户信息
         balanceInfo: {},//账户余额信息
+        isRed:false,//创建地址是否有红牌惩罚
         //创建节点表单
         createrForm: {
           rewardAddress: '',
@@ -168,12 +179,15 @@
       }, 500);
     },
     mounted() {
-      this.getBalanceByAddress(this.addressInfo.address)
+      this.getPunishByAddress(this.addressInfo.address);
+      this.getBalanceByAddress(this.addressInfo.address);
+
     },
     watch: {
       addressInfo(val, old) {
         if (val) {
           if (val.address !== old.address && old.address) {
+            this.getPunishByAddress(this.addressInfo.address);
             this.getBalanceByAddress(this.addressInfo.address)
           }
         }
@@ -216,6 +230,25 @@
       },
 
       /**
+       * 查询创建地址是否有红牌
+       * @param address
+       **/
+      getPunishByAddress(address) {
+        this.$post('/', 'getPunishList', [1, 1,2,address])
+          .then((response) => {
+            //console.log(response);
+            if (response.result.list.length !== 0 ) {
+              this.isRed= true;
+              this.$message({message: "创建地址有过红牌惩罚不能再创建节点", type: 'error', duration: 3000});
+            } else {
+              this.isRed = false;
+            }
+        }).catch((error) => {
+          this.$message({message: this.$t('public.err3') + error, type: 'error', duration: 1000});
+        });
+      },
+
+      /**
        *  确定框确定提交
        **/
       confiremSubmit() {
@@ -245,24 +278,31 @@
             deposit: Number(Times(this.createrForm.amount, 100000000).toString())
           };
           let tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, '', 4, agent);
-          txhex = await nuls.transactionSerialize(nuls.decrypteOfAES(this.addressInfo.aesPri, password), this.addressInfo.pub, tAssemble);
+          const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
+          const newAddressInfo = nuls.importByKey(2, pri, password);
+          if (newAddressInfo.address === this.addressInfo.address) {
+            txhex = await nuls.transactionSerialize(pri, this.addressInfo.pub, tAssemble);
+            //console.log(txhex);
+            //验证并广播交易
+            await validateAndBroadcast(txhex).then((response) => {
+              console.log(response);
+              if (response.success) {
+                this.$router.push({
+                  name: "txList"
+                })
+              } else {
+                this.$message({message: this.$t('error.' + response.data.code), type: 'error', duration: 3000});
+              }
+            }).catch((err) => {
+              this.$message({message: this.$t('public.err0') + err, type: 'error', duration: 1000});
+            });
+          }else {
+            this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
+          }
         } else {
           this.$message({message: this.$t('public.err1') + inOrOutputs.data, type: 'error', duration: 1000});
         }
-        //console.log(txhex);
-        //验证并广播交易
-        await validateAndBroadcast(txhex).then((response) => {
-          if (response.success) {
-            //console.log(response.hash);
-            this.$router.push({
-              name: "txList"
-            })
-          } else {
-            this.$message({message: this.$t('public.err') + response.data, type: 'error', duration: 1000});
-          }
-        }).catch((err) => {
-          this.$message({message: this.$t('public.err0') + err, type: 'error', duration: 1000});
-        });
+
       }
     }
   }

@@ -210,7 +210,7 @@
                 return tAssemble
               }
             } else {
-              this.$message({message:this.$t('public.err1') + inOrOutputs.data, type: 'error', duration: 1000});
+              this.$message({message: this.$t('public.err1') + inOrOutputs.data, type: 'error', duration: 1000});
             }
           } else {
             this.$message({message: this.$t('public.err2') + response, type: 'error', duration: 1000});
@@ -280,8 +280,8 @@
        **/
       async passSubmit(password) {
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-          const newAddressInfo = nuls.importByKey(2, pri, password);
-          if (newAddressInfo.address === this.addressInfo.address) {
+        const newAddressInfo = nuls.importByKey(2, pri, password);
+        if (newAddressInfo.address === this.addressInfo.address) {
           let transferInfo = {
             fromAddress: this.transferForm.fromAddress,
             toAddress: this.transferForm.toAddress,
@@ -315,12 +315,12 @@
             if (response.success) {
               this.toUrl("txList");
             } else {
-              this.$message({message: response.data, type: 'error', duration: 1000});
+              this.$message({message: this.$t('error.' + response.data.code), type: 'error', duration: 3000});
             }
           }).catch((err) => {
             this.$message({message: this.$t('public.err1') + err, type: 'error', duration: 1000});
           });
-        }else {
+        } else {
           this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
         }
       },
@@ -329,8 +329,8 @@
        * 通讯录功能
        * TODO 待开发...
        **/
-      showBook(){
-        this.$message({message: "开发者......" , duration: 1000});
+      showBook() {
+        this.$message({message: "开发者......", duration: 1000});
       },
 
       /**

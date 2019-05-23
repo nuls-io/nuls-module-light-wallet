@@ -2,12 +2,13 @@
   <div class="import_address bg-gray">
     <div class="bg-white">
       <div class="w1200">
-        <BackBar :backTitle="$t('importAddress.importAddress0')"></BackBar>
-        <h3 class="title">{{$t('importAddress.importAddress1')}}</h3>
+        <BackBar :backTitle="this.$route.query.address ? '修改密码' : $t('importAddress.importAddress0')"></BackBar>
+        <h3 class="title" v-if="this.$route.query.address">{{this.$route.query.address}}</h3>
+        <h3 class="title" v-else>{{$t('importAddress.importAddress1')}}</h3>
       </div>
     </div>
     <div class="w1200 mt_20 bg-white">
-      <div class="radio">
+      <div class="radio" v-show="!this.$route.query.address">
         <el-radio v-model="importRadio" label="importKeystore">{{$t('importAddress.importAddress2')}}</el-radio>
         <el-radio v-model="importRadio" label="importKey">{{$t('importAddress.importAddress3')}}</el-radio>
       </div>
@@ -16,7 +17,7 @@
         <el-button type="success" @click="importKeystore">{{$t('importAddress.importAddress4')}}</el-button>
       </div>
 
-      <div class="w630" v-show="importRadio==='importKey'">
+      <div class="w630" :class="this.$route.query.address ? 'mzt_20' : ''" v-show="importRadio==='importKey'">
         <el-form :model="importKeyForm" status-icon :rules="importKeyRules" ref="importKeyForm" class="mb_100">
           <el-form-item :label="$t('importAddress.importAddress5')" prop="key">
             <el-input type="textarea" v-model.trim="importKeyForm.key"></el-input>
@@ -28,7 +29,8 @@
             <el-input type="password" v-model="importKeyForm.checkPass" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item class="form-next">
-            <el-button type="success" @click="submitForm('importKeyForm')">{{$t('importAddress.importAddress8')}}
+            <el-button type="success" @click="submitForm('importKeyForm')">{{this.$route.query.address ?
+              '重置密码':$t('importAddress.importAddress8')}}
             </el-button>
           </el-form-item>
         </el-form>
@@ -76,7 +78,7 @@
         }
       };
       return {
-        importRadio: 'importKey',
+        importRadio: this.$route.query.address ? 'importKey' : 'importKeystore',
         keystoreInfo: {},
         importKeyForm: {
           key: '',
@@ -95,6 +97,8 @@
           ]
         }
       };
+    },
+    created() {
     },
     components: {
       BackBar,

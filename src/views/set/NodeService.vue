@@ -104,7 +104,6 @@
       };
       return {
         loading: false,//切换时加载动画
-
         //节点列表
         nodeServiceData: [],
         nodeServiceLoading: true,//节点列表加载动画

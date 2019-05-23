@@ -6,6 +6,7 @@ import './plugins/element.js'
 import i18n from './i18n'
 import {post} from './api/https'
 import VueElectron from 'vue-electron'
+
 Vue.use(VueElectron);
 
 Vue.config.productionTip = false;

@@ -20,7 +20,7 @@
         <h5 class="card-title font18">
           {{$t('consensus.consensus4')}}
           <span class="font16 click fr" @click="toUrl('newConsensus')"
-                v-show="!isNew">{{$t('consensus.consensus5')}}</span>
+                v-show="!isNew && !isRed">{{$t('consensus.consensus5')}}</span>
         </h5>
         <ul>
           <li>{{$t('consensus.consensus6')}} <label>{{nodeCount.agentCount}}</label></li>
@@ -52,7 +52,7 @@
               <span class="uppercase">{{item.agentId}}</span>&nbsp;
               <i class="iconfont"
                  :class="item.status ===0 ? 'icondaigongshi fred' : 'icongongshizhong fCN'"></i>
-              <i class="follow el-icon-star-off"></i>
+              <i class="follow clicks" :class="item.isCollect ? 'el-icon-star-on fCN':'el-icon-star-off'" @click="collect(item.agentId)" v-show="false"></i>
             </h4>
             <ul class="bg-white click" @click="toUrl('consensusInfo',item.txHash)">
               <li>{{$t('public.alias')}}<span>{{item.agentAlias}}</span></li>
@@ -74,7 +74,7 @@
               <span class="uppercase">{{item.agentId}}</span>&nbsp;
               <i class="iconfont"
                  :class="item.status ===0 ? 'icondaigongshi fred' : 'icongongshizhong fCN'"></i>
-              <i class="follow el-icon-star-off"></i>
+              <i class="follow el-icon-star-off" v-show="false"></i>
             </h4>
             <ul class="bg-white click" @click="toUrl('consensusInfo',item.txHash)">
               <li>{{$t('public.alias')}}<span>{{item.agentAlias}}</span></li>
@@ -126,6 +126,7 @@
         searchValue: '',//搜索框
         allNodeData: [],//所有节点信息
         addressInfo: [], //账户信息
+        isRed:false,//地址是否有红牌
         isNew: false,//账户是否已经创建了节点
         pageIndex: 1, //页码
         pageSize: 20, //每页条数
@@ -149,6 +150,8 @@
       this.getConsensusNodes(this.pageIndex, this.pageSize, this.nodeTypeRegion);
       this.getConsensusInfoByAddress(this.pageIndex, this.pageSize, this.addressInfo.address);
       this.getAddressInfoByNode(this.addressInfo);
+      this.getPunishByAddress(this.addressInfo.address);
+
       /*this.setInterval = setInterval(() => {
         //this.getAddressInfoByNode(this.addressInfo)
       }, 10000)*/
@@ -176,6 +179,7 @@
       addressInfo(val, old) {
         if (val.address !== old.address && old.address) {
           this.isNew = false;
+          this.getPunishByAddress(this.addressInfo.address);
           this.getConsensusNodeCount();
           this.getCoinInfo();
           this.getConsensusNodes(this.pageIndex, this.pageSize, this.nodeTypeRegion);
@@ -184,6 +188,24 @@
       }
     },
     methods: {
+
+      /**
+       * 查询创建地址是否有红牌
+       * @param address
+       **/
+      getPunishByAddress(address) {
+        this.$post('/', 'getPunishList', [1, 1,2,address])
+          .then((response) => {
+            //console.log(response);
+            if (response.result.list.length !== 0 ) {
+              this.isRed= true;
+            } else {
+              this.isRed = false;
+            }
+          }).catch((error) => {
+          this.$message({message: this.$t('public.err3') + error, type: 'error', duration: 1000});
+        });
+      },
 
       /**
        * 获取地址网络信息
@@ -196,7 +218,7 @@
         addressInfo.totalReward = 0;
         await this.$post('/', 'getAccount', [addressInfo.address])
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             if (response.hasOwnProperty("result")) {
               addressInfo.alias = response.result.alias;
               addressInfo.balance = timesDecimals(response.result.balance);
@@ -210,7 +232,6 @@
             localStorage.setItem(addressInfo.address, JSON.stringify(addressInfo));
           });
       },
-
 
       /**
        * 获取共识数统计信息
@@ -269,7 +290,15 @@
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
+              if (!this.addressInfo.collectList) {
+                this.addressInfo.collectList = [];
+              }
               for (let itme of response.result.list) {
+                if(this.addressInfo.collectList.includes(itme.agentId)){
+                  itme.isCollect = true;
+                }else {
+                  itme.isCollect = false;
+                }
                 itme.bozhengjin = itme.deposit;
                 itme.deposit = timesDecimals(itme.deposit);
                 itme.agentReward = timesDecimals(itme.agentReward);
@@ -288,6 +317,33 @@
             console.log("getConsensusNodes:" + error);
           });
 
+      },
+
+      /**
+       * 收藏功能
+       * @param agentId
+       **/
+      collect(agentId) {
+        if (!this.addressInfo.collectList) {
+          this.addressInfo.collectList = [];
+        }else {
+          if(this.addressInfo.collectList.includes(agentId)){
+            //移除已收藏
+            this.addressInfo.collectList.splice(this.addressInfo.collectList.findIndex(v => v === agentId),1);
+          }else {
+            this.addressInfo.collectList.push(agentId);
+          }
+          //循环是否收藏
+          for (let itme of this.allNodeData) {
+            if(this.addressInfo.collectList.includes(itme.agentId)){
+              itme.isCollect = true;
+            }else {
+              itme.isCollect = false;
+            }
+          }
+        }
+        sessionStorage.setItem(this.addressInfo.address,JSON.stringify(this.addressInfo));
+        localStorage.setItem(this.addressInfo.address,JSON.stringify(this.addressInfo));
       },
 
       /**

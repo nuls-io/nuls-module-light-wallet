@@ -2,7 +2,7 @@
   <div class="new_address bg-gray">
     <div class="bg-white">
       <div class="w1200">
-        <BackBar :backTitle="$t('address.address0')" ></BackBar>
+        <BackBar :backTitle="$t('address.address0')"></BackBar>
         <h3 class="title">{{$t('editPassword.editPassword0')}}</h3>
       </div>
     </div>
@@ -20,8 +20,10 @@
             <el-input type="password" v-model="passwordForm.checkPass" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item class="form-next">
-            <el-button type="success" @click="submitPasswordForm('passwordForm')">{{$t('editPassword.editPassword4')}}</el-button>
-            <div>{{$t('editPassword.editPassword5')}}</div>
+            <el-button type="success" @click="submitPasswordForm('passwordForm')">{{$t('editPassword.editPassword4')}}
+            </el-button>
+            <div>{{$t('editPassword.editPassword5')}}<span class="click" @click="toUrl('importAddress')">重新导入</span>
+            </div>
           </el-form-item>
         </el-form>
       </div>
@@ -100,7 +102,8 @@
         this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
       }, 500);
     },
-    mounted() {},
+    mounted() {
+    },
     components: {
       BackBar
     },
@@ -137,9 +140,17 @@
        * @param name
        */
       toUrl(name) {
-        this.$router.push({
-          name: name
-        })
+        if (name === 'importAddress') {
+          this.$router.push({
+            name: name,
+            query: {address: this.$route.query.address}
+          })
+        } else {
+          this.$router.push({
+            name: name,
+          })
+        }
+
       },
     }
   }

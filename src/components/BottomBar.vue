@@ -82,7 +82,7 @@
        * 获取主网最新高度（浏览器高度）
        */
       getMainHeader() {
-        const url = IS_DEV ? 'http://apitn1.nulscan.io/' : 'https://alpha.wallet.nuls.io/api';
+        const url = IS_DEV ? 'http://apitn1.nulscan.io/' : 'https://apitn1.nulscan.io/';
         const params = {"jsonrpc": "2.0", "method": "getBestBlockHeader", "params": [2], "id": 5898};
         axios.post(url, params)
           .then((response) => {
