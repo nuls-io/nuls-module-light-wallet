@@ -97,10 +97,6 @@
       };
     },
     created() {
-      this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
-      setInterval(() => {
-        this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
-      }, 500);
     },
     mounted() {
     },
@@ -110,20 +106,22 @@
     methods: {
 
       /**
-       * 创建地址
+       * 修改密码
        * @param formName
        */
       submitPasswordForm(formName) {
+        let address = this.$route.query.address;
+        let oldAddressInfo = JSON.parse(localStorage.getItem(address));
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, this.passwordForm.oldPass);
+            const pri = nuls.decrypteOfAES(oldAddressInfo.aesPri, this.passwordForm.oldPass);
             const newAddressInfo = nuls.importByKey(2, pri, this.passwordForm.oldPass);
-            if (newAddressInfo.address === this.addressInfo.address) {
+            if (newAddressInfo.address === address) {
               const importAddressInfo = nuls.importByKey(2, pri, this.passwordForm.newPass);
-              newAddressInfo.aesPri = importAddressInfo.aesPri;
-              newAddressInfo.pub = importAddressInfo.pub;
-              localStorage.setItem(importAddressInfo.address, JSON.stringify(importAddressInfo));
-              sessionStorage.setItem(importAddressInfo.address, JSON.stringify(importAddressInfo));
+              oldAddressInfo.aesPri = importAddressInfo.aesPri;
+              oldAddressInfo.pub = importAddressInfo.pub;
+              localStorage.setItem(oldAddressInfo.address, JSON.stringify(oldAddressInfo));
+              //sessionStorage.setItem(importAddressInfo.address, JSON.stringify(newAddressInfo));
               this.$message({message: this.$t('editPassword.editPassword12'), type: 'success', duration: 1000});
               this.toUrl("address");
             } else {

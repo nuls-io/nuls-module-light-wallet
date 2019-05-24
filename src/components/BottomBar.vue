@@ -13,7 +13,7 @@
           <label class="clicks">{{$t('bottom.agreement')}}</label>
           <label class="clicks">{{$t('bottom.policy')}}</label>
           <!--<label>Alpha 2.0.1</label>-->
-          <label class="click" @click="checkUpdate">Alpha 2.0.2</label>
+          <label class="click" @click="checkUpdate">Alpha 2.0.1</label>
         </div>
       </div>
     </div>
@@ -131,7 +131,7 @@
           _this.tips = text;
         });
         _this.$electron.ipcRenderer.on("downloadProgress", (event, progressObj) => {
-          _this.downloadPercent = progressObj.percent || 0;
+          _this.downloadPercent = Number(progressObj.percent.toFixed(2)) || 0;
         });
         _this.$electron.ipcRenderer.on("isUpdateNow", () => {
           _this.$electron.ipcRenderer.send("isUpdateNow");

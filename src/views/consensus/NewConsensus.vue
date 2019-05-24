@@ -95,7 +95,7 @@
         if (!value) {
           return callback(new Error(this.$t('newConsensus.newConsensus2')));
         } else if (!patrn.exec(value)) {
-          return callback(new Error(this.$t('transfer.transfer10')))
+          return callback(new Error(this.$t('newConsensus.newConsensus21')))
         } else {
           this.$refs.createrForm.validateField('blockAddress');
           callback();
@@ -108,7 +108,7 @@
         } else if (value === this.addressInfo.address) {
           return callback(new Error(this.$t('newConsensus.newConsensus4')));
         } else if (!patrn.exec(value)) {
-          return callback(new Error(this.$t('transfer.transfer10')))
+          return callback(new Error(this.$t('newConsensus.newConsensus31')))
         } else if (value === this.createrForm.rewardAddress) {
           return callback(new Error("打包地址不能为奖励地址"))
         } else {
