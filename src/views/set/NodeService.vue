@@ -130,8 +130,9 @@
     },
 
     created() {
-      if (localStorage.hasOwnProperty('customUrlsData')) {
-        this.nodeServiceData = Object.assign(defaultData, JSON.parse(localStorage.getItem('customUrlsData')));
+     /* if (localStorage.hasOwnProperty('customUrlsData')) {*/
+      if (localStorage.hasOwnProperty('urlsData')) {
+        this.nodeServiceData = Object.assign(defaultData, JSON.parse(localStorage.getItem('urlsData')));
       } else {
         this.nodeServiceData = defaultData
       }

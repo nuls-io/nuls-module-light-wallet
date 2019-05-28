@@ -628,6 +628,23 @@ const en = {
     "setAlias5":"Please enter an alias (only lowercase letters, numbers, underscores are allowed (underscores cannot be at both ends)",
   },
 
+  "codeInfo": {
+    "codeInfo0": "Contract source code is certified",
+    "codeInfo1": "Compiler",
+    "codeInfo2": "The certification date",
+    "codeInfo3": "Contract code",
+    "codeInfo4": "Contract source code isn't certified",
+    "codeInfo5": "Sorry, source code certificate failed!",
+    "codeInfo6": "Upload source code for certification",
+    "codeInfo7": "Source code upload notes",
+    "codeInfo8": "1.Please compress the source code into a zip package for uploading",
+    "codeInfo9": "2.The file directory structure and code in the zip package need to be consistent with deployment code, or it will result in certificating failure",
+    "codeInfo10": "Sorry, the maximum upload file size is 5M",
+    "codeInfo11":"Request timeout please retry",
+    "codeInfo12":"Sorry, I didn't find anything",
+    "codeInfo13":"3.Zip packages should not contain non-Java files, otherwise upload authentication will fail",
+  },
+
   "bottom": {
     "serviceNode": "Service node",
     "nodeHeight":"Host/Service Node",

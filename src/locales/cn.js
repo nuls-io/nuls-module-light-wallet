@@ -631,6 +631,24 @@ const cn = {
     "setAlias5": "请输入别名(只允许使用小写字母、数字、下划线（下划线不能在两端）)",
   },
 
+  "codeInfo":{
+    "codeInfo0":"合约源代码已认证",
+    "codeInfo1":"编译器",
+    "codeInfo2":"认证时间",
+    "codeInfo3":"合约代码",
+    "codeInfo4":"合约源代码未认证",
+    "codeInfo5":"对不起，源代码认证失败!",
+    "codeInfo6":"上传源码进行认证",
+    "codeInfo7":"源码上传注意事项",
+    "codeInfo8":"1.请将源码压缩为一个zip包再进行上传",
+    "codeInfo9":"2.压缩包中的文件目录结构和代码需和部署时保持已一致，否则将导致认证不通过",
+    "codeInfo10":"对不起，上传的文件不超过5M",
+    "codeInfo11":"请求超时请重试",
+    "codeInfo12":"对不起，什么都没查到",
+    "codeInfo13":"3.zip包中不可包含非Java文件，否则将导致上传认证失败",
+  },
+
+
   "bottom": {
     "serviceNode": "服务节点",
     "nodeHeight": "主网/服务节点",

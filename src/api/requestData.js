@@ -167,3 +167,23 @@ export async function agentDeposistList(agentHash) {
       return {success: false, data: error};
     });
 }
+
+/**
+ * 获取合约代码构造函数
+ * @param contractCodeHex
+ * @returns {Promise<any>}
+ */
+export async function getContractConstructor(contractCodeHex) {
+  return await post('/', 'getContractConstructor', [contractCodeHex])
+    .then((response) => {
+      //console.log(response);
+      if (response.hasOwnProperty("result")) {
+        return {success: true, data: response.result.constructor};
+      } else {
+        return {success: false, data: response.error};
+      }
+    })
+    .catch((error) => {
+      return {success: false, data: error};
+    });
+}

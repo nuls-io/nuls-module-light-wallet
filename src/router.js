@@ -62,6 +62,11 @@ export default new Router({
       component: resolve => require(['@/views/contract/Contract.vue'], resolve)
     },
     {
+      path: '/contractInfo',
+      name: 'contractInfo',
+      component: resolve => require(['@/views/contract/ContractInfo.vue'], resolve)
+    },
+    {
       path: '/address',
       name: 'address',
       component: resolve => require(['@/views/users/Address.vue'], resolve)

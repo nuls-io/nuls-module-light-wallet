@@ -1,11 +1,11 @@
 <template>
-  <el-dialog :title="$t('password.password0')" :visible.sync="passwordVisible" top="30vh" width="30rem" class="password-dialog"
+  <el-dialog :title="$t('password.password1')" :visible.sync="passwordVisible" top="30vh" width="30rem" class="password-dialog"
              :close-on-click-modal="false"
              :close-on-press-escape="false"
              @open="passwordShow"
              @close="passwordClose">
     <el-form ref="passwordForm" :model="passwordForm" :rules="passwordRules" @submit.native.prevent>
-      <div>{{$t('password.password1')}}</div>
+      <div v-show="false">{{$t('password.password1')}}</div>
       <el-form-item prop="password">
         <el-input v-model="passwordForm.password" type="password" :maxlength="22" ref="inpus">
         </el-input>

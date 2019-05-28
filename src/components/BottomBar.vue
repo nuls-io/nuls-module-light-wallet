@@ -13,7 +13,7 @@
           <label class="clicks">{{$t('bottom.agreement')}}</label>
           <label class="clicks">{{$t('bottom.policy')}}</label>
           <!--<label>Alpha 2.0.1</label>-->
-          <label class="click" @click="checkUpdate">Alpha 2.0.2</label>
+          <label class="click" @click="checkUpdate">Alpha 2.0.1</label>
         </div>
       </div>
     </div>
@@ -28,7 +28,7 @@
           <el-progress :text-inside="true" :stroke-width="18" :percentage="downloadPercent" status="success">
           </el-progress>
         </div>
-        <div class="upload-bt" v-if="tips.type === 3">
+        <div class="upload-bt" v-if="tips.type === 3" v-show="false">
           <el-button type="info" @clcik="afterRun">{{$t('bottom.Backstage')}}</el-button>
         </div>
       </div>
@@ -142,6 +142,7 @@
        * 后台运行
        **/
       afterRun() {
+        console.log(this.updateDialogVisible);
         this.updateDialogVisible = false;
       },
 
