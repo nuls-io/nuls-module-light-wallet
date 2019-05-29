@@ -18,6 +18,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 export function post (url,methodName,data = []) {
   return new Promise((resolve, reject) => {
     data.unshift(config.API_CHAIN_ID);
+    //console.log(data);
     const params = {"jsonrpc":"2.0", "method":methodName, "params":data, "id":5898};
     axios.post(url, params)
       .then(response => {

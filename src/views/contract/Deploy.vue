@@ -14,9 +14,11 @@
         </el-form-item>
 
         <div class="upload_jar" v-show="resource==='1'">
-          <div class="click upload tc">
+          <input type="file" id="fileId" class="hidden">
+          <div class="click upload tc" @click="uploadJar">
             <i class="el-icon-upload2 font30"></i>
-            <p class="font18">上传jar包</p>
+            <p class="font14">上传jar包</p>
+            <p class="font12" v-show="fileName">文件名:{{fileName}}</p>
           </div>
         </div>
 
@@ -80,7 +82,7 @@
     data() {
       return {
         //选择部署
-        resource: '0',
+        resource: '1',
         //不是表单
         deployForm: {
           hex: '',
@@ -105,6 +107,8 @@
         contractCreateTxData: {},//组装创建合约交易
         balanceInfo: {},//账户余额信息
         isTestSubmit: false,//测试合约
+
+        fileName: '',//jar文件名
 
       };
     },
@@ -239,7 +243,6 @@
         contractCreate.gasLimit = gasLimit;
         contractCreate.price = sdk.CONTRACT_MINIMUM_PRICE;
         contractCreate.contractCode = contractCode;
-
         let constructor = this.deployForm.parameterList;
         let contractConstructorArgsTypes = this.makeContractConstructorArgsTypes(constructor);
         contractCreate.args = await utils.twoDimensionalArray(args, contractConstructorArgsTypes);
@@ -333,9 +336,8 @@
             txhex = await nuls.transactionSerialize(pri, pub, tAssemble);
           }
           //console.log(txhex);
-
           await validateTx(txhex).then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.success) {
               if (this.isTestSubmit) {
                 this.$message({message: '测试通过', type: 'success', duration: 1000});
@@ -358,11 +360,42 @@
           }).catch((err) => {
             this.$message({message: this.$t('public.err0') + err, type: 'error', duration: 1000});
           });
-        }else {
+        } else {
           this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
         }
-      }
+      },
 
+      /**
+       * jar 上传包
+       * @returns {Promise<void>}
+       */
+      async uploadJar() {
+        let _this = this;
+        let obj = document.getElementById("fileId");
+        obj.click();
+        obj.onchange = function () {
+          if (this.value !== '') {
+            let file = obj.files[0];
+            _this.fileName = file.name;
+            //获取文件流
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (() => {
+              _this.$post('/', 'uploadContractJar', [reader.result])
+                .then((response) => {
+                  if (response.hasOwnProperty("result")) {
+                    _this.deployForm.hex = response.result.code;
+                    _this.getParameter();
+                  } else {
+                    console.log("上传jar包错误");
+                  }
+                }).catch((err) => {
+                console.log("上传jar包异常：" + err)
+              })
+            });
+          }
+        }
+      },
     }
   }
 </script>
