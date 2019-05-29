@@ -11,7 +11,9 @@
           <el-table :data="myContractData" stripe border>
             <el-table-column label="合约地址" align="center" min-width="220">
               <template slot-scope="scope">
-                <span class="click" @click="toUrl('contractInfo',scope.row.contractAddress)">{{scope.row.contractAddress}}</span>
+                <span v-if="scope.row.status === 3">{{scope.row.contractAddress}}</span>
+                <span class="click" @click="toUrl('contractInfo',scope.row.contractAddress)"
+                      v-if="scope.row.status !== 3">{{scope.row.contractAddress}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="时间" align="center">
@@ -57,13 +59,13 @@
             <div class="contract-address font18">
               <span>合约:{{contractInfo.contractAddress}}</span> <i class="el-icon-star-off"></i>
             </div>
-            <Call :modelList="modelData"></Call>
+            <Call :modelList="modelData" :contractAddress="contractInfo.contractAddress"></Call>
           </div>
         </div>
 
       </el-tab-pane>
       <el-tab-pane label="部署合约" name="contractThird">
-        <Deploy ></Deploy>
+        <Deploy :addressInfo="addressInfo"></Deploy>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -71,7 +73,7 @@
 
 <script>
   import moment from 'moment'
-  import {timesDecimals, getLocalTime, superLong} from '@/api/util'
+  import {getLocalTime} from '@/api/util'
   import Deploy from './Deploy'
   import Call from './Call'
 
@@ -88,7 +90,7 @@
         currentPage4: 4,
         searchContract: '',//搜索合约
         contractInfo: {},//合约详情
-        modelData:[],//合约方法列表
+        modelData: [],//合约方法列表
       };
     },
     created() {
@@ -108,7 +110,7 @@
     watch: {
       addressInfo(val, old) {
         if (val.address !== old.address && old.address) {
-
+          console.log(val)
         }
       }
     },
@@ -130,7 +132,7 @@
             console.log(response);
             if (response.hasOwnProperty("result")) {
               for (let item of response.result.list) {
-                item.createTime = moment(getLocalTime(item.createTime)).format('YYYY-MM-DD HH:mm:ss');
+                item.createTime = moment(getLocalTime(item.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
               }
               this.myContractData = response.result.list;
               this.pageTotal = response.result.totalCount;
@@ -158,7 +160,7 @@
         if (this.searchContract.length > 30) {
           await this.$post('/', 'getContract', [this.searchContract])
             .then((response) => {
-              //console.log(response);
+              console.log(response);
               if (response.hasOwnProperty("result")) {
                 this.contractInfo = response.result;
                 this.modelData = response.result.methods;

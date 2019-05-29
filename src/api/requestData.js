@@ -1,4 +1,5 @@
 import {post} from './https'
+import {Plus} from './util'
 
 /**
  * 获取账户的余额及nonce
@@ -38,12 +39,12 @@ export function countFee(tx, signatrueCount) {
  * @returns {*}
  **/
 export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
-  let newAmount = transferInfo.amount + transferInfo.fee;
+  let newAmount = Number(Plus(transferInfo.amount, transferInfo.fee));
   let newLocked = 0;
   let newNonce = balanceInfo.nonce;
   let newoutputAmount = transferInfo.amount;
   let newLockTime = 0;
-  if (balanceInfo.balance < transferInfo.amount + transferInfo.fee) {
+  if (balanceInfo.balance < newAmount) {
     return {success: false, data: "Your balance is not enough."}
   }
   if (type === 4) {
@@ -73,7 +74,18 @@ export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
     locked: newLocked,
     nonce: newNonce
   }];
-  let outputs = [{
+  let outputs = [];
+  if (type === 15 || type === 17) {
+    return {success: true, data: {inputs: inputs, outputs: outputs}};
+  }
+  if (type === 16) {
+    if (!transferInfo.toAddress) {
+      return {success: true, data: {inputs: inputs, outputs: outputs}};
+    } else {
+      newoutputAmount = transferInfo.value;
+    }
+  }
+  outputs = [{
     address: transferInfo.toAddress ? transferInfo.toAddress : transferInfo.fromAddress,
     assetsChainId: transferInfo.assetsChainId,
     assetsId: transferInfo.assetsId,
@@ -129,7 +141,7 @@ export async function broadcastTx(txHex) {
 export async function validateAndBroadcast(txHex) {
   return await post('/', 'validateTx', [txHex])
     .then((response) => {
-      console.log(response);
+      //console.log(response);
       if (response.hasOwnProperty("result")) {
         let newHash = response.result.value;
         return post('/', 'broadcastTx', [txHex])

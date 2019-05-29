@@ -147,3 +147,27 @@ export function getLocalTime(time) {
   let localTime = utcTime + 3600000 * Math.abs(localUtc);
   return new Date(localTime);
 }
+
+/**
+ * 获取参数的必填值
+ * @param parameterList
+ * @returns {{allParameter: boolean, args: Array}}
+ */
+export function getArgs(parameterList) {
+  let newArgs = [];
+  let allParameter = false;
+  //循环获取必填参数
+  for (let itme of parameterList) {
+    if (itme.required && itme.value) {
+      allParameter = true;
+      newArgs.push(itme.value)
+    } else {
+      allParameter = false
+    }
+  }
+  if (allParameter) {
+    return {allParameter:allParameter,args:newArgs};
+  }else {
+    return {allParameter:allParameter,args:newArgs};
+  }
+}
