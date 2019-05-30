@@ -1,8 +1,8 @@
 <template>
   <div class="call">
     <el-form :model="callForm" :rules="callRules" ref="callForm" class="call-form">
-      <el-form-item label="请选择一个方法" prop="region" class="search-model">
-        <el-select v-model="callForm.modelValue" placeholder="请选择一个方法" @change="changeModel">
+      <el-form-item label="" prop="region" class="search-model">
+        <el-select v-model="callForm.modelValue" :placeholder="$t('call.call1')" @change="changeModel">
           <el-option v-for="item in callForm.modelData" :key="item.name" :label="item.name"
                      :value="item.name">
           </el-option>
@@ -10,13 +10,13 @@
       </el-form-item>
       <el-form-item v-for="(domain, index) in callForm.parameterList" :label="domain.name" :key="domain.name"
                     :prop="'parameterList.' + index + '.value'"
-                    :rules="{required: domain.required,message:domain.name+'不能为空', trigger: 'blur'}"
+                    :rules="{required: domain.required,message:domain.name+$t('call.call2'), trigger: 'blur'}"
       >
         <el-input v-model="domain.value" @change="changeParameter"></el-input>
       </el-form-item>
 
       <div class="div-senior" v-if="!selectionData.view">
-        <el-form-item label="高级选项" class="senior">
+        <el-form-item :label="$t('call.call3')" class="senior">
           <el-switch v-model="callForm.senior"></el-switch>
         </el-form-item>
         <div class="senior-div" v-if="callForm.senior">
@@ -30,7 +30,7 @@
       </div>
 
       <el-form-item class="search-submit">
-        <el-button type="success" @click="submitForm('callForm')">调 用</el-button>
+        <el-button type="success" @click="submitForm('callForm')">{{$t('contract.contract4')}}</el-button>
       </el-form-item>
     </el-form>
     <div class="cb"></div>
@@ -80,7 +80,6 @@
         },
         contractCallData: {},//调用合约data
         callResult: '',//调用合约结果
-
       };
     },
     props: {
@@ -179,11 +178,11 @@
             if (response.hasOwnProperty("result")) {
               this.callResult = response.result.result;
             } else {
-              this.$message({message: '不上链方法调用失败:' + response.error, type: 'error', duration: 1000});
+              this.$message({message: this.$t('call.call8') + response.error, type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
-            this.$message({message: '不上链方法调用异常:' + error, type: 'error', duration: 1000});
+            this.$message({message: this.$t('call.call9') + error, type: 'error', duration: 1000});
           });
       },
 
@@ -222,11 +221,11 @@
               //return {success: true, data: response.result};
               this.imputedContractCallGas(sender, value, contractAddress, methodName, methodDesc, args)
             } else {
-              console.log("验证调用合约交易错误");
+              this.$message({message: this.$t('call.call6') + response, type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
-            console.log("验证调用合约交易异常" + error);
+            this.$message({message: this.$t('call.call7') + error, type: 'error', duration: 1000});
           });
       },
 
@@ -260,18 +259,18 @@
                 args: newArgs
               };
             } else {
-              console.log("预估调用合约交易的gas错误");
+              this.$message({message: this.$t('call.call4') + response, type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
-            console.log("预估调用合约交易的gas异常" + error);
+            this.$message({message: this.$t('call.call5') + error, type: 'error', duration: 1000});
           });
       },
 
       /**
        * 获取合约指定函数的参数类型
-       * @param contractAddress, methodName
-       * @returns {Promise<AxiosResponse<any>>}
+       * @param contractAddress
+       * @param  methodName
        */
       async getContractMethodArgsTypes(contractAddress, methodName) {
         return await this.$post('/', 'getContractMethodArgsTypes', [contractAddress, methodName])
@@ -344,7 +343,7 @@
           //console.log(txhex);
           //验证并广播交易
           await validateAndBroadcast(txhex).then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.success) {
              this.callResult = response
             } else {
@@ -370,7 +369,7 @@
         width: 500px;
       }
       .search-model {
-        margin: 0 0 10px 70px;
+        margin: 10px 0 10px 70px;
         .el-form-item__label {
           width: 500px;
           text-align: left;

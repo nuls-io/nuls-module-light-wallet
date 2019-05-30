@@ -394,6 +394,13 @@ const cn = {
     "4": "保证金"
   },
 
+  "assetsType":{
+    "undefined": "",
+    "0": "所有资产",
+    "1": "普通资产",
+    "2": "合约资产",
+  },
+
   "history": {
     "0": "所有历史",
     "1": "加入历史",
@@ -631,6 +638,60 @@ const cn = {
     "setAlias5": "请输入别名(只允许使用小写字母、数字、下划线（下划线不能在两端）)",
   },
 
+  "contract":{
+    "contract1":"我的合约",
+    "contract2":"合约地址",
+    "contract3":"标签",
+    "contract4":"调用",
+    "contract5":"查找合约",
+    "contract6":"请输入合约地址",
+    "contract7":"搜索",
+    "contract8":"所有合约",
+    "contract9":"合约",
+    "contract10":"部署合约",
+    "contract11":"获取合约列表失败:",
+    "contract12":"获取合约列表异常:",
+    "contract13":"搜索合约失败:",
+    "contract14":"搜索合约异常:",
+    "contract15":"请输入正确的合约地址",
+    "contract":"",
+  },
+
+  "call":{
+    "call1":"请选择一个方法",
+    "call2":"不能为空",
+    "call3":"高级选项",
+    "call4":"预估调用合约交易的gas错误",
+    "call5":"预估调用合约交易的gas异常",
+    "call6":"验证调用合约交易错误",
+    "call7":"验证调用合约交易异常",
+    "call8":"不上链方法调用失败",
+    "call9":"不上链方法调用异常",
+    "call":"",
+  },
+
+  "deploy":{
+    "deploy1":"HEX码",
+    "deploy2":"Jar包",
+    "deploy3":"上传jar包",
+    "deploy4":"文件名",
+    "deploy5":"测试",
+    "deploy6":"部署",
+    "deploy7":"请输入hex编码",
+    "deploy8":"请输入gas",
+    "deploy9":"请输入price",
+    "deploy10":"获取构造函数错误:",
+    "deploy11":"验证创建合约交易错误",
+    "deploy12":"验证创建合约交易异常",
+    "deploy13":"预估创建合约交易的gas错误",
+    "deploy14":"预估创建合约交易的gas异常",
+    "deploy15":"组装创建合约交易的txData错误",
+    "deploy16":"测试通过",
+    "deploy17":"上传jar包错误",
+    "deploy18":"上传jar包异常",
+    "deploy":"deploy",
+  },
+
   "codeInfo":{
     "codeInfo0":"合约源代码已认证",
     "codeInfo1":"编译器",
@@ -648,6 +709,22 @@ const cn = {
     "codeInfo13":"3.zip包中不可包含非Java文件，否则将导致上传认证失败",
   },
 
+  "contractInfo":{
+    "contractInfo1":"注销合约",
+    "contractInfo2":"交易次数",
+    "contractInfo3":"创建者",
+    "contractInfo4":"代币",
+    "contractInfo5":"交易类型",
+    "contractInfo6":"合约方法",
+    "contractInfo7":"参数",
+    "contractInfo8":"返回类型",
+    "contractInfo9":"获取合约详情失败:",
+    "contractInfo10":"获取合约详情异常:",
+    "contractInfo11":"获取合约交易列表失败:",
+    "contractInfo12":"获取合约交易列表异常:",
+    "contractInfo13":"验证删除合约失败:",
+    "contractInfo14":"contractInfo",
+  },
 
   "bottom": {
     "serviceNode": "服务节点",

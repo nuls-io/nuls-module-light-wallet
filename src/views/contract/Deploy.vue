@@ -2,8 +2,8 @@
   <div class="deploy">
     <div class="select_resource">
       <el-radio-group v-model="resource" @change="changeRadio">
-        <el-radio label="0">HEX码</el-radio>
-        <el-radio label="1">Jar包</el-radio>
+        <el-radio label="0">{{$t('deploy.deploy1')}}</el-radio>
+        <el-radio label="1">{{$t('deploy.deploy2')}}</el-radio>
       </el-radio-group>
     </div>
 
@@ -17,22 +17,22 @@
           <input type="file" id="fileId" class="hidden">
           <div class="click upload tc" @click="uploadJar">
             <i class="el-icon-upload2 font30"></i>
-            <p class="font14">上传jar包</p>
-            <p class="font12" v-show="fileName">文件名:{{fileName}}</p>
+            <p class="font14">{{$t('deploy.deploy3')}}</p>
+            <p class="font12" v-show="fileName">{{$t('deploy.deploy4')}}:{{fileName}}</p>
           </div>
         </div>
 
         <div class="parameter" v-if="deployForm.parameterList">
           <el-form-item v-for="(domain, index) in deployForm.parameterList" :label="domain.name" :key="domain.name"
                         :prop="'parameterList.' + index + '.value'"
-                        :rules="{required: domain.required,message:domain.name+'不能为空', trigger: 'blur'}"
+                        :rules="{required: domain.required,message:domain.name+$t('call.call2'), trigger: 'blur'}"
           >
             <el-input v-model.trim="domain.value" @change="changeParameter"></el-input>
           </el-form-item>
         </div>
       </div>
 
-      <el-form-item label="高级选项" class="senior">
+      <el-form-item :label="$t('call.call3')" class="senior">
         <el-switch v-model="deployForm.senior"></el-switch>
       </el-form-item>
 
@@ -43,17 +43,17 @@
         <el-form-item label="Price" prop="price">
           <el-input v-model="deployForm.price"></el-input>
         </el-form-item>
-        <el-form-item label="备注" prop="addtion">
+        <el-form-item :label="$t('public.remarks')" prop="addtion">
           <el-input v-model="deployForm.addtion"></el-input>
         </el-form-item>
       </div>
       <el-form-item class="form-next">
         <el-button type="success" @click="testSubmitForm('deployForm')">
-          测试合约
+          {{$t('deploy.deploy5')}}
         </el-button>
         <br/>
         <div class="mb_20"></div>
-        <el-button @click="submitForm('deployForm')">部署合约</el-button>
+        <el-button @click="submitForm('deployForm')">{{$t('deploy.deploy6')}}</el-button>
       </el-form-item>
     </el-form>
     <Password ref="password" @passwordSubmit="passSubmit">
@@ -94,13 +94,13 @@
         },
         deployRules: {
           hex: [
-            {required: true, message: '请输入hex编码', trigger: 'blur'},
+            {required: true, message: this.$t('deploy.deploy7'), trigger: 'blur'},
           ],
           gas: [
-            {type: 'number', required: true, message: '请输入gas', trigger: 'blur'},
+            {type: 'number', required: true, message: this.$t('deploy.deploy8'), trigger: 'blur'},
           ],
           price: [
-            {type: 'number', required: true, message: '请输入price', trigger: 'blur'},
+            {type: 'number', required: true, message: this.$t('deploy.deploy9'), trigger: 'blur'},
           ]
         },
         createAddress: '',//创建合约地址
@@ -152,7 +152,7 @@
           if (parameter.success) {
             this.deployForm.parameterList = parameter.data.args
           } else {
-            this.$message({message: '获取构造函数错误:' + parameter.data.error, type: 'error', duration: 1000});
+            this.$message({message: this.$t('deploy.deploy10') + parameter.data.error, type: 'error', duration: 1000});
           }
         }
       },
@@ -183,11 +183,11 @@
             if (response.result.success) {
               this.imputedContractCreateGas(createAddress, contractCode, args);
             } else {
-              console.log("验证创建合约交易错误")
+              this.$message({message: this.$t('deploy.deploy11') + response.error, type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
-            console.log("验证创建合约交易异常" + error)
+            this.$message({message: this.$t('deploy.deploy12') + error, type: 'error', duration: 1000});
           });
       },
 
@@ -205,11 +205,11 @@
               this.deployForm.gas = response.result.gasLimit;
               this.makeCreateData(response.result.gasLimit, createAddress, contractCode, args);
             } else {
-              console.log("预估创建合约交易的gas错误");
+              this.$message({message: this.$t('deploy.deploy13') + response.error, type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
-            console.log("预估创建合约交易的gas异常" + error);
+            this.$message({message: this.$t('deploy.deploy14') + error, type: 'error', duration: 1000});
           });
       },
 
@@ -247,12 +247,10 @@
         let contractConstructorArgsTypes = this.makeContractConstructorArgsTypes(constructor);
         contractCreate.args = await utils.twoDimensionalArray(args, contractConstructorArgsTypes);
         contractCreate.contractAddress = sdk.getStringContractAddress(config.API_CHAIN_ID);
-        console.log(contractCreate);
         if (!contractCreate.args || !contractCreate.chainId || !contractCreate.contractAddress || !contractCreate.contractCode || !contractCreate.gasLimit || !contractCreate.price || !contractCreate.sender) {
-          console.log("组装创建合约交易的txData错误")
+          this.$message({message: this.$t('deploy.deploy15'), type: 'error', duration: 1000});
         } else {
           this.contractCreateTxData = contractCreate;
-          //console.log(this.contractCreateTxData);
         }
       },
 
@@ -282,7 +280,6 @@
             this.isTestSubmit = true;
             this.$refs.password.showPassword(true)
           } else {
-            console.log('error submit!!');
             return false;
           }
         });
@@ -340,7 +337,7 @@
             //console.log(response);
             if (response.success) {
               if (this.isTestSubmit) {
-                this.$message({message: '测试通过', type: 'success', duration: 1000});
+                this.$message({message: this.$t('deploy.deploy16'), type: 'success', duration: 1000});
               } else {
                 broadcastTx(txhex).then((response) => {
                   if (response.success) {
@@ -387,10 +384,10 @@
                     _this.deployForm.hex = response.result.code;
                     _this.getParameter();
                   } else {
-                    console.log("上传jar包错误");
+                    this.$message({message: this.$t('deploy.deploy17'), type: 'error', duration: 1000});
                   }
                 }).catch((err) => {
-                console.log("上传jar包异常：" + err)
+                this.$message({message: this.$t('deploy.deploy18')+err, type: 'error', duration: 1000});
               })
             });
           }

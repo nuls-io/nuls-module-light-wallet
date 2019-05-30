@@ -6,29 +6,29 @@
       <i class="iconfont icon-fuzhi clicks"></i>
     </h3>
     <el-tabs v-model="contractActive" @tab-click="handleClick" class="w1200">
-      <el-tab-pane label="我的合约" name="contractFirst">
+      <el-tab-pane :label="$t('contract.contract1')" name="contractFirst">
         <div class="my_contract">
           <el-table :data="myContractData" stripe border>
-            <el-table-column label="合约地址" align="center" min-width="220">
+            <el-table-column :label="$t('contract.contract2')" align="center" min-width="220">
               <template slot-scope="scope">
                 <span v-if="scope.row.status === 3">{{scope.row.contractAddress}}</span>
-                <span class="click" @click="toUrl('contractInfo',scope.row.contractAddress)"
+                <span class="click" @click="toUrl('contractInfo',scope.row.contractAddress,0,'first')"
                       v-if="scope.row.status !== 3">{{scope.row.contractAddress}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="时间" align="center">
+            <el-table-column prop="createTime" :label="$t('public.time')" align="center">
             </el-table-column>
-            <el-table-column label="标签" align="center">
+            <el-table-column :label="$t('contract.contract3')" align="center">
               <template slot-scope="scope">
                 <span class="click" @click="toUrl()">{{scope.row.tag}}</span>
               </template>
             </el-table-column>
-            <el-table-column label="状态" align="center">
+            <el-table-column :label="$t('public.status')" align="center">
               <template slot-scope="scope"><span>{{ $t('contractStatus.'+scope.row.status) }}</span></template>
             </el-table-column>
-            <el-table-column label="操作" align="center">
-              <template>
-                <label class="click tab_bn">调用</label>
+            <el-table-column :label="$t('public.operation')" align="center">
+              <template slot-scope="scope">
+                <label class="click tab_bn" @click="toUrl('contractInfo',scope.row.contractAddress,0,'fourth')">{{$t('contract.contract4')}}</label>
               </template>
             </el-table-column>
           </el-table>
@@ -47,24 +47,28 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="查找合约" name="contractSecond">
+      <el-tab-pane :label="$t('contract.contract5')" name="contractSecond">
         <div class="bg-white w1200 search">
           <div class="search-div">
-            <el-input placeholder="请输入合约地址" v-model="searchContract" class="search-input">
+            <el-input :placeholder="$t('contract.contract6')" v-model="searchContract" class="search-input">
             </el-input>
-            <el-button type="success" class="search-button" @click="searchContractByAddress">搜 索</el-button>
-            <u class="click td" @click="toUrl('http://alpha.nulscan.io/contracts',1)">所有合约</u>
+            <el-button type="success" class="search-button" @click="searchContractByAddress">
+              {{$t('contract.contract7')}}
+            </el-button>
+            <u class="click td"
+               @click="toUrl('http://alpha.nulscan.io/contracts',1)">{{$t('contract.contract8')}}</u>
           </div>
           <div class="contract-info bg-gray" v-show="contractInfo.contractAddress">
             <div class="contract-address font18">
-              <span>合约:{{contractInfo.contractAddress}}</span> <i class="el-icon-star-off"></i>
+              <span>{{$t('contract.contract9')}}:{{contractInfo.contractAddress}}</span> <i
+                    class="el-icon-star-off"></i>
             </div>
             <Call :modelList="modelData" :contractAddress="contractInfo.contractAddress"></Call>
           </div>
         </div>
 
       </el-tab-pane>
-      <el-tab-pane label="部署合约" name="contractThird">
+      <el-tab-pane :label="$t('contract.contract10')" name="contractThird">
         <Deploy :addressInfo="addressInfo"></Deploy>
       </el-tab-pane>
     </el-tabs>
@@ -129,7 +133,7 @@
       async getMyContractByAddress() {
         await this.$post('/', 'getContractList', [this.pageIndex, this.pageSize, false, false])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               for (let item of response.result.list) {
                 item.createTime = moment(getLocalTime(item.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
@@ -137,11 +141,11 @@
               this.myContractData = response.result.list;
               this.pageTotal = response.result.totalCount;
             } else {
-              this.$message({message: '获取合约列表失败:' + response.error, type: 'error', duration: 1000});
+              this.$message({message: this.$t('contract.contract11') + response.error, type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
-            this.$message({message: '获取合约列表失败:' + error, type: 'error', duration: 1000});
+            this.$message({message: this.$t('contract.contract12') + error, type: 'error', duration: 1000});
           });
       },
 
@@ -160,19 +164,23 @@
         if (this.searchContract.length > 30) {
           await this.$post('/', 'getContract', [this.searchContract])
             .then((response) => {
-              console.log(response);
+              //console.log(response);
               if (response.hasOwnProperty("result")) {
                 this.contractInfo = response.result;
                 this.modelData = response.result.methods;
               } else {
-                this.$message({message: '搜索合约失败:' + response.error, type: 'error', duration: 1000});
+                this.$message({
+                  message: this.$t('contract.contract13') + response.error,
+                  type: 'error',
+                  duration: 1000
+                });
               }
             })
             .catch((error) => {
-              this.$message({message: '搜索合约异常:' + error, type: 'error', duration: 1000});
+              this.$message({message: this.$t('contract.contract14') + error, type: 'error', duration: 1000});
             });
         } else {
-          this.$message({message: '请输入正确的合约地址', type: 'error', duration: 1000});
+          this.$message({message: this.$t('contract.contract15'), type: 'error', duration: 1000});
         }
       },
 
@@ -181,14 +189,15 @@
        * @param name
        * @param parms
        * @param type
+       * @param activeName
        */
-      toUrl(name, parms, type = 0) {
+      toUrl(name, parms, type = 0, activeName) {
         //console.log(name) contractInfo
         if (type.toString() === '0') {
           if (name === 'contractInfo') {
             this.$router.push({
               name: name,
-              query: {contractAddress: parms}
+              query: {contractAddress: parms, activeName: activeName}
             });
           } else {
             this.$router.push({
@@ -202,12 +211,6 @@
         }
       },
 
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      }
     }
   };
 </script>

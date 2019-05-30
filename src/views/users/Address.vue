@@ -143,6 +143,7 @@
         addressInfo.balance = 0;
         addressInfo.consensusLock = 0;
         addressInfo.totalReward = 0;
+        addressInfo.tokens=[];
         await this.$post('/', 'getAccount', [addressInfo.address])
           .then((response) => {
             //console.log(response);
@@ -151,6 +152,7 @@
               addressInfo.balance = timesDecimals(response.result.balance);
               addressInfo.consensusLock = timesDecimals(response.result.consensusLock);
               addressInfo.totalReward = timesDecimals(response.result.totalReward);
+              addressInfo.tokens=response.result.tokens;
             }
             localStorage.setItem(addressInfo.address, JSON.stringify(addressInfo));
           })

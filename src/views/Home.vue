@@ -7,8 +7,8 @@
     </h3>
     <el-tabs v-model="homeActive" @tab-click="handleClick" class="w1200">
       <el-tab-pane :label="$t('home.home0')" name="homeFirst" v-loading="assetsListLoading">
-        <el-select v-model="assetsValue" @change="channgeAsesets" v-show="false">
-          <el-option v-for="item in assetsOptions" :key="item.value" :label="item.label" :value="item.value">
+        <el-select v-model="assetsValue" @change="channgeAsesets">
+          <el-option v-for="item in assetsOptions" :key="item.value" :label="$t('assetsType.'+item.value)" :value="item.value">
           </el-option>
         </el-select>
 
@@ -30,8 +30,8 @@
           <el-table-column prop="balance" :label="$t('tab.tab4')">
           </el-table-column>
           <el-table-column fixed="right" :label="$t('public.operation')" align="center" min-width="120">
-            <template>
-              <label class="click tab_bn" @click="toUrl('transfer')">{{$t('nav.transfer')}}</label>
+            <template slot-scope="scope">
+              <label class="click tab_bn" @click="toUrl('transfer',scope.row.account)">{{$t('nav.transfer')}}</label>
               <span class="tab_line">|</span>
               <label class="click tab_bn" @click="toUrl('txList')">{{$t('home.home2')}}</label>
             </template>
@@ -127,9 +127,9 @@
         addressAssetsData: [],
         //资产类型
         assetsOptions: [
-          {value: '0', label: '所有资产'},
-          {value: '1', label: '普通资产'},
-          {value: '2', label: '合约资产'}
+          {value: '0', label: '0'},
+          {value: '1', label: '1'},
+          {value: '2', label: '2'}
         ],
         assetsValue: "所有资产",
         //资产加载动画
@@ -284,13 +284,13 @@
               newAssetsList.balance = 0;
             }
             this.addressInfo.balance = newAssetsList.balance;
-            localStorage.setItem(this.addressInfo.address,JSON.stringify(this.addressInfo));
-            sessionStorage.setItem(this.addressInfo.address,JSON.stringify(this.addressInfo));
+            localStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
+            sessionStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
             this.addressAssetsData.push(newAssetsList);
             this.assetsListLoading = false;
           })
           .catch((error) => {
-            console.log("getAccount:"+error);
+            console.log("getAccount:" + error);
             this.assetsListLoading = false;
           });
       },
@@ -317,10 +317,14 @@
               newAssetsList = response.result.list;
             }
             this.addressAssetsData.push(...newAssetsList);
+            this.addressInfo.tokens = [];
+            this.addressInfo.tokens = this.addressAssetsData;
+            localStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
+            sessionStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
             this.assetsListLoading = false;
           })
           .catch((error) => {
-            console.log("getAccountTokens:"+error);
+            console.log("getAccountTokens:" + error);
             this.assetsListLoading = false;
           });
       },
@@ -383,11 +387,19 @@
        * 连接跳转
        * @param name
        */
-      toUrl(name) {
+      toUrl(name, parms) {
         //console.log(name)
-        this.$router.push({
-          name: name
-        })
+        let newParms = {accountType: parms};
+        if (name === 'transfer') {
+          this.$router.push({
+            name: name,
+            query: newParms
+          })
+        } else {
+          this.$router.push({
+            name: name,
+          })
+        }
       },
 
       /**

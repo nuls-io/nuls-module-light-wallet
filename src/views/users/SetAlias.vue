@@ -40,6 +40,7 @@
   import {inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
+  import * as config from '@/config.js'
 
   export default {
     data() {
@@ -134,7 +135,7 @@
         if (newAddressInfo.address === this.addressInfo.address) {
           let transferInfo = {
             fromAddress: this.addressInfo.address,
-            toAddress: 'tNULSeBaMkqeHbTxwKqyquFcbewVTUDHPkF11o',
+            toAddress: config.API_BURNING_ADDRESS,
             assetsChainId: 2,
             assetsId: 1,
             amount: 100000000,
@@ -147,13 +148,14 @@
           };
           let tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, '', 3, aliasInfo);
           let txhex = await nuls.transactionSerialize(nuls.decrypteOfAES(this.addressInfo.aesPri, password), this.addressInfo.pub, tAssemble);
-          //console.log(txhex);
+          console.log(txhex);
           //验证并广播交易
           await validateAndBroadcast(txhex).then((response) => {
+            console.log(response);
             if (response.success) {
               this.toUrl("txList");
             } else {
-              this.$message({message:  this.$t('public.err') + response.data, type: 'error', duration: 1000});
+              this.$message({message: this.$t('error.' + response.data.code), type: 'error', duration: 3000});
             }
           }).catch((err) => {
             this.$message({message:  this.$t('public.err0') + err, type: 'error', duration: 1000});

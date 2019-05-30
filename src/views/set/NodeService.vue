@@ -106,7 +106,7 @@
         loading: false,//切换时加载动画
         //节点列表
         nodeServiceData: [],
-        nodeServiceLoading: true,//节点列表加载动画
+        nodeServiceLoading: false,//节点列表加载动画
         nodeServiceDialog: false,//服务地址弹框
         nodeServiceDialogLoading: false,//服务地址弹框加载动画
         //添加、编辑表单

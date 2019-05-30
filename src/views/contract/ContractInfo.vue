@@ -3,7 +3,7 @@
 
     <div class="bg-white">
       <div class="w1200">
-        <BackBar backTitle="合约"></BackBar>
+        <BackBar :backTitle="$t('nav.contracts')"></BackBar>
         <h3 class="title">{{contractAddress}}<i class="iconfont icon-fuzhi clicks"></i></h3>
       </div>
     </div>
@@ -11,28 +11,28 @@
     <div class="w1200 mt_20">
       <div class="card_long">
         <h5 class="card-title font18">
-          基本信息
+          {{$t('public.basicData')}}
           <span class="font14 fr fred click" v-show="isCancel" @click="cancelContract">
-            注销合约
+            {{$t('contractInfo.contractInfo1')}}
           </span>
         </h5>
         <ul>
-          <li>余额<label>{{contractInfo.balance}}<span class="fCN">NULS</span></label></li>
-          <li>交易次数<label>{{contractInfo.txCount}}</label></li>
+          <li>{{$t('public.usableBalance')}}<label>{{contractInfo.balance}}<span class="fCN">NULS</span></label></li>
+          <li>{{$t('contractInfo.contractInfo2')}}<label>{{contractInfo.txCount}}</label></li>
           <li>
-            创建者
+            {{$t('contractInfo.contractInfo3')}}
             <label>
               <u class="click" @click="toUrl('consensusList')">{{contractInfo.creater}}</u>
               at TxID
               <u class="click" @click="toUrl('consensusList')">{{contractInfo.createTxHashs}}</u>
             </label>
           </li>
-          <li>代币<label>{{contractInfo.symbol}}</label></li>
+          <li>{{$t('contractInfo.contractInfo4')}}<label>{{contractInfo.symbol}}</label></li>
         </ul>
       </div>
       <div class="cb"></div>
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="交易记录" name="first">
+        <el-tab-pane :label="$t('home.home2')" name="first">
           <SelectBar v-model="contractsTypeRegion" :typeOptions="contractsStatusOptions" typeName="type"
                      @change="changeType">
           </SelectBar>
@@ -40,12 +40,12 @@
           <el-table :data="contractTxData" stripe border style="width: 100%;margin-top: 14px">
             <el-table-column label="" width="30">
             </el-table-column>
-            <el-table-column prop="height" label="高度" width="180" align="left">
+            <el-table-column prop="height" :label="$t('public.height')" width="180" align="left">
               <template slot-scope="scope">
                 <span class="cursor-p click">{{ scope.row.blockHeight }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="height" label="交易类型" width="180" align="left">
+            <el-table-column prop="height" :label="$t('contractInfo.contractInfo5')" width="180" align="left">
               <template slot-scope="scope"><span>{{ $t('type.'+scope.row.type) }}</span></template>
             </el-table-column>
             <el-table-column label="TXID" min-width="280" align="left">
@@ -56,7 +56,7 @@
             </el-table-column>
             <el-table-column prop="time" :label="$t('public.time')" width="180" align="left">
             </el-table-column>
-            <el-table-column label="手续费" width="180" align="left">
+            <el-table-column :label="$t('public.fee')" width="180" align="left">
               <template slot-scope="scope">{{scope.row.fee}}</template>
             </el-table-column>
           </el-table>
@@ -78,23 +78,23 @@
         <!--<el-tab-pane label="合约代码" name="second">
           <CodeInfo></CodeInfo>
         </el-tab-pane>-->
-        <el-tab-pane label="合约方法" name="third">
+        <el-tab-pane :label="$t('contractInfo.contractInfo6')" name="third">
           <el-table :data="modeList" stripe border style="width: 100%" class="mzt_20">
             <el-table-column label="" width="30">
             </el-table-column>
-            <el-table-column prop="name" label="Method" width="280" align="left">
+            <el-table-column prop="name" :label="$t('contractInfo.contractInfo6')" width="280" align="left">
             </el-table-column>
-            <el-table-column prop="height" label="Parameter" min-width="280" align="left">
+            <el-table-column prop="height" :label="$t('contractInfo.contractInfo7')" min-width="280" align="left">
               <template slot-scope="scope">
                 <span v-for="item in scope.row.params" :key="item.name">{{item.name}}-</span>
               </template>
             </el-table-column>
-            <el-table-column prop="returnType" label="Return Type" width="280" align="left">
+            <el-table-column prop="returnType" :label="$t('contractInfo.contractInfo8')" width="280" align="left">
             </el-table-column>
           </el-table>
 
         </el-tab-pane>
-        <el-tab-pane label="调用合约" name="fourth" class="bg-white">
+        <el-tab-pane :label="$t('type.16')" name="fourth" class="bg-white">
           <div class="w630" style="padding-bottom: 50px">
             <Call :modelList="modelData" :contractAddress="contractAddress"></Call>
           </div>
@@ -121,7 +121,7 @@
   export default {
     data() {
       return {
-        activeName: 'fourth',
+        activeName: this.$route.query.activeName ? this.$route.query.activeName : 'first',
         addressInfo: {},//账户信息
         contractAddress: this.$route.query.contractAddress,//合约地址
         contractInfo: {},//合约详情
@@ -202,11 +202,11 @@
               this.modeList = response.result.methods;
               this.isCancel = this.addressInfo.address === this.contractInfo.creater
             } else {
-              this.$message({message: '获取合约详情失败:' + response.error, type: 'error', duration: 1000});
+              this.$message({message: this.$t('contractInfo.contractInfo9') + response.error, type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
-            this.$message({message: '获取合约详情异常:' + error, type: 'error', duration: 1000});
+            this.$message({message: this.$t('contractInfo.contractInfo10') + error, type: 'error', duration: 1000});
           });
       },
 
@@ -227,11 +227,11 @@
               this.contractTxData = response.result.list;
               this.pageTotal = response.result.totalCount;
             } else {
-              this.$message({message: '获取合约交易列表失败:' + response.error, type: 'error', duration: 1000});
+              this.$message({message: this.$t('contractInfo.contractInfo11') + response.error, type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
-            this.$message({message: '获取合约交易列表异常:' + error, type: 'error', duration: 1000});
+            this.$message({message: this.$t('contractInfo.contractInfo12') + error, type: 'error', duration: 1000});
           });
       },
 
@@ -315,7 +315,7 @@
 
           let deleteValidateResult = await this.validateContractDelete(contractDelete.sender, contractDelete.contractAddress);
           if (!deleteValidateResult.success) {
-            this.$message({message: "验证删除合约失败：" +deleteValidateResult.msg, type: 'error', duration: 3000});
+            this.$message({message: this.$t('contractInfo.contractInfo13') +deleteValidateResult.msg, type: 'error', duration: 3000});
             return;
           }
           let remark = '';
@@ -344,6 +344,7 @@
       /**
        * 连接跳转
        * @param name
+       * @param type
        */
       toUrl(name, type = 0) {
         //console.log(name)

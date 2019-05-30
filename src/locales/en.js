@@ -394,6 +394,13 @@ const en = {
     "4": "Deposit"
   },
 
+  "assetsType":{
+    "undefined": "",
+    "0": "All Asset",
+    "1": "Ordinary Asset",
+    "2": "Reference Asset",
+  },
+
   "history": {
     "0": "All history",
     "1": "Int history",
@@ -628,6 +635,60 @@ const en = {
     "setAlias5":"Please enter an alias (only lowercase letters, numbers, underscores are allowed (underscores cannot be at both ends)",
   },
 
+  "contract":{
+    "contract1":"My contract",
+    "contract2":"Contract address",
+    "contract3":"Label",
+    "contract4":"Call",
+    "contract5":"Find contract",
+    "contract6":"Please enter the contract address.",
+    "contract7":"Search",
+    "contract8":"All contracts",
+    "contract9":"Contracts",
+    "contract10":"Deployment contract",
+    "contract11":"Failed to get contract list:",
+    "contract12":"Get contract list exception:",
+    "contract13":"Search contract failed:",
+    "contract14":"Search for contract exceptions:",
+    "contract15":"Please enter the correct contract address",
+    "contract":"",
+  },
+
+  "call":{
+    "call1":"Please choose a method",
+    "call2":"can not be empty",
+    "call3":"Advanced options",
+    "call4":"Gas Error Predicting Call Contract Transaction",
+    "call5":"Predicting gas anomalies in invoking contract transactions",
+    "call6":"Verify the invocation contract transaction error",
+    "call7":"Verify call contract transaction exception",
+    "call8":"Unchained method call failed",
+    "call9":"Unchained method call exception",
+    "call":"",
+  },
+
+  "deploy":{
+    "deploy1":"HEX Code",
+    "deploy2":"Jar Package",
+    "deploy3":"Upload jar package",
+    "deploy4":"File name",
+    "deploy5":"Test",
+    "deploy6":"Deploy",
+    "deploy7":"Enter the hex code",
+    "deploy8":"Please input gas",
+    "deploy9":"Please input price",
+    "deploy10":"Getting constructor errors",
+    "deploy11":"Verify the creation contract transaction error",
+    "deploy12":"Verify Creating Contract Transaction Exceptions",
+    "deploy13":"Gas Error in Estimating the Creation of Contract Transactions",
+    "deploy14":"Estimating Gas Exceptions for Creating Contract Transactions",
+    "deploy15":"Assemble txData errors that create contract transactions",
+    "deploy16":"Test pass",
+    "deploy17":"Error uploading jar package",
+    "deploy18":"Upload jar package exception",
+    "deploy":"deploy",
+  },
+
   "codeInfo": {
     "codeInfo0": "Contract source code is certified",
     "codeInfo1": "Compiler",
@@ -643,6 +704,23 @@ const en = {
     "codeInfo11":"Request timeout please retry",
     "codeInfo12":"Sorry, I didn't find anything",
     "codeInfo13":"3.Zip packages should not contain non-Java files, otherwise upload authentication will fail",
+  },
+
+  "contractInfo":{
+    "contractInfo1":"Cancel Contract",
+    "contractInfo2":"Number Trades",
+    "contractInfo3":"Creator",
+    "contractInfo4":"Token",
+    "contractInfo5":"Transaction Type",
+    "contractInfo6":"Contract method",
+    "contractInfo7":"Parameter",
+    "contractInfo8":"Return type",
+    "contractInfo9":"Failure to obtain contract details:",
+    "contractInfo10":"Unusual contract details:",
+    "contractInfo11":"Failed to obtain contract transaction list:",
+    "contractInfo12":"Get contract transaction list exception:",
+    "contractInfo13":"Failed to verify deletion contract:",
+    "contractInfo14":"contractInfo",
   },
 
   "bottom": {
