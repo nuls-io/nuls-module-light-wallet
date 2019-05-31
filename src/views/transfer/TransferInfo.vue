@@ -13,15 +13,21 @@
       <ul>
         <li>{{$t('public.time')}} <label>{{txInfo.createTime}}</label></li>
         <li>{{$t('public.amount')}} <label>{{txInfo.value}}<span class="fCN">NULS</span></label></li>
-        <li>{{$t('public.height')}} <label class="click"><u class="td" @click="toUrl('height',txInfo.height)">{{txInfo.height}}</u></label>
+        <li>
+          {{$t('public.height')}}
+          <label class="click"><u class="td" @click="toUrl('height',txInfo.height)">{{txInfo.height}}</u></label>
         </li>
         <li>{{$t('public.fee')}} <label>{{txInfo.fee}}<span class="fCN">NULS</span></label></li>
         <li>{{$t('public.type')}} <label>{{$t('type.'+txInfo.type)}}</label></li>
-        <li>{{$t('public.status')}} <label>{{txInfo.status === 0 ?
-          $t('transferStatus.0'):$t('transferStatus.1')}}</label></li>
+        <li>
+          {{$t('public.status')}}
+          <label>{{txInfo.status === 0 ? $t('transferStatus.0'):$t('transferStatus.1')}}</label>
+        </li>
         <li v-if="txInfo.type ===1">
           {{$t('public.nodeID')}}
-          <label><u class="click td uppercase" @click="toUrl('hash',txInfo.txData.txHash)">{{txInfo.txData.agentId}}</u></label>
+          <label>
+            <u class="click td uppercase" @click="toUrl('hash',txInfo.txData.txHash)">{{txInfo.txData.agentId}}</u>
+          </label>
         </li>
         <li v-if="txInfo.type ===1">
           {{$t('public.roundInfo')}}
@@ -38,53 +44,119 @@
         </li>
         <li v-if="txInfo.type ===4 || txInfo.type ===5 || txInfo.type ===6 || txInfo.type ===9">
           {{$t('public.nodeID')}}
-          <label><u class="click td uppercase" @click="toUrl('hash',txInfo.txData.txHash)">{{txInfo.txData.agentId}}</u></label>
+          <label>
+            <u class="click td uppercase" @click="toUrl('hash',txInfo.txData.txHash)">{{txInfo.txData.agentId}}</u>
+          </label>
         </li>
         <li v-if="txInfo.type ===4 || txInfo.type ===9">
           {{$t('public.packingAddress')}}
-          <label><u class="click td" @click="toUrl('address',txInfo.txData.packingAddress)">{{txInfo.txData.packingAddress}}</u></label>
+          <label>
+            <u class="click td" @click="toUrl('address',txInfo.txData.packingAddress)">
+              {{txInfo.txData.packingAddress}}
+            </u>
+          </label>
         </li>
-        <li v-if="txInfo.type ===4 || txInfo.type ===9"> {{$t('public.commission')}} <label>{{txInfo.txData.commissionRate}}%</label>
+        <li v-if="txInfo.type ===4 || txInfo.type ===9">
+          {{$t('public.commission')}}
+          <label>{{txInfo.txData.commissionRate}}%</label>
         </li>
         <li v-if="txInfo.type ===4 || txInfo.type ===9">
           {{$t('public.rewardAddress')}}
-          <label><u class="click td" @click="toUrl('address',txInfo.txData.rewardAddress)">{{txInfo.txData.rewardAddress}}</u></label>
+          <label>
+            <u class="click td" @click="toUrl('address',txInfo.txData.rewardAddress)">
+              {{txInfo.txData.rewardAddress}}
+            </u>
+          </label>
         </li>
-        <li v-if="txInfo.type ===9">{{$t('public.deposit')}} <label>{{txInfo.txData.deposit/100000000}}<span
-                class="fCN">NULS</span></label>
+        <li v-if="txInfo.type ===9">
+          {{$t('public.deposit')}}
+          <label>{{txInfo.txData.deposit/100000000}}<span class="fCN">NULS</span></label>
         </li>
         <li v-if="txInfo.type ===9">{{$t('public.credit')}} <label>{{txInfo.txData.creditValue}}</label></li>
+
+        <li v-if="txInfo.type ===15 || txInfo.type ===16 || txInfo.type ===17">{{$t('contract.contract2')}}
+          <label>
+            <u class="click td" @click="toUrl('contractsInfo',txInfo.txData.resultInfo.contractAddress)">
+              {{txInfo.txData.resultInfo.contractAddress}}
+            </u>
+          </label>
+        </li>
+        <li v-if="txInfo.type ===15 || txInfo.type ===16">Price<label>{{txInfo.txData.resultInfo.price}}<span
+                class="fCN">NULS</span> / GAS</label></li>
+        <li v-if="txInfo.type ===15 || txInfo.type ===16">Gas Used<label>{{txInfo.txData.resultInfo.gasUsed}}</label>
+        </li>
+        <li v-if="txInfo.type ===15 || txInfo.type ===16">Gas Limit<label>{{txInfo.txData.resultInfo.gasLimit}}
+          GAS</label></li>
+
+        <li v-if="txInfo.type ===16">方法<label>{{txInfo.txData.methodName}}</label></li>
+        <li v-if="txInfo.type ===16">执行结果
+          <label>{{txInfo.txData.resultInfo.success ? '成功':'失败'}}
+            <span class="click" @click="dataDialog=true">View</span>
+          </label>
+        </li>
         <li v-if="txInfo.type !==3">
           {{$t('public.remarks')}}
           <label class="remark overflow tr" :title="txInfo.remark">{{txInfo.remark}}</label>
         </li>
-        <li v-if="txInfo.type !==4 && txInfo.type !==6 && txInfo.type !==9"></li>
+        <li v-if="txInfo.type !==4 && txInfo.type !==6 && txInfo.type !==9 && txInfo.type !==17"></li>
         <p class="cb"></p>
       </ul>
     </div>
     <div class="cb"></div>
 
-    <div class="card w1200">
-      <div class="card-info left fl">
-        <h5 class="card-title font18">Input</h5>
-        <ul>
-          <li v-for="itme of inputData" :key="itme.address">
-            <font class="click td" @click="toUrl('address',itme.address)">{{itme.address}}</font>
-            <label>{{itme.amount}}<span class="fCN">NULS</span></label>
-          </li>
-        </ul>
-      </div>
-      <div class="card-info right fr">
-        <h5 class="card-title font18">Output</h5>
-        <ul>
-          <li v-for="itme of outputData" :key="itme.address">
-            <font class="click td" @click="toUrl('address',itme.address)">{{itme.address}}</font>
-            <label>{{itme.amount}}<span class="fCN">NULS</span></label>
-          </li>
-        </ul>
+    <div class="card_long mzt_20 w1200 inorouput" v-if="tokenTransfersData">
+      <h5 class="card-title font18">代币转账</h5>
+      <div class="inorou-info bg-white">
+        <div class="card-info left fl">
+          <ul>
+            <li v-for="item of tokenTransfersData" :key="item.address">
+              <font class="click td" @click="toUrl('address',item.fromAddress)">{{item.fromAddress}}</font>
+              <label>{{item.value}}<span class="fCN">{{item.name}}</span></label>
+            </li>
+          </ul>
+        </div>
+        <div class="card-info right fr">
+          <ul>
+            <li v-for="item of tokenTransfersData" :key="item.address">
+              <font class="click td" @click="toUrl('address',item.toAddress)">{{item.toAddress}}</font>
+              <label>{{item.value}}<span class="fCN">{{item.name}}</span></label>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
 
+    <div class="cb"></div>
+
+    <div class="card_long mzt_20 w1200 inorouput">
+      <h5 class="card-title font18">Input & Output</h5>
+      <div class="inorou-info bg-white">
+        <div class="card-info left fl">
+          <ul>
+            <li v-for="itme of inputData" :key="itme.address">
+              <font class="click td" @click="toUrl('address',itme.address)">{{itme.address}}</font>
+              <label>{{itme.amount}}<span class="fCN">NULS</span></label>
+            </li>
+            <li v-if="inputData.length ===0"></li>
+          </ul>
+        </div>
+        <div class="card-info right fr">
+          <ul>
+            <li v-for="itme of outputData" :key="itme.address">
+              <font class="click td" @click="toUrl('address',itme.address)">{{itme.address}}</font>
+              <label>{{itme.amount}}<span class="fCN">NULS</span></label>
+            </li>
+            <li v-if="outputData.length ===0"></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <el-dialog title="Data" width="40%" :visible.sync="dataDialog" class="userDiolog">
+      <div class="bg-white userInfo" v-if="txInfo.type ===15 || txInfo.type ===16 || txInfo.type ===17">
+        <pre>{{txInfo.txData.resultInfo}}</pre>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -103,6 +175,8 @@
         txInfo: [],//交易信息
         inputData: [],//输入
         outputData: [],//输出
+        tokenTransfersData:[],//代币转账data
+        dataDialog: false,//data 弹框
       };
     },
     created() {
@@ -126,10 +200,9 @@
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
-              response.result.createTime = moment(getLocalTime(response.result.createTime)).format('YYYY-MM-DD HH:mm:ss');
+              response.result.createTime = moment(getLocalTime(response.result.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
               response.result.fee = timesDecimals(response.result.fee);
               response.result.value = timesDecimals(response.result.value);
-
               //输入
               if (response.result.coinFroms) {
                 for (let itme of response.result.coinFroms) {
@@ -137,13 +210,16 @@
                 }
                 this.inputData = response.result.coinFroms
               }
-
               //输出
               if (response.result.coinTos) {
                 for (let itme of response.result.coinTos) {
                   itme.amount = timesDecimals(itme.amount);
                 }
                 this.outputData = response.result.coinTos
+              }
+
+              if(response.result.type ===16 && response.result.txData.methodName ==='transfer'){
+                this.tokenTransfersData = response.result.txData.resultInfo.tokenTransfers
               }
 
               this.txInfo = response.result;
@@ -170,6 +246,8 @@
           newUrl = explorerUrl + 'consensus/info?hash=' + parameter
         } else if (name === 'rotation') {
           newUrl = explorerUrl + 'rotation/info?rotation=' + parameter
+        } else if (name === 'contractsInfo') {
+          newUrl = explorerUrl + 'contracts/info?contractAddress=' + parameter
         }
         //console.log(newUrl);
         shell.openExternal(newUrl);
@@ -209,6 +287,35 @@
           }
         }
       }
+    }
+
+    .inorouput {
+      border-bottom: 0;
+      border-right: 0;
+      border-left: 0;
+      .card-title {
+        border-bottom: 0;
+        border-right: 1px solid #dfe4ef;
+        border-left: 1px solid #dfe4ef;
+      }
+      .inorou-info {
+        border: 1px solid #dfe4ef;
+        min-height: 120px;
+        .card-info {
+          width: 50%;
+          ul {
+            li {
+              width: 100%;
+              border: 0;
+              font {
+              }
+              label {
+              }
+            }
+          }
+        }
+      }
+
     }
 
   }
