@@ -664,6 +664,7 @@ const en = {
     "call7":"Verify call contract transaction exception",
     "call8":"Unchained method call failed",
     "call9":"Unchained method call exception",
+    "call10":"Gas too small may cause contract transactions to fail",
     "call":"",
   },
 

@@ -10,8 +10,8 @@
           <p class="fr">{{$t('bottom.nodeHeight')}}: {{mainHeightInfo.height}}/{{heightInfo.height}}</p>
         </div>
         <div class="right fr">
-          <label class="clicks">{{$t('bottom.agreement')}}</label>
-          <label class="clicks">{{$t('bottom.policy')}}</label>
+          <!--<label class="clicks">{{$t('bottom.agreement')}}</label>
+          <label class="clicks">{{$t('bottom.policy')}}</label>-->
           <!--<label>Alpha 2.0.1</label>-->
           <label class="click" @click="checkUpdate">Alpha 2.0.1</label>
         </div>

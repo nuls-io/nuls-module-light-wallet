@@ -15,6 +15,7 @@
           <template slot-scope="scope">
             <span v-if="scope.row.delay === '-1'">{{ $t('nodeService.nodeService17') }}</span>
             <span v-else-if="scope.row.delay === '-2'">{{ $t('nodeService.nodeService18') }}</span>
+            <span v-else-if="scope.row.delay === '-3'"><i class="el-icon-loading"></i></span>
             <span v-else>{{ scope.row.delay }}</span>
           </template>
         </el-table-column>
@@ -104,8 +105,7 @@
       };
       return {
         loading: false,//切换时加载动画
-        //节点列表
-        nodeServiceData: [],
+        nodeServiceData: [],//节点列表
         nodeServiceLoading: false,//节点列表加载动画
         nodeServiceDialog: false,//服务地址弹框
         nodeServiceDialogLoading: false,//服务地址弹框加载动画
@@ -130,7 +130,7 @@
     },
 
     created() {
-     /* if (localStorage.hasOwnProperty('customUrlsData')) {*/
+      /* if (localStorage.hasOwnProperty('customUrlsData')) {*/
       if (localStorage.hasOwnProperty('urlsData')) {
         this.nodeServiceData = Object.assign(defaultData, JSON.parse(localStorage.getItem('urlsData')));
       } else {
@@ -146,7 +146,7 @@
        * 连接或断开
        **/
       editState(index) {
-        if (this.nodeServiceData[index].delay === "-1" || this.nodeServiceData[index].delay === "-2") {
+        if (this.nodeServiceData[index].delay === "-1" || this.nodeServiceData[index].delay === "-2" || this.nodeServiceData[index].delay === "-3") {
           this.$message({message: this.$t('nodeService.nodeService16'), type: 'error', duration: 1000});
         } else {
           if (this.nodeServiceData[index].state === 0) {
@@ -168,6 +168,18 @@
        * 获取延迟毫秒
        **/
       async getDelay() {
+        let newData = [];
+        for (let item of this.nodeServiceData) {
+          item.delay = '-3';
+          newData.push(item);
+        }
+        this.nodeServiceData = newData;
+        this.nodeServiceLoading = false;
+        localStorage.setItem("urlsData", JSON.stringify(this.nodeServiceData));
+        this.getDelays();
+      },
+
+      async getDelays() {
         let newData = [];
         for (let item of this.nodeServiceData) {
           if (item.state === 1) {
@@ -192,7 +204,6 @@
               item.state = 0;
               console.log(error);
             });
-
           newData.push(item);
         }
         this.nodeServiceData = newData;

@@ -27,22 +27,20 @@
           <el-input v-model="transferForm.amount" @change="changeParameter">
           </el-input>
         </el-form-item>
-
         <div class="div-senior" v-show="transferForm.type !== 'NULS'">
-          <el-form-item label="高级选项" class="senior">
+          <el-form-item :label="$t('call.call3')" class="senior">
             <el-switch v-model="transferForm.senior"></el-switch>
           </el-form-item>
           <div class="senior-div" v-if="transferForm.senior">
             <el-form-item label="Gas Limit" prop="gas">
-              <el-input v-model="transferForm.gas"></el-input>
+              <el-input v-model="transferForm.gas" @change="changeGas"></el-input>
+              <div class="font12 yellow" v-show="gasTips">{{$t('call.call10')}}</div>
             </el-form-item>
             <el-form-item label="Price" prop="price">
               <el-input v-model="transferForm.price"></el-input>
             </el-form-item>
           </div>
         </div>
-
-
         <el-form-item :label="$t('transfer.transfer4')">
           <el-input type="textarea" v-model="transferForm.remarks" maxlength="100" show-word-limit>
           </el-input>
@@ -157,6 +155,9 @@
         addressInfo: '', //默认账户信息
         balanceInfo: '',//账户余额信息
         changeAssets: '',//选择的资产信息
+        gasNumber: 0,//消耗的gas
+        oldGasNumber: 0,//默认的gas
+        gasTips:false,//gas 太小提示信息
         //转账数据
         transferForm: {
           fromAddress: '',
@@ -164,7 +165,7 @@
           type: this.$route.query.accountType ? this.$route.query.accountType : 'NULS',
           amount: '',
           senior: false,
-          gas: 0,
+          gas: this.gasNumber,
           price: sdk.CONTRACT_MINIMUM_PRICE,
           remarks: '',
         },
@@ -183,10 +184,8 @@
             {validator: validatePrice, trigger: 'blur'}
           ],
         },
-        //手续费
-        fee: 0.001,
-        //转账确认弹框
-        transferVisible: false,
+        fee: 0.001, //手续费
+        transferVisible: false,//转账确认弹框
       };
     },
     created() {
@@ -203,6 +202,13 @@
       addressInfo(val, old) {
         if (val.address !== old.address && old.address) {
           this.transferForm.fromAddress = this.addressInfo.address
+        }
+      },
+      gasNumber(val, old) {
+        if(old && this.oldGasNumber > val){
+          this.gasTips = true
+        }else{
+          this.gasTips = false
         }
       }
     },
@@ -303,7 +309,7 @@
       async getNulsBalance(assetsId = 1, address) {
         await this.$post('/', 'getAccountBalance', [assetsId, address])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               this.balanceInfo = {'balance': response.result.balance, 'nonce': response.result.nonce};
               this.$refs.password.showPassword(true);
@@ -412,6 +418,8 @@
         return await this.$post('/', 'imputedContractCallGas', [sender, value, contractAddress, methodName, methodDesc, args])
           .then((response) => {
             if (response.hasOwnProperty("result")) {
+              this.gasNumber = response.result.gasLimit;
+              this.oldGasNumber = response.result.gasLimit;
               this.transferForm.gas = response.result.gasLimit;
               let contractConstructorArgsTypes = this.getContractMethodArgsTypes(contractAddress, methodName);
               let newArgs = utils.twoDimensionalArray(args, contractConstructorArgsTypes);
@@ -438,8 +446,9 @@
 
       /**
        * 获取合约指定函数的参数类型
-       * @param contractAddress, methodName
-       * @returns {Promise<AxiosResponse<any>>}
+       * @param contractAddress
+       * @param methodName
+       * @returns
        */
       async getContractMethodArgsTypes(contractAddress, methodName) {
         return await this.$post('/', 'getContractMethodArgsTypes', [contractAddress, methodName])
@@ -453,6 +462,13 @@
           .catch((error) => {
             return {success: false, data: error};
           });
+      },
+
+      /**
+       * gas 值改变
+       **/
+      changeGas(e){
+        this.gasNumber = Number(e);
       },
 
       /**
