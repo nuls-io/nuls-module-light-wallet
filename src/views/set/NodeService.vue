@@ -7,9 +7,15 @@
         <i class="el-icon-plus click" @click="addNodeService"></i>
       </div>
       <el-table :data="nodeServiceData" stripe border>
-        <el-table-column prop="name" :label="$t('nodeService.nodeService2')" align="center">
+        <el-table-column prop="chainName" label="链名" align="center">
         </el-table-column>
-        <el-table-column prop="urls" :label="$t('nodeService.nodeService3')" align="center">
+        <el-table-column :label="$t('nodeService.nodeService2')" align="center">
+          <template slot-scope="scope">
+            <span v-if="scope.row.name === 'Official'">{{ $t('nodeService.official') }}</span>
+            <span v-else>{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="urls" :label="$t('nodeService.nodeService3')" align="center" min-width="180">
         </el-table-column>
         <el-table-column :label="$t('nodeService.nodeService4')" align="center">
           <template slot-scope="scope">
@@ -82,7 +88,7 @@
 
 <script>
   import axios from 'axios'
-  import {defaultData} from '@/config'
+  import {defaultData, API_CHAIN_ID} from '@/config'
 
   export default {
     data() {
@@ -139,6 +145,7 @@
     },
     mounted() {
       this.getDelay();
+      //this.getChains();
     },
     methods: {
 
@@ -146,7 +153,7 @@
        * 连接或断开
        **/
       editState(index) {
-        if (this.nodeServiceData[index].delay === "-1" || this.nodeServiceData[index].delay === "-2" || this.nodeServiceData[index].delay === "-3") {
+        if (this.nodeServiceData[index].delay === "-2" || this.nodeServiceData[index].delay === "-3") {
           this.$message({message: this.$t('nodeService.nodeService16'), type: 'error', duration: 1000});
         } else {
           if (this.nodeServiceData[index].state === 0) {
@@ -187,13 +194,15 @@
           }
           let startTime = (new Date()).valueOf();
           let endTime = 0;
-          const params = {jsonrpc: "2.0", method: "getBestBlockHeader", "params": [2], "id": 5898};
+          const params = {jsonrpc: "2.0", method: "getChainInfo", "params": [], "id": 5898};
           await axios.post(item.urls, params)
             .then(function (response) {
               //console.log(response);
               if (response.data.hasOwnProperty("result")) {
                 endTime = (new Date()).valueOf();
                 item.delay = endTime - startTime + "ms";
+                item.chainId = response.data.result.chainId;
+                item.chainName = response.data.result.chainName;
               } else {
                 item.delay = "-1";
                 item.state = 0;
@@ -212,6 +221,26 @@
       },
 
       /**
+       * 获取链ID
+       *@param url
+       */
+      async getChainInfo(url) {
+        const params = {jsonrpc: "2.0", method: "getChainInfo", "params": [], "id": 5898};
+        await axios.post(url, params)
+          .then((response) => {
+            return response;
+            /*console.log(response);
+            if (response.data.hasOwnProperty("result")) {
+              console.log(response.data.result);
+              return response.data.result;
+            }*/
+          })
+          .catch((error) => {
+            console.log("getChainInfo:" + error)
+          })
+      },
+
+      /**
        * 测试连接
        * @param formName
        **/
@@ -220,7 +249,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             that.nodeServiceDialogLoading = true;
-            const params = {jsonrpc: "2.0", method: "getBestBlockHeader", "params": [2], "id": 5898};
+            const params = {jsonrpc: "2.0", method: "getBestBlockHeader", "params": [API_CHAIN_ID], "id": 5898};
             axios.post(this.nodeServiceForm.urls, params)
               .then(function (response) {
                 //console.log(response.data);

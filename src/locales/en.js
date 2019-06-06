@@ -534,6 +534,7 @@ const en = {
     "nodeService20":"Does Node Service Continue",
     "nodeService21":"Tips",
     "nodeService22":"Remove success",
+    "official": "Official",
   },
 
   "address":{

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import * as config from '../config.js'
+
 axios.defaults.timeout = config.API_URL;
 axios.defaults.baseURL = config.API_URL;
 setInterval(() => {
@@ -15,11 +16,11 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
  * @param data
  * @returns {Promise}
  */
-export function post (url,methodName,data = []) {
+export function post(url, methodName, data = []) {
   return new Promise((resolve, reject) => {
-    data.unshift(config.API_CHAIN_ID);
-    //console.log(data);
-    const params = {"jsonrpc":"2.0", "method":methodName, "params":data, "id":5898};
+    let chainID = localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')).chainId : 2;
+    data.unshift(chainID);
+    const params = {"jsonrpc": "2.0", "method": methodName, "params": data, "id": 5898};
     axios.post(url, params)
       .then(response => {
         resolve(response.data)

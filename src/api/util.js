@@ -69,14 +69,42 @@ export function timesDecimals(nu, decimals = 8) {
 }
 
 /**
- * 右移八位
- * Execute the float addition
- * @param arg
- * @returns {BigNumber}
+ * 获取链ID
+ * @returns {number}
  */
-export function RightShiftEight(arg) {
-  let right8 = new BigNumber(100000000);
-  return right8.times(arg);
+export function chainID() {
+  return localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')).chainId : 2
+}
+
+/**
+ * 获取chainId+number
+ * @returns {string}
+ */
+export function chainIdNumber() {
+  return 'chainId' + chainID();
+}
+
+/**
+ * 获取地址列表或选择地址
+ * @param type 0:地址列表，1:选中地址
+ * @returns {*}
+ */
+export function addressInfo(type) {
+  let chainNumber = 'chainId' + chainID();
+  let addressList = localStorage.hasOwnProperty(chainNumber) ? JSON.parse(localStorage.getItem(chainNumber)) : [];
+  if (addressList) {
+    if (type === 0) {
+      return addressList
+    } else {
+      for (let item  of addressList) {
+        if (item.selection) {
+          return item
+        }
+      }
+    }
+  } else {
+    return addressList
+  }
 }
 
 /**
@@ -166,8 +194,8 @@ export function getArgs(parameterList) {
     }
   }
   if (allParameter) {
-    return {allParameter:allParameter,args:newArgs};
-  }else {
-    return {allParameter:allParameter,args:newArgs};
+    return {allParameter: allParameter, args: newArgs};
+  } else {
+    return {allParameter: allParameter, args: newArgs};
   }
 }

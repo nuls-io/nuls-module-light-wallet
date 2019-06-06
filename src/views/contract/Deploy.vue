@@ -380,6 +380,7 @@
             reader.onload = (() => {
               _this.$post('/', 'uploadContractJar', [reader.result])
                 .then((response) => {
+                  console.log(response);
                   if (response.hasOwnProperty("result")) {
                     _this.deployForm.hex = response.result.code;
                     _this.getParameter();

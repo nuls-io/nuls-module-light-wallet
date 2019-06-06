@@ -5,15 +5,15 @@
         <div class="left fl">
           <p class="fl">
             {{$t('bottom.serviceNode')}}:
-            <u class="click" @click="toUrl('nodeService')">{{serviceUrls}}</u>
+            <u class="click" @click="toUrl('nodeService')">{{serviceUrls.urls}}</u>
           </p>
-          <p class="fr">{{$t('bottom.nodeHeight')}}: {{mainHeightInfo.height}}/{{heightInfo.height}}</p>
+          <p class="fr">{{$t('bottom.nodeHeight')}}: {{heightInfo.networkHeight}}/{{heightInfo.localHeight}}</p>
         </div>
         <div class="right fr">
           <!--<label class="clicks">{{$t('bottom.agreement')}}</label>
           <label class="clicks">{{$t('bottom.policy')}}</label>-->
           <!--<label>Alpha 2.0.1</label>-->
-          <label class="click" @click="checkUpdate">Alpha 2.0.1</label>
+          <label class="click" @click="checkUpdate">Alpha 2.0.4</label>
         </div>
       </div>
     </div>
@@ -39,39 +39,35 @@
 
 <script>
   import axios from 'axios'
-  import {IS_DEV} from '@/config.js'
+  import {IS_DEV,API_CHAIN_ID,defaultUrl} from '@/config.js'
 
   export default {
     name: "bottom-bar",
     data() {
       return {
-        mainHeightInfo: [],//最新主网高度
-        heightInfo: [],//最新高度
-        serviceUrls: localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'https://alpha.wallet.nuls.io/api',
+        heightInfo: [],//高度信息
+        serviceUrls: localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")) : defaultUrl,
         updateDialogVisible: false,//更新弹框
         tips: {},//提示信息
         downloadPercent: 0,//下载进度
       }
     },
     created() {
-      this.getBestBlockHeader();
-      this.getMainHeader();
-      this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/';
+      this.getHeaderInfo();
       setInterval(() => {
-        this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/';
+        this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")) : defaultUrl;
       }, 500);
     },
     mounted() {
       setInterval(() => {
-        this.getBestBlockHeader();
-        this.getMainHeader();
+        this.getHeaderInfo();
       }, 10000);
     },
     watch: {
       serviceUrls(val, old) {
         if (val) {
           if (val !== old && old) {
-            this.getBestBlockHeader();
+            //this.getBestBlockHeader();
           }
         }
       }
@@ -79,41 +75,22 @@
     methods: {
 
       /**
-       * 获取主网最新高度（浏览器高度）
+       * 获取主网最新高度和本地高度
        */
-      getMainHeader() {
-        const url = IS_DEV ? 'http://apitn1.nulscan.io/' : 'http://apitn1.nulscan.io/';
-        const params = {"jsonrpc": "2.0", "method": "getBestBlockHeader", "params": [2], "id": 5898};
+      getHeaderInfo() {
+        const url = 'http://192.168.1.192:18003/';
+        const params = {"jsonrpc": "2.0", "method": "getInfo", "params": [API_CHAIN_ID], "id": 5898};
         axios.post(url, params)
           .then((response) => {
             //console.log(response);
             if (response.data.hasOwnProperty("result")) {
-              this.mainHeightInfo = response.data.result;
+              this.heightInfo = response.data.result;
             } else {
-              this.mainHeightInfo = {height: 0};
+              this.heightInfo = {localHeight: 0,networkHeight:0};
             }
           })
           .catch((error) => {
-            this.mainHeightInfo = {height: 0};
-            console.log("getBestBlockHeader:" + error)
-          })
-      },
-
-      /**
-       * 获取最新高度
-       */
-      getBestBlockHeader() {
-        this.$post('/', 'getBestBlockHeader', [])
-          .then((response) => {
-            //console.log(response);
-            if (response.hasOwnProperty("result")) {
-              this.heightInfo = response.result;
-            } else {
-              this.heightInfo = {height: 0};
-            }
-          })
-          .catch((error) => {
-            this.heightInfo = {height: 0};
+            this.heightInfo = {localHeight: 0,networkHeight:0};
             console.log("getBestBlockHeader:" + error)
           })
       },

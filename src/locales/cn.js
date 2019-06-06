@@ -536,6 +536,7 @@ const cn = {
     "nodeService20": "节点服务是否继续?",
     "nodeService21": "提示",
     "nodeService22": "移除成功",
+    "official": "官方",
   },
 
   "address": {

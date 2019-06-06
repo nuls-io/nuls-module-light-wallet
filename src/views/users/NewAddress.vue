@@ -112,7 +112,7 @@
   import nuls from 'nuls-sdk-js'
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
-  import {copys} from '@/api/util'
+  import {copys, chainID, chainIdNumber, addressInfo} from '@/api/util'
 
   export default {
     data() {
@@ -142,11 +142,11 @@
         isFirst: true,//第一步
         isBackups: false,//备份账户
         keyDialog: false, //key弹框
-        userDialog:false,//用户协议弹框
+        userDialog: false,//用户协议弹框
         ifAddressInfo: sessionStorage.hasOwnProperty(sessionStorage.key(0)),//判断是否账户地址
         passwordForm: {
-          pass: '',
-          checkPass: '',
+          pass: 'nuls123456',
+          checkPass: 'nuls123456',
         },
         passwordRules: {
           pass: [
@@ -183,8 +183,8 @@
       submitPasswordForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.newAddressInfo = nuls.newAddress(2, this.passwordForm.pass);
-            let addressInfo = {
+            this.newAddressInfo = nuls.newAddress(chainID(), this.passwordForm.pass);
+            let newAddressInfo = {
               address: this.newAddressInfo.address,
               aesPri: this.newAddressInfo.aesPri,
               pub: this.newAddressInfo.pub,
@@ -192,7 +192,17 @@
               remark: '',
               selection: false,
             };
-            localStorage.setItem(this.newAddressInfo.address, JSON.stringify(addressInfo));
+            let addressList = [];
+            let newAddressList = [];
+            newAddressList.push(newAddressInfo);
+            let newArr = addressInfo(0);
+            if (newArr.length !== 0) {
+              addressList = [...newAddressList, ...newArr];
+            } else {
+              newAddressInfo.selection = true;
+              addressList[0] = newAddressInfo
+            }
+            localStorage.setItem(chainIdNumber(), JSON.stringify(addressList));
             this.isFirst = false;
           } else {
             return false;
@@ -223,7 +233,7 @@
       passSubmit(password) {
         let that = this;
         const pri = nuls.decrypteOfAES(this.newAddressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(2, pri, password);
+        const newAddressInfo = nuls.importByKey(JSON.parse(localStorage.getItem('urls')).chainId, pri, password);
         if (newAddressInfo.address === this.newAddressInfo.address) {
           if (this.backType === 0) {
             const {dialog} = require('electron').remote;
@@ -273,28 +283,13 @@
        * 获取账户列表
        */
       getAddressList() {
-        let addressList = [];
-        for (let i = localStorage.length - 1; i >= 0; i--) {
-          if (localStorage.getItem(localStorage.key(i)) !== 'SILENT' && localStorage.key(i).length > 10) {
-            addressList.push(JSON.parse(localStorage.getItem(localStorage.key(i))))
-          }
-        }
+        let chainId = Number(JSON.parse(localStorage.getItem('urls')).chainId);
+        let chainNumber = 'chainId' + chainId;
         //循环账户智能有一个是选中的账户
-        let countSelection = 0;
-        for (let item  of addressList) {
+        for (let item  of JSON.parse(localStorage.getItem(chainNumber))) {
           if (item.selection) {
-            countSelection++;
             sessionStorage.setItem(item.address, JSON.stringify(item));
-            if (countSelection > 1) {
-              item.selection = false;
-              localStorage.setItem(item.address, JSON.stringify(item))
-            }
           }
-        }
-        //一个选中的都没就默认第一个
-        if (countSelection === 0) {
-          addressList[0].selection = true;
-          sessionStorage.setItem(addressList[0].address, JSON.stringify(addressList[0]))
         }
       },
 

@@ -75,7 +75,7 @@
 <script>
   import nuls from 'nuls-sdk-js'
   import Password from '@/components/PasswordBar'
-  import {timesDecimals} from '@/api/util'
+  import {timesDecimals, chainID, chainIdNumber, addressInfo} from '@/api/util'
 
   export default {
     data() {
@@ -101,32 +101,9 @@
        * 获取账户列表
        */
       getAddressList() {
-        this.addressList = [];
-        for (let i = localStorage.length - 1; i >= 0; i--) {
-          if (localStorage.getItem(localStorage.key(i)) !== 'SILENT' && localStorage.key(i).length > 10) {
-            this.addressList.push(JSON.parse(localStorage.getItem(localStorage.key(i))))
-          }
-        }
+        this.addressList = addressInfo(0);
         //如果没有账户跳转到创建地址界面
-        if (this.addressList.length !== 0) {
-          //循环账户智能有一个是选中的账户
-          let countSelection = 0;
-          for (let item  of this.addressList) {
-            if (item.selection) {
-              countSelection++;
-              sessionStorage.setItem(item.address, JSON.stringify(item));
-              if (countSelection > 1) {
-                item.selection = false;
-                localStorage.setItem(item.address, JSON.stringify(item))
-              }
-            }
-          }
-          //一个选中的都没就默认第一个
-          if (countSelection === 0) {
-            this.addressList[0].selection = true;
-            localStorage.setItem(this.addressList[0].address, JSON.stringify(this.addressList[0]))
-          }
-        } else {
+        if (this.addressList.length === 0) {
           this.$router.push({
             name: "newAddress",
             query: {'address': ''}
@@ -143,22 +120,20 @@
         addressInfo.balance = 0;
         addressInfo.consensusLock = 0;
         addressInfo.totalReward = 0;
-        addressInfo.tokens=[];
+        addressInfo.tokens = [];
         await this.$post('/', 'getAccount', [addressInfo.address])
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             if (response.hasOwnProperty("result")) {
               addressInfo.alias = response.result.alias;
               addressInfo.balance = timesDecimals(response.result.balance);
               addressInfo.consensusLock = timesDecimals(response.result.consensusLock);
               addressInfo.totalReward = timesDecimals(response.result.totalReward);
-              addressInfo.tokens=response.result.tokens;
+              addressInfo.tokens = response.result.tokens;
             }
-            localStorage.setItem(addressInfo.address, JSON.stringify(addressInfo));
           })
           .catch((error) => {
             console.log("getAccount:" + error);
-            localStorage.setItem(addressInfo.address, JSON.stringify(addressInfo));
           });
       },
 
@@ -179,9 +154,9 @@
        * @param rowInfo
        **/
       addAlias(rowInfo) {
-        if(rowInfo.balance  ===0){
+        if (rowInfo.balance === 0) {
           this.$message({message: this.$t('address.address12'), type: 'error', duration: 1000});
-        }else {
+        } else {
           this.toUrl('setAlias', rowInfo.address)
         }
 
@@ -230,7 +205,7 @@
           }
           this.getAddressList();
         } else {
-          this.$message({message:this.$t('address.address13'), type: 'error', duration: 1000});
+          this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
         }
       },
 

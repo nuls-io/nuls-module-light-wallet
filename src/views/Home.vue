@@ -93,7 +93,7 @@
 
 <script>
   import moment from 'moment'
-  import {timesDecimals, getLocalTime, superLong, copys} from '@/api/util'
+  import {timesDecimals, getLocalTime, superLong, copys, chainID, chainIdNumber, addressInfo} from '@/api/util'
 
   export default {
     name: 'home',
@@ -122,9 +122,9 @@
     },
     components: {},
     created() {
-      this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+      this.addressInfo = addressInfo(1);
       setInterval(() => {
-        this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+        this.addressInfo = addressInfo(1);
       }, 500);
 
       //判断是否有账户
@@ -224,8 +224,7 @@
               newAssetsList.balance = 0;
             }
             this.addressInfo.balance = newAssetsList.balance;
-            localStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
-            sessionStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
+            //localStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
             this.addressAssetsData.push(newAssetsList);
             this.assetsListLoading = false;
           })
@@ -259,8 +258,7 @@
             this.addressAssetsData.push(...newAssetsList);
             this.addressInfo.tokens = [];
             this.addressInfo.tokens = this.addressAssetsData;
-            localStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
-            sessionStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
+            //localStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
             this.assetsListLoading = false;
           })
           .catch((error) => {

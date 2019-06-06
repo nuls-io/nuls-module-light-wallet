@@ -45,6 +45,7 @@
   import nuls from 'nuls-sdk-js'
   import BackBar from '@/components/BackBar'
   import Password from '@/components/PasswordBar'
+  import {copys, chainID, chainIdNumber, addressInfo} from '@/api/util'
 
   export default {
     data() {
@@ -187,8 +188,8 @@
        * 导入私钥方法
        */
       importWallet() {
-        const importAddressInfo = nuls.importByKey(2, this.importKeyForm.key, this.importKeyForm.pass);
-        let addressInfo = {
+        const importAddressInfo = nuls.importByKey(chainID(), this.importKeyForm.key, this.importKeyForm.pass);
+        let newImportAddressInfo = {
           address: importAddressInfo.address,
           aesPri: importAddressInfo.aesPri,
           pub: importAddressInfo.pub,
@@ -196,7 +197,17 @@
           remark: '',
           selection: false,
         };
-        localStorage.setItem(importAddressInfo.address, JSON.stringify(addressInfo));
+        let addressList = [];
+        let newAddressList = [];
+        newAddressList.push(newImportAddressInfo);
+        let newArr = addressInfo(0);
+        if (newArr.length !== 0) {
+          addressList = [...newAddressList, ...newArr];
+        } else {
+          newImportAddressInfo.selection = true;
+          addressList[0] = newImportAddressInfo
+        }
+        localStorage.setItem(chainIdNumber(), JSON.stringify(addressList));
         this.toUrl('address')
       },
 
