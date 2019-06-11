@@ -77,7 +77,7 @@
 
 <script>
   import moment from 'moment'
-  import {getLocalTime} from '@/api/util'
+  import {getLocalTime,chainID,chainIdNumber,addressInfo} from '@/api/util'
   import Deploy from './Deploy'
   import Call from './Call'
 
@@ -98,9 +98,9 @@
       };
     },
     created() {
-      this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+      this.addressInfo = addressInfo(1);
       setInterval(() => {
-        this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+        this.addressInfo = addressInfo(1);
       }, 500);
 
     },

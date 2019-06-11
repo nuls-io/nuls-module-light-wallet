@@ -94,7 +94,7 @@
 
 <script>
   import SelectBar from '@/components/SelectBar';
-  import {timesDecimals, copys} from '@/api/util'
+  import {timesDecimals, copys,addressInfo} from '@/api/util'
 
   export default {
     name: 'consensus',
@@ -139,9 +139,9 @@
       SelectBar
     },
     created() {
-      this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+      this.addressInfo = addressInfo(1);
       setInterval(() => {
-        this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+        this.addressInfo = addressInfo(1);
       }, 500);
       this.getConsensusNodeCount();
       this.getCoinInfo();

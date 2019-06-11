@@ -45,7 +45,7 @@
   import nuls from 'nuls-sdk-js'
   import BackBar from '@/components/BackBar'
   import Password from '@/components/PasswordBar'
-  import {copys, chainID, chainIdNumber, addressInfo} from '@/api/util'
+  import {chainID, chainIdNumber, addressInfo} from '@/api/util'
 
   export default {
     data() {
@@ -193,9 +193,13 @@
           address: importAddressInfo.address,
           aesPri: importAddressInfo.aesPri,
           pub: importAddressInfo.pub,
-          alias: '',
-          remark: '',
           selection: false,
+          alias: "",
+          remark:"",
+          balance: 0,
+          consensusLock: 0,
+          totalReward: 0,
+          tokens: []
         };
         let addressList = [];
         let newAddressList = [];

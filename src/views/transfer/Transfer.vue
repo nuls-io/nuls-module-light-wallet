@@ -16,12 +16,17 @@
           <el-select v-model="transferForm.type" @change="changeType">
             <el-option
                     v-for="item in addressInfo.tokens"
-                    :key="item.account"
-                    :label="item.account"
-                    :value="item.account">
+                    :key="item.contractAddress"
+                    :label="item.symbol"
+                    :value="item.contractAddress">
             </el-option>
           </el-select>
         </el-form-item>
+
+        <div class="cross yellow font12" v-show="isCross">
+          提示：您填写的地址是跨链资产这笔交易将是跨链交易...
+        </div>
+
         <el-form-item :label="$t('transfer.transfer3')" prop="amount">
           <span class="balance font12 fr">{{$t('public.usableBalance')}}: {{changeAssets.balance}}</span>
           <el-input v-model="transferForm.amount" @change="changeParameter">
@@ -98,7 +103,7 @@
   import utils from 'nuls-sdk-js/lib/utils/utils'
   import {getNulsBalance, countFee, inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
   import * as config from '@/config.js'
-  import {RightShiftEight, Times, Power, Plus} from '@/api/util'
+  import {Times, Power, Plus, timesDecimals, addressInfo} from '@/api/util'
   import Password from '@/components/PasswordBar'
 
   export default {
@@ -124,12 +129,13 @@
           callback(new Error(this.$t('transfer.transfer13')))
         } else {
           setTimeout(() => {
-            if (parseInt(RightShiftEight(value).toString()) > parseInt(RightShiftEight(this.changeAssets.balance).toString())) {
+            if (parseInt(value).toString() > this.changeAssets.balance) {
               callback(new Error(this.$t('transfer.transfer14')))
             } else {
               callback()
             }
           }, 200);
+          //callback();
         }
       };
       let validateGas = (rule, value, callback) => {
@@ -154,11 +160,13 @@
       return {
         addressInfo: '', //默认账户信息
         balanceInfo: '',//账户余额信息
-        changeAssets: '',//选择的资产信息
+        changeAssets: {
+          account: 'NULS',
+          balance: 0,
+        },//选择的资产信息
         gasNumber: 0,//消耗的gas
         oldGasNumber: 0,//默认的gas
-        gasTips:false,//gas 太小提示信息
-        //转账数据
+        gasTips: false,//gas 太小提示信息
         transferForm: {
           fromAddress: '',
           toAddress: '',
@@ -167,9 +175,15 @@
           senior: false,
           gas: this.gasNumber,
           price: sdk.CONTRACT_MINIMUM_PRICE,
+
+          options: [
+            {value: 2, label: 'NULS'},
+            {value: 100, label: 'BTC'}
+          ],
+          value: '',
+
           remarks: '',
-        },
-        //验证信息
+        },//转账数据
         transferRules: {
           toAddress: [
             {validator: validateToAddress, trigger: ['blur', 'change']}
@@ -183,17 +197,19 @@
           price: [
             {validator: validatePrice, trigger: 'blur'}
           ],
-        },
+        }, //验证信息
         fee: 0.001, //手续费
         transferVisible: false,//转账确认弹框
+        isCross: false,//是否跨链交易
       };
     },
     created() {
-      this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+      this.addressInfo = addressInfo(1);
       setInterval(() => {
-        this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+        this.addressInfo = addressInfo(1);
       }, 500);
-      this.transferForm.fromAddress = this.addressInfo.address
+      this.transferForm.fromAddress = this.addressInfo.address;
+      this.getNulsBalance(2, 1, this.transferForm.fromAddress);
     },
     mounted() {
       this.assetsBalance();
@@ -201,13 +217,14 @@
     watch: {
       addressInfo(val, old) {
         if (val.address !== old.address && old.address) {
-          this.transferForm.fromAddress = this.addressInfo.address
+          this.transferForm.fromAddress = this.addressInfo.address;
+          this.getNulsBalance(2, 1, this.transferForm.fromAddress);
         }
       },
       gasNumber(val, old) {
-        if(old && this.oldGasNumber > val){
+        if (old && this.oldGasNumber > val) {
           this.gasTips = true
-        }else{
+        } else {
           this.gasTips = false
         }
       }
@@ -221,6 +238,15 @@
        * 验证参数
        **/
       changeParameter() {
+        let fromAddress = nuls.verifyAddress(this.transferForm.fromAddress);
+        let toAddress = nuls.verifyAddress(this.transferForm.toAddress);
+        if (fromAddress.chainId === toAddress.chainId) {
+          this.isCross = false;
+        } else {
+          this.isCross = true;
+        }
+
+
         if (this.transferForm.type !== 'NULS') {
           this.transferForm.gas = sdk.CONTRACT_MAX_GASLIMIT;
           this.$refs['transferForm'].validate((valid) => {
@@ -249,8 +275,8 @@
       changeType(type) {
         this.changeParameter();
         if (type === 'NULS') {
-          this.transferForm.gas = 5;
-          this.transferForm.price = 5;
+          this.transferForm.gas = 5000;
+          this.transferForm.price = 25;
         } else {
           this.transferForm.gas = 0;
           this.transferForm.price = sdk.CONTRACT_MINIMUM_PRICE;
@@ -289,16 +315,8 @@
        * 弹框确认提交
        **/
       async confirmTraanser() {
-        await getNulsBalance(this.transferForm.fromAddress).then((response) => {
-          if (response.success) {
-            this.balanceInfo = response.data;
-            this.$refs.password.showPassword(true)
-          } else {
-            this.$message({message: this.$t('public.err') + response, type: 'error', duration: 1000});
-          }
-        }).catch((error) => {
-          this.$message({message: this.$t('public.err0') + error, type: 'error', duration: 1000});
-        });
+        this.$refs.password.showPassword(true)
+
       },
 
       /**
@@ -306,20 +324,18 @@
        *  @param assetsId
        *  @param address
        **/
-      async getNulsBalance(assetsId = 1, address) {
-        await this.$post('/', 'getAccountBalance', [assetsId, address])
-          .then((response) => {
-            //console.log(response);
-            if (response.hasOwnProperty("result")) {
-              this.balanceInfo = {'balance': response.result.balance, 'nonce': response.result.nonce};
-              this.$refs.password.showPassword(true);
-            } else {
-              this.$message({message: this.$t('public.err') + response, type: 'error', duration: 1000});
-            }
-          })
-          .catch((error) => {
-            this.$message({message: this.$t('public.err0') + error, type: 'error', duration: 1000});
-          });
+      async getNulsBalance(assetChainId, assetId, address) {
+        await getNulsBalance(assetChainId, assetId, address).then((response) => {
+          //console.log(response);
+          if (response.success) {
+            this.balanceInfo = response.data;
+            this.changeAssets.balance = timesDecimals(response.data.balance).toString()
+          } else {
+            this.$message({message: this.$t('public.err') + response, type: 'error', duration: 1000});
+          }
+        }).catch((error) => {
+          this.$message({message: this.$t('public.err0') + error, type: 'error', duration: 1000});
+        });
       },
 
       /**
@@ -467,7 +483,7 @@
       /**
        * gas 值改变
        **/
-      changeGas(e){
+      changeGas(e) {
         this.gasNumber = Number(e);
       },
 
@@ -549,6 +565,9 @@
               }
             }
           }
+        }
+        .cross {
+          margin: -14px 0 8px 0;
         }
       }
     }

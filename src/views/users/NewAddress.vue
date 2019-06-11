@@ -188,9 +188,13 @@
               address: this.newAddressInfo.address,
               aesPri: this.newAddressInfo.aesPri,
               pub: this.newAddressInfo.pub,
-              alias: '',
-              remark: '',
               selection: false,
+              alias: "",
+              remark:"",
+              balance: 0,
+              consensusLock: 0,
+              totalReward: 0,
+              tokens: []
             };
             let addressList = [];
             let newAddressList = [];
@@ -233,7 +237,7 @@
       passSubmit(password) {
         let that = this;
         const pri = nuls.decrypteOfAES(this.newAddressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(JSON.parse(localStorage.getItem('urls')).chainId, pri, password);
+        const newAddressInfo = nuls.importByKey(chainID(), pri, password);
         if (newAddressInfo.address === this.newAddressInfo.address) {
           if (this.backType === 0) {
             const {dialog} = require('electron').remote;
@@ -275,22 +279,27 @@
        * 进入钱包
        */
       goWallet() {
-        this.getAddressList();
-        this.toUrl('home')
+        this.toUrl('home');
+        //this.getAccount(newAddressInfo);
       },
 
       /**
-       * 获取账户列表
+       * 获取账户网络信息
+       * @param newAddressInfo
        */
-      getAddressList() {
-        let chainId = Number(JSON.parse(localStorage.getItem('urls')).chainId);
-        let chainNumber = 'chainId' + chainId;
-        //循环账户智能有一个是选中的账户
-        for (let item  of JSON.parse(localStorage.getItem(chainNumber))) {
-          if (item.selection) {
-            sessionStorage.setItem(item.address, JSON.stringify(item));
-          }
-        }
+      async getAccount(newAddressInfo) {
+        await this.$post('/', 'getAccount', [newAddressInfo.address])
+          .then((response) => {
+            //console.log(response);
+            if (response.hasOwnProperty("result")) {
+              console.log(response.result);
+            } else {
+
+            }
+          })
+          .catch((error) => {
+            console.log("getAccount:" + error);
+          });
       },
 
       /**

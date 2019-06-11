@@ -48,7 +48,7 @@
   import utils from 'nuls-sdk-js/lib/utils/utils'
   import {getNulsBalance, countFee, inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
   import Password from '@/components/PasswordBar'
-  import {getArgs, Times, Plus} from '@/api/util'
+  import {getArgs, Times, Plus,addressInfo} from '@/api/util'
   import * as config from '@/config.js'
 
   export default {
@@ -91,11 +91,11 @@
     },
     created() {
       this.callForm.modelData = this.modelList;
-      this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+      this.addressInfo =  addressInfo(1);
       setInterval(() => {
-        this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+        this.addressInfo =  addressInfo(1);
       }, 500);
-      this.getBalanceByAddress(this.addressInfo.address);
+      this.getBalanceByAddress(2,1,this.addressInfo.address);
     },
     mounted() {
 
@@ -106,7 +106,7 @@
       },
       addressInfo(val, old) {
         if (val.address !== old.address && old.address) {
-          this.getBalanceByAddress(this.addressInfo.address);
+          this.getBalanceByAddress(2,1,this.addressInfo.address);
         }
       }
     },
@@ -290,14 +290,16 @@
        * 获取账户余额
        * @param address
        **/
-      getBalanceByAddress(address) {
-        getNulsBalance(address).then((response) => {
+      getBalanceByAddress(assetChainId, assetId,address) {
+        getNulsBalance(assetChainId, assetId,address).then((response) => {
+          console.log(response);
           if (response.success) {
             this.balanceInfo = response.data;
           } else {
             this.$message({message: this.$t('public.err2') + response, type: 'error', duration: 1000});
           }
         }).catch((error) => {
+          console.log(error);
           this.$message({message: this.$t('public.err3') + error, type: 'error', duration: 1000});
         });
       },

@@ -75,7 +75,7 @@
   } from '@/api/requestData'
   import * as config from '@/config.js'
   import Password from '@/components/PasswordBar'
-  import {getArgs} from '@/api/util'
+  import {getArgs,chainID} from '@/api/util'
 
   export default {
     name: "deploy",
@@ -120,7 +120,7 @@
     },
     created() {
       this.createAddress = this.addressInfo.address;
-      this.getBalanceByAddress(this.createAddress);
+      this.getBalanceByAddress(2,1,this.createAddress);
     },
     mounted() {
       //this.getTxInfoByHash(this.hash);
@@ -129,7 +129,7 @@
       addressInfo(val, old) {
         if (val.address !== old.address && old.address) {
           this.createAddress = val.address;
-          this.getBalanceByAddress(this.createAddress);
+          this.getBalanceByAddress(2,1,this.createAddress);
         }
       }
     },
@@ -238,7 +238,7 @@
        */
       async makeCreateData(gasLimit, createAddress, contractCode, args) {
         let contractCreate = {};
-        contractCreate.chainId = config.API_CHAIN_ID;
+        contractCreate.chainId = chainID();
         contractCreate.sender = createAddress;
         contractCreate.gasLimit = gasLimit;
         contractCreate.price = sdk.CONTRACT_MINIMUM_PRICE;
@@ -246,7 +246,7 @@
         let constructor = this.deployForm.parameterList;
         let contractConstructorArgsTypes = this.makeContractConstructorArgsTypes(constructor);
         contractCreate.args = await utils.twoDimensionalArray(args, contractConstructorArgsTypes);
-        contractCreate.contractAddress = sdk.getStringContractAddress(config.API_CHAIN_ID);
+        contractCreate.contractAddress = sdk.getStringContractAddress(chainID());
         if (!contractCreate.args || !contractCreate.chainId || !contractCreate.contractAddress || !contractCreate.contractCode || !contractCreate.gasLimit || !contractCreate.price || !contractCreate.sender) {
           this.$message({message: this.$t('deploy.deploy15'), type: 'error', duration: 1000});
         } else {
@@ -258,14 +258,16 @@
        * 获取账户余额
        * @param address
        **/
-      getBalanceByAddress(address) {
-        getNulsBalance(address).then((response) => {
+      getBalanceByAddress(assetChainId, assetId, address) {
+        getNulsBalance(assetChainId, assetId, address).then((response) => {
+          console.log(response);
           if (response.success) {
             this.balanceInfo = response.data;
           } else {
             this.$message({message: this.$t('public.err2') + response, type: 'error', duration: 1000});
           }
         }).catch((error) => {
+          console.log(error);
           this.$message({message: this.$t('public.err3') + error, type: 'error', duration: 1000});
         });
       },
@@ -311,7 +313,7 @@
         if (newAddressInfo.address === this.addressInfo.address) {
           let transferInfo = {
             fromAddress: this.addressInfo.address,
-            assetsChainId: config.API_CHAIN_ID,
+            assetsChainId: chainID(),
             assetsId: 1,
             amount: amount,
             fee: 100000
@@ -332,6 +334,7 @@
           } else {
             txhex = await nuls.transactionSerialize(pri, pub, tAssemble);
           }
+          //console.log(transferInfo);
           //console.log(txhex);
           await validateTx(txhex).then((response) => {
             //console.log(response);

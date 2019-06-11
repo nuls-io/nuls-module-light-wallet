@@ -6,8 +6,8 @@ import {Plus} from './util'
  * @param address
  * @returns {Promise<any>}
  */
-export async function getNulsBalance(address) {
-  return await post('/', 'getAccountBalance', [1, address])
+export async function getNulsBalance(assetChainId = 2, assetId = 1, address) {
+  return await post('/', 'getAccountBalance', [assetChainId, assetId, address])
     .then((response) => {
       if (response.hasOwnProperty("result")) {
         return {success: true, data: {balance: response.result.balance, nonce: response.result.nonce}}

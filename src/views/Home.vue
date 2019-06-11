@@ -51,13 +51,13 @@
       </el-tab-pane>
       <el-tab-pane :label="$t('home.home1')" name="homeSecond">
         <el-table :data="crossLinkData" stripe border v-loading="crossLinkDataLoading">
-          <el-table-column prop="account" :label="$t('tab.tab0')" align="center">
+          <el-table-column prop="symbol" :label="$t('tab.tab0')" align="center">
           </el-table-column>
-          <el-table-column :label="$t('tab.tab1')" align="center" width="150">
-            <template slot-scope="scope"><span>{{ $t('addressType.'+scope.row.type) }}</span></template>
-          </el-table-column>
-          <el-table-column prop="total" :label="$t('tab.tab2')">
-          </el-table-column>
+        <!--  <el-table-column :label="$t('tab.tab1')" align="center" width="150">
+            <template slot-scope="scope"><span>{{ scope.row.symbol }}</span></template>
+          </el-table-column>-->
+          <el-table-column prop="totalBalance" :label="$t('tab.tab2')">
+        </el-table-column>
           <el-table-column :label="$t('tab.tab3')">
             <template slot-scope="scope">
               <span class="click" @click="toUrl('frozenList')"
@@ -69,7 +69,7 @@
           </el-table-column>
           <el-table-column fixed="right" :label="$t('public.operation')" align="center" min-width="120">
             <template slot-scope="scope">
-              <label class="click tab_bn" @click="toUrl('transfer',scope.row.account)">{{$t('nav.transfer')}}</label>
+              <label class="click tab_bn" @click="toUrl('transfer',scope.row.address)">{{$t('nav.transfer')}}</label>
               <span class="tab_line">|</span>
               <label class="click tab_bn" @click="toUrl('txList')">{{$t('home.home2')}}</label>
             </template>
@@ -93,7 +93,7 @@
 
 <script>
   import moment from 'moment'
-  import {timesDecimals, getLocalTime, superLong, copys, chainID, chainIdNumber, addressInfo} from '@/api/util'
+  import {timesDecimals, getLocalTime, superLong, copys, addressInfo} from '@/api/util'
 
   export default {
     name: 'home',
@@ -102,7 +102,7 @@
         homeActive: 'homeFirst',   //tab默认选中
         addressInfo: {},//默认账户信息
         addressAssetsData: [],//账户资产列表
-        assetsListLoading:true,//账户资产列表加载动画
+        assetsListLoading: true,//账户资产列表加载动画
         //资产类型
         assetsOptions: [
           {value: '0', label: '0'},
@@ -157,7 +157,7 @@
               this.pageNumber = 1;
               this.pageSize = 10;
               this.pageCount = 0;
-              this.getTxlistByAddress(this.pageNumber, this.pageSize, this.addressInfo.address, this.type, this.isHide)
+              //this.getTxlistByAddress(this.pageNumber, this.pageSize, this.addressInfo.address, this.type, this.isHide)
             }
           }
         }
@@ -205,26 +205,25 @@
        * @param address
        **/
       getAddressInfoByNode(address) {
-        this.$post('/', 'getAccount', [address])
+        this.$post('/', 'getAccountLedgerList', [address])
           .then((response) => {
-            //console.log(response);
+            //console.log(response.result);
             this.addressAssetsData = [];
             let newAssetsList = {};
             if (response.hasOwnProperty("result")) {
-              newAssetsList.account = "NULS";
+              newAssetsList.account = response.result[0].symbol;
               newAssetsList.type = 1;
-              newAssetsList.total = timesDecimals(response.result.totalBalance);
-              newAssetsList.locking = timesDecimals(response.result.consensusLock + response.result.timeLock);
-              newAssetsList.balance = timesDecimals(response.result.balance);
+              newAssetsList.total = timesDecimals(response.result[0].totalBalance);
+              newAssetsList.locking = timesDecimals(response.result[0].consensusLock + response.result[0].timeLock);
+              newAssetsList.balance = timesDecimals(response.result[0].balance);
             } else {
-              newAssetsList.account = "NULS";
+              newAssetsList.account = response.result.symbol;
               newAssetsList.type = 1;
               newAssetsList.total = 0;
               newAssetsList.locking = 0;
               newAssetsList.balance = 0;
             }
             this.addressInfo.balance = newAssetsList.balance;
-            //localStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
             this.addressAssetsData.push(newAssetsList);
             this.assetsListLoading = false;
           })
@@ -243,7 +242,7 @@
       getTokenListByAddress(pageSize, pageRows, address) {
         this.$post('/', 'getAccountTokens', [pageSize, pageRows, address])
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             let newAssetsList = {};
             if (response.hasOwnProperty("result")) {
               for (let itme of response.result.list) {
@@ -275,22 +274,19 @@
         //this.txListDataLoading = true;
         this.$post('/', 'getAccountCrossLedgerList', [address])
           .then((response) => {
-            console.log(response);
-            //TODO 待完善
+            //console.log(response);
             this.crossLinkDataLoading = false;
             if (response.hasOwnProperty("result")) {
-               for (let item of response.result.list) {
-                 item.createTime = moment(getLocalTime(item.createTime)).format('YYYY-MM-DD HH:mm:ss');
-                 item.txid = superLong(item.txHash, 8);
-                 item.balance = timesDecimals(item.balance);
-               }
-              this.crossLinkData = response.result.list;
-              this.pageCount = response.result.totalCount;
-
-              //this.txListDataLoading = false;
+              for (let item of response.result) {
+                item.totalBalance = timesDecimals(item.totalBalance);
+                item.balance = timesDecimals(item.balance);
+                item.locking = timesDecimals(item.consensusLock +item.timeLock);
+              }
+              this.crossLinkData = response.result;
+              this.txListDataLoading = false;
             }
-          }).catch((err)=>{
-            console.log(err);
+          }).catch((err) => {
+          console.log(err);
         })
       },
 

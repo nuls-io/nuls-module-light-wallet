@@ -73,7 +73,7 @@
 
 <script>
   import moment from 'moment'
-  import {timesDecimals, getLocalTime, superLong} from '@/api/util'
+  import {timesDecimals, getLocalTime, superLong,addressInfo} from '@/api/util'
   import BackBar from '@/components/BackBar'
 
   export default {
@@ -122,9 +122,9 @@
       };
     },
     created() {
-      this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+      this.addressInfo = addressInfo(1);
       setInterval(() => {
-        this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+        this.addressInfo = addressInfo(1);
       }, 500);
     },
     mounted() {
@@ -155,7 +155,7 @@
       getTxlistByAddress(pageSize, pageRows, address, type, isHide) {
         this.$post('/', 'getAccountTxs', [pageSize, pageRows, address, type, isHide])
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             if (response.hasOwnProperty("result")) {
               for (let item of response.result.list) {
                 item.createTime = moment(getLocalTime(item.createTime*1000)).format('YYYY-MM-DD HH:mm:ss');

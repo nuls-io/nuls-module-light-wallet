@@ -75,7 +75,7 @@
 <script>
   import nuls from 'nuls-sdk-js'
   import Password from '@/components/PasswordBar'
-  import {timesDecimals, chainID, chainIdNumber, addressInfo} from '@/api/util'
+  import {timesDecimals,chainIdNumber, addressInfo} from '@/api/util'
 
   export default {
     data() {
@@ -116,26 +116,60 @@
        * @param addressInfo
        **/
       async getAddressInfoByNode(addressInfo) {
-        addressInfo.alias = "";
-        addressInfo.balance = 0;
-        addressInfo.consensusLock = 0;
-        addressInfo.totalReward = 0;
-        addressInfo.tokens = [];
         await this.$post('/', 'getAccount', [addressInfo.address])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
-              addressInfo.alias = response.result.alias;
-              addressInfo.balance = timesDecimals(response.result.balance);
-              addressInfo.consensusLock = timesDecimals(response.result.consensusLock);
-              addressInfo.totalReward = timesDecimals(response.result.totalReward);
-              addressInfo.tokens = response.result.tokens;
+              for(let item of this.addressList){
+                if(item.address === addressInfo.address){
+                  addressInfo.alias = response.result.alias;
+                  addressInfo.balance = timesDecimals(response.result.balance);
+                  addressInfo.consensusLock = timesDecimals(response.result.consensusLock);
+                  addressInfo.totalReward = timesDecimals(response.result.totalReward);
+                  let newToken = [{symbol:'NULS', contractAddress:'NULS',}];
+                  if(response.result.tokens){
+                    for(let item of response.result.tokens){
+                      let newArr = {};
+                      let newArray = item.split(",");
+                      newArr = {symbol:newArray[1], contractAddress:newArray[0]};
+                      newToken.push(newArr);
+                    }
+                  }
+                  addressInfo.tokens = newToken;
+                }
+              }
+              localStorage.setItem(chainIdNumber(),JSON.stringify(this.addressList))
             }
           })
           .catch((error) => {
             console.log("getAccount:" + error);
           });
       },
+
+      /**
+       * 获取跨链资产信息根据地址
+       * @param addressInfo
+       **/
+      getAccountCrossLedgerList(addressInfo) {
+        //TODO 待完善
+        console.log(addressInfo);
+        this.$post('/', 'getAccountCrossLedgerList', [addressInfo.address])
+          .then((response) => {
+            console.log(response);
+            if (response.hasOwnProperty("result")) {
+             /* for (let item of response.result) {
+                item.totalBalance = timesDecimals(item.totalBalance);
+                item.balance = timesDecimals(item.balance);
+                item.locking = timesDecimals(item.consensusLock +item.timeLock);
+              }
+              this.crossLinkData = response.result;*/
+            }
+          }).catch((err) => {
+          console.log(err);
+        })
+      },
+
+
 
       /**
        * 循环获取账户余额及别名
@@ -146,6 +180,11 @@
           setTimeout(() => {
             this.getAddressInfoByNode(item);
           }, 500);
+
+          setTimeout(() => {
+            this.getAccountCrossLedgerList(item);
+          }, 1000);
+
         }
       },
 
@@ -159,7 +198,6 @@
         } else {
           this.toUrl('setAlias', rowInfo.address)
         }
-
       },
 
       /**
@@ -241,13 +279,6 @@
           query: {'address': param}
         })
       },
-
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      }
     }
   }
 </script>

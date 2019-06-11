@@ -46,7 +46,7 @@
 
 <script>
   import moment from 'moment'
-  import {timesDecimals, getLocalTime, superLong} from '@/api/util'
+  import {timesDecimals, getLocalTime, superLong,addressInfo} from '@/api/util'
   import BackBar from '@/components/BackBar'
 
   export default {
@@ -60,9 +60,9 @@
       };
     },
     created() {
-      this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+      this.addressInfo = addressInfo(1);
       setInterval(() => {
-        this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+        this.addressInfo = addressInfo(1);
       }, 500);
     },
     mounted() {

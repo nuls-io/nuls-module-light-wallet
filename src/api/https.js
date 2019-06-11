@@ -1,5 +1,6 @@
 import axios from 'axios'
-import * as config from '../config.js'
+import * as config from './../config.js'
+import {chainID} from './util'
 
 axios.defaults.timeout = config.API_URL;
 axios.defaults.baseURL = config.API_URL;
@@ -18,9 +19,10 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
  */
 export function post(url, methodName, data = []) {
   return new Promise((resolve, reject) => {
-    let chainID = localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')).chainId : 2;
-    data.unshift(chainID);
+    data.unshift(chainID());
     const params = {"jsonrpc": "2.0", "method": methodName, "params": data, "id": 5898};
+   /* console.log(url);
+    console.log(params);*/
     axios.post(url, params)
       .then(response => {
         resolve(response.data)

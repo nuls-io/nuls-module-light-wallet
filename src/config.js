@@ -20,3 +20,5 @@ export const defaultData = [
 ];
 //默认服务节点地址
 export const defaultUrl ={name: 'Official',chainId:2,chainName:'tNULS', urls: 'http://192.168.1.40:18003/', delay: '10ms', state: 1, isDelete: false};
+//默认浏览器连接地址
+export const explorerUrl = localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')).urls : 'http://192.168.1.40:18003/';

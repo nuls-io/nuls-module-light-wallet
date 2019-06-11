@@ -39,7 +39,8 @@
 
 <script>
   import axios from 'axios'
-  import {IS_DEV,API_CHAIN_ID,defaultUrl} from '@/config.js'
+  import {defaultUrl} from '@/config.js'
+  import {chainID} from '@/api/util'
 
   export default {
     name: "bottom-bar",
@@ -78,20 +79,23 @@
        * 获取主网最新高度和本地高度
        */
       getHeaderInfo() {
-        const url = 'http://192.168.1.192:18003/';
-        const params = {"jsonrpc": "2.0", "method": "getInfo", "params": [API_CHAIN_ID], "id": 5898};
+        const url = localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')).urls : 'http://192.168.1.40:18003/';
+        const params = {"jsonrpc": "2.0", "method": "getInfo", "params": [chainID()], "id": 5898};
+        //this.$post('/', 'getInfo', [])
+        /* console.log(url);
+         console.log(params);*/
         axios.post(url, params)
           .then((response) => {
-            //console.log(response);
+            //console.log(response.data);
             if (response.data.hasOwnProperty("result")) {
               this.heightInfo = response.data.result;
             } else {
-              this.heightInfo = {localHeight: 0,networkHeight:0};
+              this.heightInfo = {localHeight: 0, networkHeight: 0};
             }
           })
           .catch((error) => {
-            this.heightInfo = {localHeight: 0,networkHeight:0};
-            console.log("getBestBlockHeader:" + error)
+            this.heightInfo = {localHeight: 0, networkHeight: 0};
+            console.log("getInfo:" + error)
           })
       },
 
