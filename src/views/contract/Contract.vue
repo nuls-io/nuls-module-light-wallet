@@ -77,7 +77,7 @@
 
 <script>
   import moment from 'moment'
-  import {getLocalTime,chainID,chainIdNumber,addressInfo} from '@/api/util'
+  import {getLocalTime, addressInfo} from '@/api/util'
   import Deploy from './Deploy'
   import Call from './Call'
 

@@ -15,24 +15,23 @@
         <el-form-item :label="$t('transfer.transfer2')">
           <el-select v-model="transferForm.type" @change="changeType">
             <el-option
-                    v-for="item in addressInfo.tokens"
-                    :key="item.contractAddress"
+                    v-for="item in assetsList"
+                    :key="item.type === 1 ? item.chainId : item.contractAddress"
                     :label="item.symbol"
-                    :value="item.contractAddress">
+                    :disabled="isCross && item.type === 2"
+                    :value="item">
             </el-option>
           </el-select>
         </el-form-item>
-
         <div class="cross yellow font12" v-show="isCross">
-          提示：您填写的地址是跨链资产这笔交易将是跨链交易...
+          提示：您填写的地址是跨链地址这笔交易将是跨链交易，您只能选择基本资产...
         </div>
-
         <el-form-item :label="$t('transfer.transfer3')" prop="amount">
           <span class="balance font12 fr">{{$t('public.usableBalance')}}: {{changeAssets.balance}}</span>
           <el-input v-model="transferForm.amount" @change="changeParameter">
           </el-input>
         </el-form-item>
-        <div class="div-senior" v-show="transferForm.type !== 'NULS'">
+        <div class="div-senior" v-show="changeAssets.type !== 1">
           <el-form-item :label="$t('call.call3')" class="senior">
             <el-switch v-model="transferForm.senior"></el-switch>
           </el-form-item>
@@ -101,7 +100,15 @@
   import nuls from 'nuls-sdk-js'
   import sdk from 'nuls-sdk-js/lib/api/sdk'
   import utils from 'nuls-sdk-js/lib/utils/utils'
-  import {getNulsBalance, countFee, inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
+  import {
+    isMainNet,
+    countCtxFee,
+    ctxInputsOrOutputs,
+    getNulsBalance,
+    countFee,
+    inputsOrOutputs,
+    validateAndBroadcast
+  } from '@/api/requestData'
   import * as config from '@/config.js'
   import {Times, Power, Plus, timesDecimals, addressInfo} from '@/api/util'
   import Password from '@/components/PasswordBar'
@@ -129,7 +136,7 @@
           callback(new Error(this.$t('transfer.transfer13')))
         } else {
           setTimeout(() => {
-            if (parseInt(value).toString() > this.changeAssets.balance) {
+            if (Number(value) > Number(this.changeAssets.balance)) {
               callback(new Error(this.$t('transfer.transfer14')))
             } else {
               callback()
@@ -160,10 +167,8 @@
       return {
         addressInfo: '', //默认账户信息
         balanceInfo: '',//账户余额信息
-        changeAssets: {
-          account: 'NULS',
-          balance: 0,
-        },//选择的资产信息
+        assetsList: [],//账户资产列表
+        changeAssets: {},//选择的资产信息
         gasNumber: 0,//消耗的gas
         oldGasNumber: 0,//默认的gas
         gasTips: false,//gas 太小提示信息
@@ -175,13 +180,6 @@
           senior: false,
           gas: this.gasNumber,
           price: sdk.CONTRACT_MINIMUM_PRICE,
-
-          options: [
-            {value: 2, label: 'NULS'},
-            {value: 100, label: 'BTC'}
-          ],
-          value: '',
-
           remarks: '',
         },//转账数据
         transferRules: {
@@ -209,16 +207,15 @@
         this.addressInfo = addressInfo(1);
       }, 500);
       this.transferForm.fromAddress = this.addressInfo.address;
-      this.getNulsBalance(2, 1, this.transferForm.fromAddress);
+      this.getCapitalListByAddress(this.transferForm.fromAddress);
     },
     mounted() {
-      this.assetsBalance();
     },
     watch: {
       addressInfo(val, old) {
         if (val.address !== old.address && old.address) {
           this.transferForm.fromAddress = this.addressInfo.address;
-          this.getNulsBalance(2, 1, this.transferForm.fromAddress);
+          this.getCapitalListByAddress(this.transferForm.fromAddress);
         }
       },
       gasNumber(val, old) {
@@ -235,19 +232,123 @@
     methods: {
 
       /**
+       * 获取地址的资金列表
+       * @param address
+       **/
+      async getCapitalListByAddress(address) {
+        this.assetsList = [];
+        //获取本连的基本资产
+        let basicAssets = [];
+        let chainId = 2; //记录主链id
+        await this.$post('/', 'getAccountLedgerList', [address])
+          .then((response) => {
+            //console.log(response.result);
+            if (response.hasOwnProperty("result")) {
+              for (let item of response.result) {
+                basicAssets.push({
+                  type: 1,
+                  symbol: item.symbol,
+                  chainId: item.chainId,
+                  assetId: item.assetId,
+                  //TODO 默认为8的进度系数 待完善
+                  balance: timesDecimals(item.balance)
+                });
+                chainId = item.chainId;
+              }
+            }
+          })
+          .catch((error) => {
+            console.log("getAccountLedgerList:" + error);
+            this.assetsListLoading = false;
+          });
+        //console.log(basicAssets);
+
+        //获取本连的合约资产
+        let contractAssets = [];
+        await this.$post('/', 'getAccountTokens', [1, 100, address])
+          .then((response) => {
+            //console.log(response);
+            if (response.hasOwnProperty("result")) {
+              for (let itme of response.result.list) {
+                contractAssets.push({
+                  type: 2,
+                  symbol: itme.tokenSymbol,
+                  chainId: chainId,
+                  balance: timesDecimals(itme.balance, itme.decimals),
+                  contractAddress: itme.contractAddress,
+                  decimals: itme.decimals
+                })
+
+              }
+            }
+          })
+          .catch((error) => {
+            console.log("getAccountTokens:" + error);
+          });
+        //console.log(contractAssets);
+
+        //获取跨链的基本资产
+        let crossAssets = [];
+        await this.$post('/', 'getAccountCrossLedgerList', [address])
+          .then((response) => {
+            //console.log(response);
+            if (response.hasOwnProperty("result")) {
+              for (let item of response.result) {
+                crossAssets.push({
+                  type: 1,
+                  symbol: item.symbol,
+                  chainId: item.chainId,
+                  assetId: item.assetId,
+                  //TODO 默认为8的进度系数 待完善
+                  balance: timesDecimals(item.balance)
+                })
+              }
+            }
+          })
+          .catch((err) => {
+            console.log("getAccountCrossLedgerList:" + err);
+          });
+        //console.log(crossAssets);
+
+        this.assetsList = [...basicAssets, ...contractAssets, ...crossAssets];
+        let isNuls = false; //是否有nuls资产
+        for (let item of this.assetsList) {
+          if (item.symbol === 'NULS') {
+            isNuls = true
+          }
+        }
+        //没有nuls 资产 添加一个为nuls资产
+        if (!isNuls) {
+          let newNulsAssets = {
+            type: 1,
+            symbol: 'NULS',
+            chainId: 2,
+            assetId: 1,
+            balance: 0
+          };
+          this.assetsList.unshift(newNulsAssets);
+        }
+        console.log(this.assetsList);
+        this.changeNuls();
+      },
+
+      /**
        * 验证参数
        **/
       changeParameter() {
-        let fromAddress = nuls.verifyAddress(this.transferForm.fromAddress);
-        let toAddress = nuls.verifyAddress(this.transferForm.toAddress);
-        if (fromAddress.chainId === toAddress.chainId) {
-          this.isCross = false;
-        } else {
-          this.isCross = true;
+        //判断转出地址是否为其他链地址 如果有就为跨链交易
+        if (this.transferForm.toAddress) {
+          let fromAddress = nuls.verifyAddress(this.transferForm.fromAddress);
+          let toAddress = nuls.verifyAddress(this.transferForm.toAddress);
+          if (fromAddress.chainId === toAddress.chainId) {
+            this.isCross = false;
+          } else {
+            this.isCross = true;
+            //this.changeNuls();
+          }
         }
-
-
-        if (this.transferForm.type !== 'NULS') {
+        //合约地址转账交易
+        if (this.changeAssets.type !== 1) {
           this.transferForm.gas = sdk.CONTRACT_MAX_GASLIMIT;
           this.$refs['transferForm'].validate((valid) => {
             if (valid) {
@@ -265,7 +366,6 @@
         } else {
           this.$refs['transferForm'].validate();
         }
-
       },
 
       /**
@@ -273,25 +373,25 @@
        * @param type
        **/
       changeType(type) {
+        //console.log(type);
         this.changeParameter();
-        if (type === 'NULS') {
+        if (type.type === 1) {
           this.transferForm.gas = 5000;
           this.transferForm.price = 25;
         } else {
           this.transferForm.gas = 0;
           this.transferForm.price = sdk.CONTRACT_MINIMUM_PRICE;
         }
-        this.transferForm.type = type;
-        this.assetsBalance();
+        this.changeAssets = type;
+        this.transferForm.type = type.symbol;
       },
 
-      /**
-       * 资产类型余额
-       **/
-      assetsBalance() {
-        for (let item of this.addressInfo.tokens) {
-          if (item.account === this.transferForm.type) {
+      //默认选择nuls资产
+      changeNuls() {
+        for (let item of this.assetsList) {
+          if (item.symbol === 'NULS') {
             this.changeAssets = item;
+            this.transferForm.type = item.symbol;
           }
         }
       },
@@ -305,7 +405,6 @@
           if (valid) {
             this.transferVisible = true
           } else {
-            console.log('error submit!!');
             return false;
           }
         });
@@ -315,13 +414,14 @@
        * 弹框确认提交
        **/
       async confirmTraanser() {
-        this.$refs.password.showPassword(true)
-
+        this.getNulsBalance(this.changeAssets.chainId, 1, this.transferForm.fromAddress);
+        this.$refs.password.showPassword(true);
       },
 
       /**
-       * 获取转出账户余额信息
-       *  @param assetsId
+       * 获取转出地址余额信息
+       *  @param assetChainId
+       *  @param assetId
        *  @param address
        **/
       async getNulsBalance(assetChainId, assetId, address) {
@@ -329,7 +429,6 @@
           //console.log(response);
           if (response.success) {
             this.balanceInfo = response.data;
-            this.changeAssets.balance = timesDecimals(response.data.balance).toString()
           } else {
             this.$message({message: this.$t('public.err') + response, type: 'error', duration: 1000});
           }
@@ -344,39 +443,140 @@
        **/
       async passSubmit(password) {
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(2, pri, password);
+        const newAddressInfo = nuls.importByKey(this.changeAssets.chainId, pri, password);
+        let crossTxHex = '';
         if (newAddressInfo.address === this.addressInfo.address) {
-          let transferInfo = {fromAddress: this.transferForm.fromAddress, assetsChainId: 2, assetsId: 1, fee: 10000};
+          let transferInfo = {
+            fromAddress: this.transferForm.fromAddress,
+            assetsChainId: this.changeAssets.chainId,
+            assetsId: 1,
+            fee: 10000
+          };
           let inOrOutputs = {};
           let tAssemble = [];
-          if (this.changeAssets.account === 'NULS') {
+          if (this.changeAssets.type === 1 && !this.isCross) {
             transferInfo['toAddress'] = this.transferForm.toAddress;
             transferInfo['amount'] = Number(Times(this.transferForm.amount, 100000000).toString());
             inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 2);
             //交易组装
             tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 2);
+          } else if (this.changeAssets.type === 1 && this.isCross) {
+            const txs = require('nuls-sdk-js/lib/model/txs');
+            const Serializers = require("nuls-sdk-js/lib/api/serializers");
+            transferInfo.fee = 1000000;
+            transferInfo['toAddress'] = this.transferForm.toAddress;
+            transferInfo['amount'] = Number(Times(this.transferForm.amount, 100000000).toString());
+            inOrOutputs = await ctxInputsOrOutputs(transferInfo, this.balanceInfo);
+            let ctxSign = "";//本链协议交易签名
+            let mainCtxSign = "";//主网协议交易签名
+            let bw = new Serializers();
+            let mainCtx = new txs.CrossChainTransaction();
+            let pubHex = Buffer.from(this.addressInfo.pub, 'hex');
+            let mainNetBalanceInfo = await getNulsBalance(2, 1, this.transferForm.fromAddress);
+            if (inOrOutputs.success) {
+              tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remark, 10);
+              let newFee = 0;
+              //获取手续费
+              if (isMainNet(this.changeAssets.chainId)) {
+                newFee = countCtxFee(tAssemble, 1);
+              } else {
+                newFee = countCtxFee(tAssemble, 2);
+                if (mainNetBalanceInfo.data.balance < newFee) {
+                  console.log("Your balance is not enough.");
+                  return
+                }
+                mainCtx.time = tAssemble.time;
+                mainCtx.remark = tAssemble.remark;
+                let mainNetInputs = [{
+                  address: transferInfo.fromAddress,
+                  assetsChainId: transferInfo.assetsChainId,
+                  assetsId: transferInfo.assetsId,
+                  amount: Number(Times(this.transferForm.amount, 100000000).toString()),
+                  locked: 0,
+                  nonce: this.balanceInfo.nonce
+                }, {
+                  address: transferInfo.fromAddress,
+                  assetsChainId: 2,
+                  assetsId: 1,
+                  amount: newFee,
+                  locked: 0,
+                  nonce: mainNetBalanceInfo.data.nonce
+                }];
+                let mainNetOutputs = [{
+                  address: transferInfo.toAddress ? transferInfo.toAddress : transferInfo.fromAddress,
+                  assetsChainId: transferInfo.assetsChainId,
+                  assetsId: transferInfo.assetsId,
+                  amount: Number(Times(this.transferForm.amount, 100000000).toString()),
+                  lockTime: 0
+                }];
+                mainCtx.setCoinData(mainNetInputs, mainNetOutputs);
+              }
+              //如果手续费发生改变，重新组装CoinData
+              if (transferInfo.fee !== newFee) {
+                transferInfo.fee = newFee;
+                inOrOutputs = await ctxInputsOrOutputs(transferInfo, this.balanceInfo);
+                if (!inOrOutputs.success) {
+                  console.log(inOrOutputs.data);
+                  return
+                }
+                if (!isMainNet(this.changeAssets.chainId)) {
+                  inOrOutputs.data.inputs.push({
+                    address: transferInfo.fromAddress,
+                    assetsChainId: 2,
+                    assetsId: 1,
+                    amount: newFee,
+                    locked: 0,
+                    nonce: mainNetBalanceInfo.data.nonce
+                  });
+                }
+                tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remark, 10);
+                ctxSign = nuls.transactionSignature(pri, tAssemble);
+              } else {
+                ctxSign = nuls.transactionSignature(pri, tAssemble);
+              }
+              bw.writeBytesWithLength(pubHex);
+              bw.writeBytesWithLength(ctxSign);
+            } else {
+              console.log("交易组装失败！");
+              console.log(inOrOutputs.data);
+              return;
+            }
+            if (!isMainNet(this.changeAssets.chainId)) {
+              mainCtx.txData = tAssemble.getHash();
+              mainCtxSign = nuls.transactionSignature(pri, mainCtx);
+              bw.writeBytesWithLength(pubHex);
+              bw.writeBytesWithLength(mainCtxSign);
+            }
+            tAssemble.signatures = bw.getBufWriter().toBuffer();
+            crossTxHex = tAssemble.txSerialize().toString('hex');
+            //console.log(crossTxHex);
           } else {
             transferInfo['amount'] = Number(Plus(0, Number(Times(this.transferForm.gas, this.transferForm.price))));
             inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 16);
             tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 16, this.contractCallData);
           }
+
           //交易签名
           let txhex = "";
-          //获取手续费
-          let newFee = countFee(tAssemble, 1);
-          //手续费大于0.001的时候重新组装交易及签名
-          if (transferInfo.fee !== newFee) {
-            transferInfo.fee = newFee;
-            if (this.changeAssets.account === 'NULS') {
-              inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 2);
-              tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 2);
-            } else {
-              inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 16);
-              tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 16, this.contractCallData);
-            }
-            txhex = await nuls.transactionSerialize(nuls.decrypteOfAES(this.addressInfo.aesPri, password), this.addressInfo.pub, tAssemble);
+          if (this.changeAssets.type === 1 && this.isCross) {
+            txhex = crossTxHex;
           } else {
-            txhex = await nuls.transactionSerialize(nuls.decrypteOfAES(this.addressInfo.aesPri, password), this.addressInfo.pub, tAssemble);
+            //获取手续费
+            let newFee = countFee(tAssemble, 1);
+            //手续费大于0.001的时候重新组装交易及签名
+            if (transferInfo.fee !== newFee) {
+              transferInfo.fee = newFee;
+              if (this.changeAssets.type === 1) {
+                inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 2);
+                tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 2);
+              } else {
+                inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 16);
+                tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 16, this.contractCallData);
+              }
+              txhex = await nuls.transactionSerialize(nuls.decrypteOfAES(this.addressInfo.aesPri, password), this.addressInfo.pub, tAssemble);
+            } else {
+              txhex = await nuls.transactionSerialize(nuls.decrypteOfAES(this.addressInfo.aesPri, password), this.addressInfo.pub, tAssemble);
+            }
           }
           //console.log(txhex);
           //验证并广播交易

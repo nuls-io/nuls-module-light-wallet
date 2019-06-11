@@ -2,22 +2,14 @@ import {post} from './https'
 import {Plus} from './util'
 
 /**
- * 获取账户的余额及nonce
- * @param address
- * @returns {Promise<any>}
- */
-export async function getNulsBalance(assetChainId = 2, assetId = 1, address) {
-  return await post('/', 'getAccountBalance', [assetChainId, assetId, address])
-    .then((response) => {
-      if (response.hasOwnProperty("result")) {
-        return {success: true, data: {balance: response.result.balance, nonce: response.result.nonce}}
-      } else {
-        return {success: false, data: response}
-      }
-    })
-    .catch((error) => {
-      return {success: false, data: error};
-    });
+ * 判断是否为主网
+ * @param chainId
+ **/
+export function isMainNet(chainId) {
+  if (chainId === 2) {
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -29,6 +21,17 @@ export function countFee(tx, signatrueCount) {
   let txSize = tx.txSerialize().length;
   txSize += signatrueCount * 110;
   return 100000 * Math.ceil(txSize / 1024);
+}
+
+/**
+ * 计算跨链交易手续费
+ * @param tx
+ * @param signatrueCount 签名数量，默认为1
+ **/
+export function countCtxFee(tx, signatrueCount) {
+  let txSize = tx.txSerialize().length;
+  txSize += signatrueCount * 110;
+  return 1000000 * Math.ceil(txSize / 1024);
 }
 
 /**
@@ -93,6 +96,59 @@ export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
     lockTime: newLockTime
   }];
   return {success: true, data: {inputs: inputs, outputs: outputs}};
+}
+
+/**
+ * 获取跨链交易inputs 、 outputs
+ * @param transferInfo
+ * @param balanceInfo
+ * @returns {*}
+ */
+export async function ctxInputsOrOutputs(transferInfo, balanceInfo) {
+  let newAmount = transferInfo.amount + transferInfo.fee;
+  let newLocked = 0;
+  let newNonce = balanceInfo.nonce;
+  let newoutputAmount = transferInfo.amount;
+  let newLockTime = 0;
+  if (balanceInfo.balance < transferInfo.amount + transferInfo.fee) {
+    return {success: false, data: "Your balance is not enough."}
+  }
+  let inputs = [{
+    address: transferInfo.fromAddress,
+    assetsChainId: transferInfo.assetsChainId,
+    assetsId: transferInfo.assetsId,
+    amount: newAmount,
+    locked: newLocked,
+    nonce: newNonce
+  }];
+  let outputs = [];
+  outputs = [{
+    address: transferInfo.toAddress ? transferInfo.toAddress : transferInfo.fromAddress,
+    assetsChainId: transferInfo.assetsChainId,
+    assetsId: transferInfo.assetsId,
+    amount: newoutputAmount,
+    lockTime: newLockTime
+  }];
+  return {success: true, data: {inputs: inputs, outputs: outputs}};
+}
+
+/**
+ * 获取账户的余额及nonce
+ * @param address
+ * @returns {Promise<any>}
+ */
+export async function getNulsBalance(assetChainId = 2, assetId = 1, address) {
+  return await post('/', 'getAccountBalance', [assetChainId, assetId, address])
+    .then((response) => {
+      if (response.hasOwnProperty("result")) {
+        return {success: true, data: {balance: response.result.balance, nonce: response.result.nonce}}
+      } else {
+        return {success: false, data: response}
+      }
+    })
+    .catch((error) => {
+      return {success: false, data: error};
+    });
 }
 
 /**

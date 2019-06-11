@@ -190,7 +190,7 @@
               pub: this.newAddressInfo.pub,
               selection: false,
               alias: "",
-              remark:"",
+              remark: "",
               balance: 0,
               consensusLock: 0,
               totalReward: 0,
@@ -294,7 +294,7 @@
             if (response.hasOwnProperty("result")) {
               console.log(response.result);
             } else {
-
+              console.log(response.result);
             }
           })
           .catch((error) => {

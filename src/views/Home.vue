@@ -92,8 +92,7 @@
 </template>
 
 <script>
-  import moment from 'moment'
-  import {timesDecimals, getLocalTime, superLong, copys, addressInfo} from '@/api/util'
+  import {timesDecimals, copys, addressInfo} from '@/api/util'
 
   export default {
     name: 'home',
@@ -201,7 +200,7 @@
       },
 
       /**
-       * 获取地址网络信息
+       * 获取地址基本资产信息
        * @param address
        **/
       getAddressInfoByNode(address) {
@@ -234,7 +233,7 @@
       },
 
       /**
-       * 获取地址代币列表
+       * 获取地址代币资产信息
        * @param pageSize
        * @param pageRows
        * @param address
@@ -267,7 +266,7 @@
       },
 
       /**
-       * 获取跨链资产信息根据地址
+       * 获取地址跨链资产信息
        * @param address
        **/
       getAccountCrossLedgerList(address) {
@@ -286,7 +285,7 @@
               this.txListDataLoading = false;
             }
           }).catch((err) => {
-          console.log(err);
+          console.log("getAccountCrossLedgerList:"+err);
         })
       },
 

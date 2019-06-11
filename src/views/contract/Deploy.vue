@@ -73,7 +73,6 @@
     validateTx,
     broadcastTx,
   } from '@/api/requestData'
-  import * as config from '@/config.js'
   import Password from '@/components/PasswordBar'
   import {getArgs,chainID} from '@/api/util'
 
