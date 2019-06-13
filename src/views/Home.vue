@@ -116,7 +116,6 @@
         pageCount: 0, //总条数
         crossLinkData: [],//跨链资产
         crossLinkDataLoading: true, //资产加载动画
-
       };
     },
     components: {},
@@ -156,7 +155,7 @@
               this.pageNumber = 1;
               this.pageSize = 10;
               this.pageCount = 0;
-              //this.getTxlistByAddress(this.pageNumber, this.pageSize, this.addressInfo.address, this.type, this.isHide)
+              this.getAccountCrossLedgerList(this.addressInfo.address)
             }
           }
         }
@@ -241,7 +240,7 @@
       getTokenListByAddress(pageSize, pageRows, address) {
         this.$post('/', 'getAccountTokens', [pageSize, pageRows, address])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             let newAssetsList = {};
             if (response.hasOwnProperty("result")) {
               for (let itme of response.result.list) {

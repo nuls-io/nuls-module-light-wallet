@@ -61,17 +61,14 @@
         certificationTimes:'',
         //合约地址
         contractsAddress: this.$route.query.contractAddress,
-
         //上传源代码动画
         uploadLoading:false,
-
         //代码目录
         codeTress:[],
         defaultProps: {
           children: 'children',
           label: 'name'
         },
-
         //代码内容
         codeInfo:'',
       };

@@ -292,7 +292,7 @@
        **/
       getBalanceByAddress(assetChainId, assetId,address) {
         getNulsBalance(assetChainId, assetId,address).then((response) => {
-          console.log(response);
+          //console.log(response);
           if (response.success) {
             this.balanceInfo = response.data;
           } else {

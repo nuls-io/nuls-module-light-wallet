@@ -84,7 +84,7 @@
 <script>
   import nuls from 'nuls-sdk-js'
   import {getNulsBalance, inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
-  import {Times} from '@/api/util'
+  import {Times,addressInfo} from '@/api/util'
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
 
@@ -173,22 +173,21 @@
       };
     },
     created() {
-      this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+      this.addressInfo = addressInfo(1);
       setInterval(() => {
-        this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+        this.addressInfo = addressInfo(1);
       }, 500);
     },
     mounted() {
       this.getPunishByAddress(this.addressInfo.address);
-      this.getBalanceByAddress(this.addressInfo.address);
-
+      this.getBalanceByAddress(this.addressInfo.chainId,1,this.addressInfo.address);
     },
     watch: {
       addressInfo(val, old) {
         if (val) {
           if (val.address !== old.address && old.address) {
             this.getPunishByAddress(this.addressInfo.address);
-            this.getBalanceByAddress(this.addressInfo.address)
+            this.getBalanceByAddress(this.addressInfo.chainId,1,this.addressInfo.address);
           }
         }
       }
@@ -217,8 +216,8 @@
        * 获取账户余额
        * @param address
        **/
-      getBalanceByAddress(address) {
-        getNulsBalance(address).then((response) => {
+      getBalanceByAddress(assetChainId,assetId,address) {
+        getNulsBalance(assetChainId,assetId,address).then((response) => {
           if (response.success) {
             this.balanceInfo = response.data;
           } else {
@@ -262,7 +261,7 @@
       async passSubmit(password) {
         let transferInfo = {
           fromAddress: this.addressInfo.address,
-          assetsChainId: 2,
+          assetsChainId: this.addressInfo.chainId,
           assetsId: 1,
           amount: Number(Times(this.createrForm.amount, 100000000).toString()),
           fee: 100000
@@ -279,13 +278,13 @@
           };
           let tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, '', 4, agent);
           const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-          const newAddressInfo = nuls.importByKey(2, pri, password);
+          const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password);
           if (newAddressInfo.address === this.addressInfo.address) {
             txhex = await nuls.transactionSerialize(pri, this.addressInfo.pub, tAssemble);
             //console.log(txhex);
             //验证并广播交易
             await validateAndBroadcast(txhex).then((response) => {
-              console.log(response);
+              //console.log(response);
               if (response.success) {
                 this.$router.push({
                   name: "txList"

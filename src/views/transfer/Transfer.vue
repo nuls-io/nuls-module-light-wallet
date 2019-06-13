@@ -103,7 +103,6 @@
   import {
     isMainNet,
     countCtxFee,
-    ctxInputsOrOutputs,
     getNulsBalance,
     countFee,
     inputsOrOutputs,
@@ -328,7 +327,6 @@
           };
           this.assetsList.unshift(newNulsAssets);
         }
-        console.log(this.assetsList);
         this.changeNuls();
       },
 
@@ -443,7 +441,7 @@
        **/
       async passSubmit(password) {
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(this.changeAssets.chainId, pri, password);
+        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password);
         let crossTxHex = '';
         if (newAddressInfo.address === this.addressInfo.address) {
           let transferInfo = {
@@ -461,95 +459,11 @@
             //交易组装
             tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 2);
           } else if (this.changeAssets.type === 1 && this.isCross) {
-            const txs = require('nuls-sdk-js/lib/model/txs');
-            const Serializers = require("nuls-sdk-js/lib/api/serializers");
-            transferInfo.fee = 1000000;
             transferInfo['toAddress'] = this.transferForm.toAddress;
             transferInfo['amount'] = Number(Times(this.transferForm.amount, 100000000).toString());
-            inOrOutputs = await ctxInputsOrOutputs(transferInfo, this.balanceInfo);
-            let ctxSign = "";//本链协议交易签名
-            let mainCtxSign = "";//主网协议交易签名
-            let bw = new Serializers();
-            let mainCtx = new txs.CrossChainTransaction();
-            let pubHex = Buffer.from(this.addressInfo.pub, 'hex');
-            let mainNetBalanceInfo = await getNulsBalance(2, 1, this.transferForm.fromAddress);
-            if (inOrOutputs.success) {
-              tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remark, 10);
-              let newFee = 0;
-              //获取手续费
-              if (isMainNet(this.changeAssets.chainId)) {
-                newFee = countCtxFee(tAssemble, 1);
-              } else {
-                newFee = countCtxFee(tAssemble, 2);
-                if (mainNetBalanceInfo.data.balance < newFee) {
-                  console.log("Your balance is not enough.");
-                  return
-                }
-                mainCtx.time = tAssemble.time;
-                mainCtx.remark = tAssemble.remark;
-                let mainNetInputs = [{
-                  address: transferInfo.fromAddress,
-                  assetsChainId: transferInfo.assetsChainId,
-                  assetsId: transferInfo.assetsId,
-                  amount: Number(Times(this.transferForm.amount, 100000000).toString()),
-                  locked: 0,
-                  nonce: this.balanceInfo.nonce
-                }, {
-                  address: transferInfo.fromAddress,
-                  assetsChainId: 2,
-                  assetsId: 1,
-                  amount: newFee,
-                  locked: 0,
-                  nonce: mainNetBalanceInfo.data.nonce
-                }];
-                let mainNetOutputs = [{
-                  address: transferInfo.toAddress ? transferInfo.toAddress : transferInfo.fromAddress,
-                  assetsChainId: transferInfo.assetsChainId,
-                  assetsId: transferInfo.assetsId,
-                  amount: Number(Times(this.transferForm.amount, 100000000).toString()),
-                  lockTime: 0
-                }];
-                mainCtx.setCoinData(mainNetInputs, mainNetOutputs);
-              }
-              //如果手续费发生改变，重新组装CoinData
-              if (transferInfo.fee !== newFee) {
-                transferInfo.fee = newFee;
-                inOrOutputs = await ctxInputsOrOutputs(transferInfo, this.balanceInfo);
-                if (!inOrOutputs.success) {
-                  console.log(inOrOutputs.data);
-                  return
-                }
-                if (!isMainNet(this.changeAssets.chainId)) {
-                  inOrOutputs.data.inputs.push({
-                    address: transferInfo.fromAddress,
-                    assetsChainId: 2,
-                    assetsId: 1,
-                    amount: newFee,
-                    locked: 0,
-                    nonce: mainNetBalanceInfo.data.nonce
-                  });
-                }
-                tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remark, 10);
-                ctxSign = nuls.transactionSignature(pri, tAssemble);
-              } else {
-                ctxSign = nuls.transactionSignature(pri, tAssemble);
-              }
-              bw.writeBytesWithLength(pubHex);
-              bw.writeBytesWithLength(ctxSign);
-            } else {
-              console.log("交易组装失败！");
-              console.log(inOrOutputs.data);
-              return;
-            }
-            if (!isMainNet(this.changeAssets.chainId)) {
-              mainCtx.txData = tAssemble.getHash();
-              mainCtxSign = nuls.transactionSignature(pri, mainCtx);
-              bw.writeBytesWithLength(pubHex);
-              bw.writeBytesWithLength(mainCtxSign);
-            }
-            tAssemble.signatures = bw.getBufWriter().toBuffer();
-            crossTxHex = tAssemble.txSerialize().toString('hex');
-            //console.log(crossTxHex);
+            transferInfo['remark'] = this.transferForm.remarks;
+            transferInfo.fee = 1000000;
+            crossTxHex = await this.crossTxhexs(pri, this.addressInfo.pub, this.addressInfo.chainId, transferInfo);
           } else {
             transferInfo['amount'] = Number(Plus(0, Number(Times(this.transferForm.gas, this.transferForm.price))));
             inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 16);
@@ -581,6 +495,7 @@
           //console.log(txhex);
           //验证并广播交易
           await validateAndBroadcast(txhex).then((response) => {
+            //console.log(response);
             if (response.success) {
               this.toUrl("txList");
             } else {
@@ -592,6 +507,200 @@
         } else {
           this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
         }
+      },
+
+      /**
+       *  跨链交易签名
+       * @param pri
+       * @param pub
+       * @param chainId
+       * @param transferInfo
+       **/
+      async crossTxhexs(pri, pub, chainId, transferInfo) {
+        //账户转出资产余额
+        const balanceInfo = await getNulsBalance(transferInfo.assetsChainId, transferInfo.assetsId, transferInfo.fromAddress);
+        let inputs = [];
+        let outputs = [{
+          address: transferInfo.toAddress ? transferInfo.toAddress : transferInfo.fromAddress,
+          assetsChainId: transferInfo.assetsChainId,
+          assetsId: transferInfo.assetsId,
+          amount: transferInfo.amount,
+          lockTime: 0
+        }];
+        let mainNetBalanceInfo = await getNulsBalance(2, 1, transferInfo.fromAddress);
+        let localBalanceInfo;
+        //如果不是主网需要收取NULS手续费
+        if (!isMainNet(chainId)) {
+          if (mainNetBalanceInfo.data.balance < transferInfo.fee) {
+            console.log("余额不足");
+            return;
+          }
+        }
+        //如果转出资产为本链主资产，则直接将手续费加到转出金额上
+        if (chainId === transferInfo.assetsChainId && transferInfo.assetsId === 1) {
+          let newAmount = transferInfo.amount + transferInfo.fee;
+          if (balanceInfo.data.balance < transferInfo.amount + transferInfo.fee) {
+            console.log("余额不足");
+            return;
+          }
+          //转出的本链资产 = 转出资产amount + 本链手续费
+          inputs.push({
+            address: transferInfo.fromAddress,
+            assetsChainId: transferInfo.assetsChainId,
+            assetsId: transferInfo.assetsId,
+            amount: newAmount,
+            locked: 0,
+            nonce: balanceInfo.data.nonce
+          });
+          //如果不是主网需收取主网NULS手续费
+          if (!isMainNet(chainId)) {
+            inputs.push({
+              address: transferInfo.fromAddress,
+              assetsChainId: 2,
+              assetsId: 1,
+              amount: transferInfo.fee,
+              locked: 0,
+              nonce: mainNetBalanceInfo.data.nonce
+            });
+          }
+        } else {
+          localBalanceInfo = await getNulsBalance(chainId, 1, transferInfo.fromAddress);
+          if (localBalanceInfo.data.balance < transferInfo.fee) {
+            console.log("该账户本链主资产不足够支付手续费！");
+            return;
+          }
+          //如果转出的是NULS，则需要把NULS手续费添加到转出金额上
+          if (transferInfo.assetsChainId === 2 && transferInfo.assetsId === 1) {
+            let newAmount = transferInfo.amount + transferInfo.fee;
+            if (mainNetBalanceInfo.data.balance < newAmount) {
+              console.log("余额不足");
+              return;
+            }
+            inputs.push({
+              address: transferInfo.fromAddress,
+              assetsChainId: transferInfo.assetsChainId,
+              assetsId: transferInfo.assetsId,
+              amount: newAmount,
+              locked: 0,
+              nonce: mainNetBalanceInfo.data.nonce
+            });
+          } else {
+            inputs.push({
+              address: transferInfo.fromAddress,
+              assetsChainId: transferInfo.assetsChainId,
+              assetsId: transferInfo.assetsId,
+              amount: transferInfo.amount,
+              locked: 0,
+              nonce: balanceInfo.data.nonce
+            });
+            inputs.push({
+              address: transferInfo.fromAddress,
+              assetsChainId: 2,
+              assetsId: 1,
+              amount: transferInfo.fee,
+              locked: 0,
+              nonce: mainNetBalanceInfo.data.nonce
+            });
+          }
+          //本链主资产手续费
+          if (!isMainNet(chainId)) {
+            inputs.push({
+              address: transferInfo.fromAddress,
+              assetsChainId: chainId,
+              assetsId: 1,
+              amount: transferInfo.fee,
+              locked: 0,
+              nonce: localBalanceInfo.data.nonce
+            });
+          }
+        }
+        let tAssemble = await nuls.transactionAssemble(inputs, outputs, transferInfo.remark, 10);//交易组装
+        let ctxSign = "";//本链协议交易签名
+        let mainCtxSign = "";//主网协议交易签名
+        const txs = require('nuls-sdk-js/lib/model/txs');
+        const Serializers = require("nuls-sdk-js/lib/api/serializers");
+        let bw = new Serializers();
+        let mainCtx = new txs.CrossChainTransaction();
+        let pubHex = Buffer.from(pub, 'hex');
+        let newFee = 0;
+        if (isMainNet(chainId)) {
+          newFee = countCtxFee(tAssemble, 1)
+        } else {
+          newFee = countCtxFee(tAssemble, 2);
+          mainCtx.time = tAssemble.time;
+          mainCtx.remark = tAssemble.remark;
+          let mainNetInputs = [];
+          if (transferInfo.assetsChainId === 2 && transferInfo.assetsId === 1) {
+            mainNetInputs.push({
+              address: transferInfo.fromAddress,
+              assetsChainId: transferInfo.assetsChainId,
+              assetsId: transferInfo.assetsId,
+              amount: transferInfo.amount + newFee,
+              locked: 0,
+              nonce: mainNetBalanceInfo.data.nonce
+            });
+          } else {
+            mainNetInputs = [{
+              address: transferInfo.fromAddress,
+              assetsChainId: transferInfo.assetsChainId,
+              assetsId: transferInfo.assetsId,
+              amount: transferInfo.amount,
+              locked: 0,
+              nonce: balanceInfo.data.nonce
+            }, {
+              address: transferInfo.fromAddress,
+              assetsChainId: 2,
+              assetsId: 1,
+              amount: newFee,
+              locked: 0,
+              nonce: mainNetBalanceInfo.data.nonce
+            }];
+          }
+          mainCtx.setCoinData(mainNetInputs, outputs);
+        }
+        //如果手续费发生改变，重新组装CoinData
+        if (transferInfo.fee !== newFee) {
+          if (chainId === transferInfo.assetsChainId && transferInfo.assetsId === 1) {
+            if (balanceInfo.data.balance < transferInfo.amount + newFee) {
+              console.log("余额不足");
+              return;
+            }
+            inputs[0].amount = transferInfo.amount + newFee;
+            if (!isMainNet(chainId)) {
+              inputs[1].amount = newFee;
+            }
+          } else {
+            if (localBalanceInfo.data.balance < transferInfo.fee) {
+              console.log("该账户本链主资产不足够支付手续费！");
+              return;
+            }
+            if (transferInfo.assetsChainId === 2 && transferInfo.assetsId === 1) {
+              if (mainNetBalanceInfo.data.balance < transferInfo.amount + newFee) {
+                console.log("余额不足");
+                return;
+              }
+              inputs[0].amount = transferInfo.amount + newFee;
+              inputs[1].amount = newFee;
+            } else {
+              inputs[1].amount = newFee;
+              inputs[2].amount = newFee;
+            }
+          }
+          tAssemble = await nuls.transactionAssemble(inputs, outputs, transferInfo.remark, 10);
+          ctxSign = nuls.transactionSignature(pri, tAssemble);
+        } else {
+          ctxSign = nuls.transactionSignature(pri, tAssemble);
+        }
+        bw.writeBytesWithLength(pubHex);
+        bw.writeBytesWithLength(ctxSign);
+        if (!isMainNet()) {
+          mainCtx.txData = tAssemble.getHash();
+          mainCtxSign = nuls.transactionSignature(pri, mainCtx);
+          bw.writeBytesWithLength(pubHex);
+          bw.writeBytesWithLength(mainCtxSign);
+        }
+        tAssemble.signatures = bw.getBufWriter().toBuffer();
+        return tAssemble.txSerialize().toString('hex');
       },
 
       /**
@@ -650,7 +759,6 @@
                 methodDesc: methodDesc,
                 args: newArgs
               };
-              console.log(this.contractCallData)
             } else {
               console.log("预估调用合约交易的gas错误");
             }

@@ -109,7 +109,7 @@
   import moment from 'moment'
   import nuls from 'nuls-sdk-js'
   import {getNulsBalance, countFee, inputsOrOutputs, validateAndBroadcast, agentDeposistList} from '@/api/requestData'
-  import {timesDecimals, getLocalTime, Minus, Times} from '@/api/util'
+  import {timesDecimals, getLocalTime, Minus, Times,addressInfo} from '@/api/util'
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
 
@@ -157,13 +157,13 @@
       };
     },
     created() {
-      this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+      this.addressInfo = addressInfo(1);
       setInterval(() => {
-        this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+        this.addressInfo = addressInfo(1);
       }, 500);
     },
     mounted() {
-      this.getBalanceByAddress(this.addressInfo.address);
+      this.getBalanceByAddress(this.addressInfo.chainId,1,this.addressInfo.address);
       this.getNodeInfoByHash(this.$route.query.hash);
       this.getNodeDepositByHash(this.pageIndex, this.pageSize, this.addressInfo.address, this.$route.query.hash)
     },
@@ -263,10 +263,12 @@
 
       /**
        * 获取账户余额
+       * @param assetChainId
+       * @param assetId
        * @param address
        **/
-      getBalanceByAddress(address) {
-        getNulsBalance(address).then((response) => {
+      getBalanceByAddress(assetChainId,assetId,address) {
+        getNulsBalance(assetChainId,assetId,address).then((response) => {
           if (response.success) {
             this.balanceInfo = response.data;
           } else {
@@ -283,7 +285,7 @@
        **/
       cancelDeposit(outInfo) {
         this.outInfo = outInfo;
-        getNulsBalance(this.addressInfo.address).then((response) => {
+        getNulsBalance(this.addressInfo.chainId,1,this.addressInfo.address).then((response) => {
           if (response.success) {
             this.balanceInfo = response.data;
             this.$refs.password.showPassword(true);
@@ -300,7 +302,7 @@
        *  注销节点
        **/
       stopNode() {
-        getNulsBalance(this.addressInfo.address).then((response) => {
+        getNulsBalance(this.addressInfo.chainId,1,this.addressInfo.address).then((response) => {
           if (response.success) {
             this.balanceInfo = response.data;
             this.$refs.password.showPassword(true);
@@ -318,13 +320,12 @@
        * @param password
        **/
       async passSubmit(password) {
-
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(2, pri, password);
+        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password);
         if (newAddressInfo.address === this.addressInfo.address) {
           let transferInfo = {
             fromAddress: this.addressInfo.address,
-            assetsChainId: 2,
+            assetsChainId: this.addressInfo.chainId,
             assetsId: 1,
             amount: Number(Times(this.jionNodeForm.amount, 100000000).toString()),
             fee: 100000
@@ -369,7 +370,7 @@
                 //console.log(itme.address);
                 newInputs.push({
                   address: itme.address,
-                  assetsChainId: 2,
+                  assetsChainId: this.addressInfo.chainId,
                   assetsId: 1,
                   amount: itme.amount,
                   locked: -1,
@@ -377,7 +378,7 @@
                 });
                 outputs.push({
                   address: itme.address,
-                  assetsChainId: 2,
+                  assetsChainId: this.addressInfo.chainId,
                   assetsId: 1,
                   amount: itme.amount,
                   lockTime: 0

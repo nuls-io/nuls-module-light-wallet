@@ -143,7 +143,7 @@
         isBackups: false,//备份账户
         keyDialog: false, //key弹框
         userDialog: false,//用户协议弹框
-        ifAddressInfo: sessionStorage.hasOwnProperty(sessionStorage.key(0)),//判断是否账户地址
+        ifAddressInfo: localStorage.hasOwnProperty(chainIdNumber),//判断是否账户地址
         passwordForm: {
           pass: 'nuls123456',
           checkPass: 'nuls123456',
@@ -161,11 +161,12 @@
       };
     },
     created() {
-      if (this.$route.query.address) {
+      let backAddressInfo = this.$route.query.backAddressInfo;
+      if (backAddressInfo) {
         this.isFirst = false;
         this.isBackups = true;
-        this.newAddressInfo.address = this.$route.query.address;
-        this.newAddressInfo.aesPri = this.$route.query.aesPri;
+        this.newAddressInfo.address = backAddressInfo.address;
+        this.newAddressInfo.aesPri = backAddressInfo.aesPri;
       }
     },
     mounted() {
@@ -237,7 +238,8 @@
       passSubmit(password) {
         let that = this;
         const pri = nuls.decrypteOfAES(this.newAddressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(chainID(), pri, password);
+        let chainid = this.$route.query.backAddressInfo ? this.$route.query.backAddressInfo.chainId : chainID();
+        const newAddressInfo = nuls.importByKey(chainid, pri, password);
         if (newAddressInfo.address === this.newAddressInfo.address) {
           if (this.backType === 0) {
             const {dialog} = require('electron').remote;
@@ -281,25 +283,6 @@
       goWallet() {
         this.toUrl('home');
         //this.getAccount(newAddressInfo);
-      },
-
-      /**
-       * 获取账户网络信息
-       * @param newAddressInfo
-       */
-      async getAccount(newAddressInfo) {
-        await this.$post('/', 'getAccount', [newAddressInfo.address])
-          .then((response) => {
-            //console.log(response);
-            if (response.hasOwnProperty("result")) {
-              console.log(response.result);
-            } else {
-              console.log(response.result);
-            }
-          })
-          .catch((error) => {
-            console.log("getAccount:" + error);
-          });
       },
 
       /**

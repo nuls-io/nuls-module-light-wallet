@@ -52,7 +52,8 @@
               <span class="uppercase">{{item.agentId}}</span>&nbsp;
               <i class="iconfont"
                  :class="item.status ===0 ? 'icondaigongshi fred' : 'icongongshizhong fCN'"></i>
-              <i class="follow clicks" :class="item.isCollect ? 'el-icon-star-on fCN':'el-icon-star-off'" @click="collect(item.agentId)" v-show="false"></i>
+              <i class="follow clicks" :class="item.isCollect ? 'el-icon-star-on fCN':'el-icon-star-off'"
+                 @click="collect(item.agentId)" v-show="false"></i>
             </h4>
             <ul class="bg-white click" @click="toUrl('consensusInfo',item.txHash)">
               <li>{{$t('public.alias')}}<span>{{item.agentAlias}}</span></li>
@@ -94,7 +95,7 @@
 
 <script>
   import SelectBar from '@/components/SelectBar';
-  import {timesDecimals, copys,addressInfo} from '@/api/util'
+  import {timesDecimals, copys, addressInfo,chainIdNumber} from '@/api/util'
 
   export default {
     name: 'consensus',
@@ -126,7 +127,7 @@
         searchValue: '',//搜索框
         allNodeData: [],//所有节点信息
         addressInfo: [], //账户信息
-        isRed:false,//地址是否有红牌
+        isRed: false,//地址是否有红牌
         isNew: false,//账户是否已经创建了节点
         pageIndex: 1, //页码
         pageSize: 20, //每页条数
@@ -151,11 +152,9 @@
       this.getConsensusInfoByAddress(this.pageIndex, this.pageSize, this.addressInfo.address);
       this.getAddressInfoByNode(this.addressInfo);
       this.getPunishByAddress(this.addressInfo.address);
-
       /*this.setInterval = setInterval(() => {
         //this.getAddressInfoByNode(this.addressInfo)
       }, 10000)*/
-
     },
     destroyed() {
       clearInterval(this.setInterval);
@@ -194,11 +193,11 @@
        * @param address
        **/
       getPunishByAddress(address) {
-        this.$post('/', 'getPunishList', [1, 1,2,address])
+        this.$post('/', 'getPunishList', [1, 1, 2, address])
           .then((response) => {
             //console.log(response);
-            if (response.result.list.length !== 0 ) {
-              this.isRed= true;
+            if (response.result.list.length !== 0) {
+              this.isRed = true;
             } else {
               this.isRed = false;
             }
@@ -211,25 +210,27 @@
        * 获取地址网络信息
        * @param addressInfo
        **/
-      async getAddressInfoByNode(addressInfo) {
-        addressInfo.alias = "";
-        addressInfo.balance = 0;
-        addressInfo.consensusLock = 0;
-        addressInfo.totalReward = 0;
-        await this.$post('/', 'getAccount', [addressInfo.address])
+      async getAddressInfoByNode(addressInfos) {
+        await this.$post('/', 'getAccount', [addressInfos.address])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
-              addressInfo.alias = response.result.alias;
-              addressInfo.balance = timesDecimals(response.result.balance);
-              addressInfo.consensusLock = timesDecimals(response.result.consensusLock);
-              addressInfo.totalReward = timesDecimals(response.result.totalReward);
+              let newAddressInfo = addressInfo(0);
+              for(let item of newAddressInfo){
+                if(item.address === addressInfos.address){
+                  item.alias = response.result.alias;
+                  item.balance = timesDecimals(response.result.balance);
+                  item.consensusLock = timesDecimals(response.result.consensusLock);
+                  item.totalReward = timesDecimals(response.result.totalReward);
+                  item.totalIn = timesDecimals(response.result.totalIn);
+                  item.totalOut = timesDecimals(response.result.totalOut);
+                }
+              }
+              localStorage.setItem(chainIdNumber(),JSON.stringify(newAddressInfo));
             }
-            localStorage.setItem(addressInfo.address, JSON.stringify(addressInfo));
           })
           .catch((error) => {
             console.log("getAccount:" + error);
-            localStorage.setItem(addressInfo.address, JSON.stringify(addressInfo));
           });
       },
 
@@ -294,9 +295,9 @@
                 this.addressInfo.collectList = [];
               }
               for (let itme of response.result.list) {
-                if(this.addressInfo.collectList.includes(itme.agentId)){
+                if (this.addressInfo.collectList.includes(itme.agentId)) {
                   itme.isCollect = true;
-                }else {
+                } else {
                   itme.isCollect = false;
                 }
                 itme.bozhengjin = itme.deposit;
@@ -326,24 +327,24 @@
       collect(agentId) {
         if (!this.addressInfo.collectList) {
           this.addressInfo.collectList = [];
-        }else {
-          if(this.addressInfo.collectList.includes(agentId)){
+        } else {
+          if (this.addressInfo.collectList.includes(agentId)) {
             //移除已收藏
-            this.addressInfo.collectList.splice(this.addressInfo.collectList.findIndex(v => v === agentId),1);
-          }else {
+            this.addressInfo.collectList.splice(this.addressInfo.collectList.findIndex(v => v === agentId), 1);
+          } else {
             this.addressInfo.collectList.push(agentId);
           }
           //循环是否收藏
           for (let itme of this.allNodeData) {
-            if(this.addressInfo.collectList.includes(itme.agentId)){
+            if (this.addressInfo.collectList.includes(itme.agentId)) {
               itme.isCollect = true;
-            }else {
+            } else {
               itme.isCollect = false;
             }
           }
         }
-        sessionStorage.setItem(this.addressInfo.address,JSON.stringify(this.addressInfo));
-        localStorage.setItem(this.addressInfo.address,JSON.stringify(this.addressInfo));
+        sessionStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
+        localStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
       },
 
       /**

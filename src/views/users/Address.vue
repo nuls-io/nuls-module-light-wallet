@@ -126,16 +126,8 @@
                   addressInfo.balance = timesDecimals(response.result.balance);
                   addressInfo.consensusLock = timesDecimals(response.result.consensusLock);
                   addressInfo.totalReward = timesDecimals(response.result.totalReward);
-                  let newToken = [{symbol:'NULS', contractAddress:'NULS',}];
-                  if(response.result.tokens){
-                    for(let item of response.result.tokens){
-                      let newArr = {};
-                      let newArray = item.split(",");
-                      newArr = {symbol:newArray[1], contractAddress:newArray[0]};
-                      newToken.push(newArr);
-                    }
-                  }
-                  addressInfo.tokens = newToken;
+                  addressInfo.tokens = [];
+                  addressInfo.chainId = nuls.verifyAddress(item.address).chainId;
                 }
               }
               localStorage.setItem(chainIdNumber(),JSON.stringify(this.addressList))
@@ -147,31 +139,6 @@
       },
 
       /**
-       * 获取跨链资产信息根据地址
-       * @param addressInfo
-       **/
-      getAccountCrossLedgerList(addressInfo) {
-        //TODO 待完善
-        console.log(addressInfo);
-        this.$post('/', 'getAccountCrossLedgerList', [addressInfo.address])
-          .then((response) => {
-            console.log(response);
-            if (response.hasOwnProperty("result")) {
-             /* for (let item of response.result) {
-                item.totalBalance = timesDecimals(item.totalBalance);
-                item.balance = timesDecimals(item.balance);
-                item.locking = timesDecimals(item.consensusLock +item.timeLock);
-              }
-              this.crossLinkData = response.result;*/
-            }
-          }).catch((err) => {
-          console.log(err);
-        })
-      },
-
-
-
-      /**
        * 循环获取账户余额及别名
        * @param addressList
        **/
@@ -180,11 +147,6 @@
           setTimeout(() => {
             this.getAddressInfoByNode(item);
           }, 500);
-
-          setTimeout(() => {
-            this.getAccountCrossLedgerList(item);
-          }, 1000);
-
         }
       },
 
@@ -216,7 +178,7 @@
         this.selectAddressInfo = rowInfo;
         this.$router.push({
           name: "newAddress",
-          query: {'address': rowInfo.address, 'aesPri': rowInfo.aesPri}
+          query: {'backAddressInfo':rowInfo}
         })
       },
 
@@ -234,13 +196,12 @@
        * @param password
        **/
       passSubmit(password) {
+        let newAddressInfo = addressInfo(0);
         const pri = nuls.decrypteOfAES(this.selectAddressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(2, pri, password);
-        if (newAddressInfo.address === this.selectAddressInfo.address) {
-          localStorage.removeItem(this.selectAddressInfo.address);
-          if (sessionStorage.hasOwnProperty(this.selectAddressInfo.address)) {
-            sessionStorage.removeItem(this.selectAddressInfo.address);
-          }
+        const deleteAddressInfo = nuls.importByKey(this.selectAddressInfo.chainId, pri, password);
+        if (deleteAddressInfo.address === this.selectAddressInfo.address) {
+          newAddressInfo.splice(newAddressInfo.findIndex(item => item.address === this.selectAddressInfo.address), 1);
+          localStorage.setItem(chainIdNumber(),JSON.stringify(newAddressInfo));
           this.getAddressList();
         } else {
           this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
@@ -261,8 +222,15 @@
        * 账户备注提交
        */
       addRemark() {
-        this.selectAddressInfo.remark = this.remarkInfo;
-        localStorage.setItem(this.selectAddressInfo.address, JSON.stringify(this.selectAddressInfo));
+        console.log(this.remarkInfo);
+        let newAddressInfo = addressInfo(0);
+        for(let item of newAddressInfo){
+          if(item.address === this.selectAddressInfo.address){
+            this.selectAddressInfo.remark = this.remarkInfo;
+            item.remark = this.remarkInfo;
+          }
+        }
+        localStorage.setItem(chainIdNumber(),JSON.stringify(newAddressInfo));
         this.remarkDialog = false;
         this.selectAddressInfo = '';
       },

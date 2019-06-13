@@ -41,6 +41,7 @@
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
   import * as config from '@/config.js'
+  import {addressInfo} from '@/api/util'
 
   export default {
     data() {
@@ -68,8 +69,12 @@
       };
     },
     created() {
-      this.addressInfo = JSON.parse(localStorage.getItem(this.$route.query.address));
-      this.getNulsBalance(1, this.$route.query.address);
+      for (let item of addressInfo(0)) {
+        if (item.address === this.$route.query.address) {
+          this.addressInfo = item
+        }
+      }
+      this.getNulsBalance(2, 1, this.$route.query.address);
     },
     watch: {
       addressInfo(val, old) {
@@ -108,15 +113,15 @@
        *  @param assetsId
        *  @param address
        **/
-      async getNulsBalance(assetsId = 1, address) {
-        await this.$post('/', 'getAccountBalance', [assetsId, address])
+      async getNulsBalance(chainId = 2, assetsId = 1, address) {
+        await this.$post('/', 'getAccountBalance', [chainId, assetsId, address])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
               this.balanceInfo = {'balance': response.result.balance, 'nonce': response.result.nonce};
               //this.$refs.password.showPassword(true);
             } else {
-              this.$message({message:this.$t('public.err2') + response, type: 'error', duration: 1000});
+              this.$message({message: this.$t('public.err2') + response, type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
@@ -148,17 +153,17 @@
           };
           let tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, '', 3, aliasInfo);
           let txhex = await nuls.transactionSerialize(nuls.decrypteOfAES(this.addressInfo.aesPri, password), this.addressInfo.pub, tAssemble);
-          console.log(txhex);
+          //console.log(txhex);
           //验证并广播交易
           await validateAndBroadcast(txhex).then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.success) {
               this.toUrl("txList");
             } else {
               this.$message({message: this.$t('error.' + response.data.code), type: 'error', duration: 3000});
             }
           }).catch((err) => {
-            this.$message({message:  this.$t('public.err0') + err, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err0') + err, type: 'error', duration: 1000});
           });
         } else {
           this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});

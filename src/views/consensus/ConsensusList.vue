@@ -42,9 +42,8 @@
 </template>
 
 <script>
-
   import moment from 'moment'
-  import {timesDecimals, getLocalTime,} from '@/api/util'
+  import {timesDecimals, getLocalTime,addressInfo} from '@/api/util'
   import BackBar from '@/components/BackBar'
 
   export default {
@@ -60,9 +59,9 @@
       };
     },
     created() {
-      this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+      this.addressInfo = addressInfo(1);
       setInterval(() => {
-        this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+        this.addressInfo = addressInfo(1);
       }, 500);
       this.getNodeDepositByHash(this.pageIndex, this.pageSize, this.addressInfo.address)
     },
@@ -87,7 +86,7 @@
                 itme.amount = timesDecimals(itme.amount);
                 //itme.txHashs = superLong(itme.txHash, 20);
                 itme.agendID = itme.agentHash.substr(-8);
-                itme.createTime = moment(getLocalTime(itme.createTime)).format('YYYY-MM-DD HH:mm:ss');
+                itme.createTime = moment(getLocalTime(itme.createTime*1000)).format('YYYY-MM-DD HH:mm:ss');
                 this.totalAmount = this.totalAmount + Number(itme.amount);
               }
               this.consensusData = response.result.list;

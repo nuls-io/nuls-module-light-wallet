@@ -119,7 +119,7 @@
     },
     created() {
       this.createAddress = this.addressInfo.address;
-      this.getBalanceByAddress(2,1,this.createAddress);
+      this.getBalanceByAddress(this.addressInfo.chainId,1,this.createAddress);
     },
     mounted() {
       //this.getTxInfoByHash(this.hash);
@@ -128,7 +128,7 @@
       addressInfo(val, old) {
         if (val.address !== old.address && old.address) {
           this.createAddress = val.address;
-          this.getBalanceByAddress(2,1,this.createAddress);
+          this.getBalanceByAddress(this.addressInfo.chainId,1,this.createAddress);
         }
       }
     },
@@ -255,11 +255,13 @@
 
       /**
        * 获取账户余额
+       * @param assetChainId
+       * @param assetId
        * @param address
        **/
       getBalanceByAddress(assetChainId, assetId, address) {
         getNulsBalance(assetChainId, assetId, address).then((response) => {
-          console.log(response);
+          //console.log(response);
           if (response.success) {
             this.balanceInfo = response.data;
           } else {
@@ -307,7 +309,7 @@
        **/
       async passSubmit(password) {
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(2, pri, password);
+        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password);
         let amount = this.contractCreateTxData.gasLimit * this.contractCreateTxData.price;
         if (newAddressInfo.address === this.addressInfo.address) {
           let transferInfo = {

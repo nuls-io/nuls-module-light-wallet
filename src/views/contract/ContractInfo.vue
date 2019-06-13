@@ -113,7 +113,7 @@
   import BackBar from '@/components/BackBar'
   import SelectBar from '@/components/SelectBar';
   import Call from './Call'
-  import {timesDecimals, getLocalTime, superLong} from '@/api/util'
+  import {timesDecimals, getLocalTime, superLong,addressInfo} from '@/api/util'
   import {getNulsBalance, inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
   import Password from '@/components/PasswordBar'
   import * as config from '@/config.js'
@@ -145,11 +145,11 @@
       };
     },
     created() {
-      this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+      this.addressInfo = addressInfo(1);
       setInterval(() => {
-        this.addressInfo = JSON.parse(sessionStorage.getItem(sessionStorage.key(0)));
+        this.addressInfo = addressInfo(1);
       }, 500);
-      this.getBalanceByAddress(this.addressInfo.address);
+      this.getBalanceByAddress(this.addressInfo.chainId,1,this.addressInfo.address);
     },
     mounted() {
       this.contractInfoByAddress(this.contractAddress);
@@ -176,7 +176,7 @@
         if (val.address !== old.address && old.address) {
           this.addressInfo = val;
           this.isCancel = this.addressInfo.address === this.contractInfo.creater;
-          this.getBalanceByAddress(this.addressInfo.address);
+          this.getBalanceByAddress(this.addressInfo.chainId,1,this.addressInfo.address);
         }
       }
     },
@@ -253,8 +253,8 @@
        * 获取账户余额
        * @param address
        **/
-      getBalanceByAddress(address) {
-        getNulsBalance(address).then((response) => {
+      getBalanceByAddress(assetChainId, assetId,address) {
+        getNulsBalance(assetChainId, assetId,address).then((response) => {
           if (response.success) {
             this.balanceInfo = response.data;
           } else {
@@ -296,7 +296,7 @@
       async passSubmit(password) {
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
         let pub = this.addressInfo.pub;
-        const newAddressInfo = nuls.importByKey(2, pri, password);
+        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password);
         if (newAddressInfo.address === this.addressInfo.address) {
 
           let amount = 0;
@@ -308,7 +308,7 @@
             fee: 100000
           };
           let contractDelete = {
-            chainId: 2,
+            chainId: this.addressInfo.chainId,
             sender: this.addressInfo.address,
             contractAddress: this.contractAddress
           };

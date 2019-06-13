@@ -1,5 +1,5 @@
 import {post} from './https'
-import {Plus} from './util'
+import {Plus, chainID} from './util'
 
 /**
  * 判断是否为主网
@@ -69,6 +69,7 @@ export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
   } else {
     //return {success: false, data: "No transaction type"}
   }
+
   let inputs = [{
     address: transferInfo.fromAddress,
     assetsChainId: transferInfo.assetsChainId,
@@ -77,6 +78,24 @@ export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
     locked: newLocked,
     nonce: newNonce
   }];
+
+  if (type === 2 && transferInfo.assetsChainId !== chainID()) {
+    inputs[0].amount = transferInfo.amount;
+    //账户转出资产余额
+    let nulsbalance = await getNulsBalance(chainID(), transferInfo.assetsId, transferInfo.fromAddress);
+    if (nulsbalance.data.balance < 100000) {
+      console.log("余额小于手续费");
+      return
+    }
+    inputs.push({
+      address: transferInfo.fromAddress,
+      assetsChainId: chainID(),
+      assetsId: transferInfo.assetsId,
+      amount: 100000,
+      locked: newLocked,
+      nonce: nulsbalance.data.nonce
+    })
+  }
   let outputs = [];
   if (type === 15 || type === 17) {
     return {success: true, data: {inputs: inputs, outputs: outputs}};
@@ -88,40 +107,6 @@ export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
       newoutputAmount = transferInfo.value;
     }
   }
-  outputs = [{
-    address: transferInfo.toAddress ? transferInfo.toAddress : transferInfo.fromAddress,
-    assetsChainId: transferInfo.assetsChainId,
-    assetsId: transferInfo.assetsId,
-    amount: newoutputAmount,
-    lockTime: newLockTime
-  }];
-  return {success: true, data: {inputs: inputs, outputs: outputs}};
-}
-
-/**
- * 获取跨链交易inputs 、 outputs
- * @param transferInfo
- * @param balanceInfo
- * @returns {*}
- */
-export async function ctxInputsOrOutputs(transferInfo, balanceInfo) {
-  let newAmount = transferInfo.amount + transferInfo.fee;
-  let newLocked = 0;
-  let newNonce = balanceInfo.nonce;
-  let newoutputAmount = transferInfo.amount;
-  let newLockTime = 0;
-  if (balanceInfo.balance < transferInfo.amount + transferInfo.fee) {
-    return {success: false, data: "Your balance is not enough."}
-  }
-  let inputs = [{
-    address: transferInfo.fromAddress,
-    assetsChainId: transferInfo.assetsChainId,
-    assetsId: transferInfo.assetsId,
-    amount: newAmount,
-    locked: newLocked,
-    nonce: newNonce
-  }];
-  let outputs = [];
   outputs = [{
     address: transferInfo.toAddress ? transferInfo.toAddress : transferInfo.fromAddress,
     assetsChainId: transferInfo.assetsChainId,

@@ -21,7 +21,8 @@
             </el-option>
           </el-select>
           <el-select :value="$t('budgetType.'+inAndOutValue)" @change="channgeInAndOut" :disabled="types !==2">
-            <el-option v-for="item in inAndOutOptions" :key="item.value" :label="$t('budgetType.'+item.value)" :value="item.value">
+            <el-option v-for="item in inAndOutOptions" :key="item.value" :label="$t('budgetType.'+item.value)"
+                       :value="item.value">
             </el-option>
           </el-select>
           <el-switch v-model="isHide" active-text="" :inactive-text="$t('public.hideReward')" :width="35"
@@ -30,8 +31,7 @@
           </el-switch>
         </div>
         <el-table :data="txListData" stripe border>
-          <el-table-column :label="$t('tab.tab0')" align="center" width="100">
-            <template><span>NULS</span></template>
+          <el-table-column prop="symbol" :label="$t('tab.tab0')" align="center" width="100">
           </el-table-column>
           <el-table-column :label="$t('tab.tab1')" align="center" width="100">
             <template slot-scope="scope"><span>{{ $t('type.'+scope.row.type) }}</span></template>
@@ -73,7 +73,7 @@
 
 <script>
   import moment from 'moment'
-  import {timesDecimals, getLocalTime, superLong,addressInfo} from '@/api/util'
+  import {timesDecimals, getLocalTime, superLong, addressInfo} from '@/api/util'
   import BackBar from '@/components/BackBar'
 
   export default {
@@ -155,10 +155,10 @@
       getTxlistByAddress(pageSize, pageRows, address, type, isHide) {
         this.$post('/', 'getAccountTxs', [pageSize, pageRows, address, type, isHide])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               for (let item of response.result.list) {
-                item.createTime = moment(getLocalTime(item.createTime*1000)).format('YYYY-MM-DD HH:mm:ss');
+                item.createTime = moment(getLocalTime(item.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
                 item.txid = superLong(item.txHash, 8);
                 item.balance = timesDecimals(item.balance);
                 item.amount = timesDecimals(item.values);

@@ -35,6 +35,7 @@
 <script>
   import nuls from 'nuls-sdk-js'
   import BackBar from '@/components/BackBar'
+  import {addressInfo} from '@/api/util'
 
   export default {
     data() {
@@ -111,7 +112,12 @@
        */
       submitPasswordForm(formName) {
         let address = this.$route.query.address;
-        let oldAddressInfo = JSON.parse(localStorage.getItem(address));
+        let oldAddressInfo ={};
+        for(let item of addressInfo(0)){
+          if(item.address === address){
+             oldAddressInfo = item
+          }
+        }
         this.$refs[formName].validate((valid) => {
           if (valid) {
             const pri = nuls.decrypteOfAES(oldAddressInfo.aesPri, this.passwordForm.oldPass);
