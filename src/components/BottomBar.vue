@@ -13,7 +13,7 @@
           <!--<label class="clicks">{{$t('bottom.agreement')}}</label>
           <label class="clicks">{{$t('bottom.policy')}}</label>-->
           <!--<label>Alpha 2.0.1</label>-->
-          <label class="click" @click="checkUpdate">Alpha 2.0.4</label>
+          <label class="click" @click="checkUpdate">Alpha 2.0.1</label>
         </div>
       </div>
     </div>
@@ -38,9 +38,10 @@
 </template>
 
 <script>
+  import nuls from 'nuls-sdk-js'
   import axios from 'axios'
   import {defaultUrl} from '@/config.js'
-  import {chainID} from '@/api/util'
+  import {chainID,chainIdNumber,addressInfo,timesDecimals} from '@/api/util'
 
   export default {
     name: "bottom-bar",
@@ -62,16 +63,10 @@
     mounted() {
       setInterval(() => {
         this.getHeaderInfo();
+        this.getAddressInfo();
       }, 10000);
     },
     watch: {
-      serviceUrls(val, old) {
-        if (val) {
-          if (val !== old && old) {
-            //this.getBestBlockHeader();
-          }
-        }
-      }
     },
     methods: {
 
@@ -81,9 +76,6 @@
       getHeaderInfo() {
         const url = localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')).urls : 'http://192.168.1.40:18003/';
         const params = {"jsonrpc": "2.0", "method": "getInfo", "params": [chainID()], "id": 5898};
-        //this.$post('/', 'getInfo', [])
-        /* console.log(url);
-         console.log(params);*/
         axios.post(url, params)
           .then((response) => {
             //console.log(response.data);
@@ -97,6 +89,35 @@
             this.heightInfo = {localHeight: 0, networkHeight: 0};
             console.log("getInfo:" + error)
           })
+      },
+
+      /**
+       * 获取地址网络信息
+       * @param addressInfo
+       **/
+      async getAddressInfo() {
+        let addressInfos = addressInfo(1);
+        let addressList = addressInfo(0);
+        await this.$post('/', 'getAccount', [addressInfos.address])
+          .then((response) => {
+            //console.log(response);
+            if (response.hasOwnProperty("result")) {
+              for(let item of addressList){
+                if(item.address === addressInfos.address){
+                  item.alias = response.result.alias;
+                  item.balance = timesDecimals(response.result.balance);
+                  item.consensusLock = timesDecimals(response.result.consensusLock);
+                  item.totalReward = timesDecimals(response.result.totalReward);
+                  item.tokens = [];
+                  item.chainId = nuls.verifyAddress(item.address).chainId;
+                }
+              }
+              localStorage.setItem(chainIdNumber(),JSON.stringify(addressList))
+            }
+          })
+          .catch((error) => {
+            console.log("getAccount:" + error);
+          });
       },
 
       /**

@@ -342,7 +342,9 @@
             this.isCross = false;
           } else {
             this.isCross = true;
-            //this.changeNuls();
+            if(this.changeAssets.type === 2){
+              this.changeNuls();
+            }
           }
         }
         //合约地址转账交易

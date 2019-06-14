@@ -222,7 +222,6 @@
        * 账户备注提交
        */
       addRemark() {
-        console.log(this.remarkInfo);
         let newAddressInfo = addressInfo(0);
         for(let item of newAddressInfo){
           if(item.address === this.selectAddressInfo.address){

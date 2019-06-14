@@ -145,8 +145,8 @@
         userDialog: false,//用户协议弹框
         ifAddressInfo: localStorage.hasOwnProperty(chainIdNumber),//判断是否账户地址
         passwordForm: {
-          pass: 'nuls123456',
-          checkPass: 'nuls123456',
+          pass: '',
+          checkPass: '',
         },
         passwordRules: {
           pass: [
