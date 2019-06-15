@@ -18,7 +18,7 @@
           <el-table-column :label="$t('tab.tab1')" align="center" width="150">
             <template slot-scope="scope"><span>{{ $t('addressType.'+scope.row.type) }}</span></template>
           </el-table-column>
-          <el-table-column prop="total" :label="$t('tab.tab2')">
+          <el-table-column prop="balance" :label="$t('tab.tab4')">
           </el-table-column>
           <el-table-column :label="$t('tab.tab3')">
             <template slot-scope="scope">
@@ -27,7 +27,7 @@
               <span v-show="scope.row.locking === '--' || scope.row.locking ===0">{{scope.row.locking}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="balance" :label="$t('tab.tab4')">
+          <el-table-column prop="total" :label="$t('tab.tab2')">
           </el-table-column>
           <el-table-column fixed="right" :label="$t('public.operation')" align="center" min-width="120">
             <template slot-scope="scope">
@@ -53,11 +53,11 @@
         <el-table :data="crossLinkData" stripe border v-loading="crossLinkDataLoading">
           <el-table-column prop="symbol" :label="$t('tab.tab0')" align="center">
           </el-table-column>
-        <!--  <el-table-column :label="$t('tab.tab1')" align="center" width="150">
-            <template slot-scope="scope"><span>{{ scope.row.symbol }}</span></template>
-          </el-table-column>-->
-          <el-table-column prop="totalBalance" :label="$t('tab.tab2')">
-        </el-table-column>
+          <!--  <el-table-column :label="$t('tab.tab1')" align="center" width="150">
+              <template slot-scope="scope"><span>{{ scope.row.symbol }}</span></template>
+            </el-table-column>-->
+          <el-table-column prop="balance" :label="$t('tab.tab4')">
+          </el-table-column>
           <el-table-column :label="$t('tab.tab3')">
             <template slot-scope="scope">
               <span class="click" @click="toUrl('frozenList')"
@@ -65,7 +65,7 @@
               <span v-show="scope.row.locking === '--' || scope.row.locking ===0">{{scope.row.locking}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="balance" :label="$t('tab.tab4')">
+          <el-table-column prop="totalBalance" :label="$t('tab.tab2')">
           </el-table-column>
           <el-table-column fixed="right" :label="$t('public.operation')" align="center" min-width="120">
             <template slot-scope="scope">
@@ -278,13 +278,13 @@
               for (let item of response.result) {
                 item.totalBalance = timesDecimals(item.totalBalance);
                 item.balance = timesDecimals(item.balance);
-                item.locking = timesDecimals(item.consensusLock +item.timeLock);
+                item.locking = timesDecimals(item.consensusLock + item.timeLock);
               }
               this.crossLinkData = response.result;
               this.txListDataLoading = false;
             }
           }).catch((err) => {
-          console.log("getAccountCrossLedgerList:"+err);
+          console.log("getAccountCrossLedgerList:" + err);
         })
       },
 

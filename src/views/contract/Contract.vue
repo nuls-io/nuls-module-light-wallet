@@ -28,7 +28,8 @@
             </el-table-column>
             <el-table-column :label="$t('public.operation')" align="center">
               <template slot-scope="scope">
-                <label class="click tab_bn" @click="toUrl('contractInfo',scope.row.contractAddress,0,'fourth')">{{$t('contract.contract4')}}</label>
+                <label class="tab_bn" v-if="scope.row.status ===3">--</label>
+                <label class="click tab_bn" v-else @click="toUrl('contractInfo',scope.row.contractAddress,0,'fourth')">{{$t('contract.contract4')}}</label>
               </template>
             </el-table-column>
           </el-table>

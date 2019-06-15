@@ -303,6 +303,7 @@
        **/
       stopNode() {
         getNulsBalance(this.addressInfo.chainId,1,this.addressInfo.address).then((response) => {
+          //console.log(response);
           if (response.success) {
             this.balanceInfo = response.data;
             this.$refs.password.showPassword(true);

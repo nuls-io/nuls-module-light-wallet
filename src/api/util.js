@@ -199,3 +199,23 @@ export function getArgs(parameterList) {
     return {allParameter: allParameter, args: newArgs};
   }
 }
+
+/**
+ * 连接跳转
+ * @param name
+ * @param parameter
+ * @param type 0:路由跳转 1：跳转到浏览器
+ */
+export function connect(name, parameter, type = 0) {
+  //console.log(name)
+  if (type === 0) {
+    this.$router.push({
+      name: name
+    });
+  } else {
+    //shell.openExternal(newUrl);
+    window.open(name, '_blank');
+  }
+
+
+}

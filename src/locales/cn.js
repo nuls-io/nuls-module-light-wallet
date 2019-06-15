@@ -568,7 +568,7 @@ const cn = {
     "newAddress5": "请认真保存钱包密码，NULS钱包不存储密码，也无法帮您找回，请务必牢记",
     "newAddress6": "密码",
     "newAddress7": "确认密码",
-    "newAddress8": "点击下一步，你已经同意了",
+    "newAddress8": "我理解我需要保存好我的密码，否则可能造成资产丢失",
     "newAddress9": "用户协议",
     "newAddress10": "下一步",
     "newAddress11": "导入钱包",

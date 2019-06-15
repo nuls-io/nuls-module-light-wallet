@@ -50,8 +50,9 @@
             </el-table-column>
             <el-table-column label="TXID" min-width="280" align="left">
               <template slot-scope="scope">
-                <span class="cursor-p click"
-                      @click="toUrl('transactionInfo',scope.row.txHash)">{{ scope.row.txHashs }}</span>
+                <span class="cursor-p click" @click="toUrl('transactionInfo',scope.row.txHash)">
+                  {{ scope.row.txHashs }}
+                </span>
               </template>
             </el-table-column>
             <el-table-column prop="time" :label="$t('public.time')" width="180" align="left">
@@ -79,7 +80,7 @@
           <CodeInfo></CodeInfo>
         </el-tab-pane>-->
         <el-tab-pane :label="$t('contractInfo.contractInfo6')" name="third">
-          <el-table :data="modeList" stripe border style="width: 100%" class="mzt_20">
+          <el-table :data="modeList" stripe border style="width: 100%" class="mzt_20 mb_100">
             <el-table-column label="" width="30">
             </el-table-column>
             <el-table-column prop="name" :label="$t('contractInfo.contractInfo6')" width="280" align="left">
@@ -116,7 +117,6 @@
   import {timesDecimals, getLocalTime, superLong,addressInfo} from '@/api/util'
   import {getNulsBalance, inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
   import Password from '@/components/PasswordBar'
-  import * as config from '@/config.js'
 
   export default {
     data() {
@@ -298,11 +298,10 @@
         let pub = this.addressInfo.pub;
         const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password);
         if (newAddressInfo.address === this.addressInfo.address) {
-
           let amount = 0;
           let transferInfo = {
             fromAddress: this.addressInfo.address,
-            assetsChainId: config.API_CHAIN_ID,
+            assetsChainId: this.addressInfo.chainId,
             assetsId: 1,
             amount: amount,
             fee: 100000
@@ -312,7 +311,6 @@
             sender: this.addressInfo.address,
             contractAddress: this.contractAddress
           };
-
           let deleteValidateResult = await this.validateContractDelete(contractDelete.sender, contractDelete.contractAddress);
           if (!deleteValidateResult.success) {
             this.$message({message: this.$t('contractInfo.contractInfo13') +deleteValidateResult.msg, type: 'error', duration: 3000});

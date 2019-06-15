@@ -42,10 +42,14 @@
           <el-form-item :label="$t('newAddress.newAddress7')" prop="checkPass">
             <el-input type="password" v-model="passwordForm.checkPass" autocomplete="off"></el-input>
           </el-form-item>
-          <div class="font12">{{$t('newAddress.newAddress8')}}<span
-                  class="click" @click="userDialog=true">{{$t('newAddress.newAddress9')}}</span></div>
+          <el-form-item label="" prop="agreement">
+            <el-checkbox-group v-model="passwordForm.agreement">
+              <el-checkbox :label="$t('newAddress.newAddress8')" name="agreement"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
           <el-form-item class="form-next">
-            <el-button type="success" @click="submitPasswordForm('passwordForm')">{{$t('newAddress.newAddress10')}}
+            <el-button type="success" @click="submitPasswordForm('passwordForm')" :disabled="!passwordForm.agreement">
+              {{$t('newAddress.newAddress10')}} {{passwordForm.agreement}}
             </el-button>
             <el-button type="text" @click="toUrl('importAddress')">{{$t('newAddress.newAddress11')}}</el-button>
           </el-form-item>
@@ -87,24 +91,6 @@
         <el-button type="success" @click="copy(newAddressInfo.pri)">{{$t('newAddress.newAddress21')}}</el-button>
       </span>
     </el-dialog>
-
-    <el-dialog title="用户协议" width="40%" :visible.sync="userDialog" class="userDiolog">
-      <div class="bg-white userInfo">
-        <p>在前些日子举办的Google IO 2019 年度开发者大会上，Flutter web作为一个很亮眼的技术受到了开发者的追捧。这是继Flutter支持Android</p>
-        <p>IOS等设备之后，又一个里程碑式的版本，后续还会支持windows、linux、Macos、chroms等其他嵌入式设备。Flutter本身是一个类似于RN、WEEX、hHybrid等多端</p>
-        <p>统一跨平台解决方案，真正做到了一次编写，多处运行，它的发展超出了很多人的想象，值得前端开发者去关注，今天我们来体验一下Flutter Web</p>
-        <p>在前些日子举办的Google IO 2019 年度开发者大会上，Flutter web作为一个很亮眼的技术受到了开发者的追捧。这是继Flutter支持Android</p>
-        <p>IOS等设备之后，又一个里程碑式的版本，后续还会支持windows、linux、Macos、chroms等其他嵌入式设备。Flutter本身是一个类似于RN、WEEX、hHybrid等多端</p>
-        <p>统一跨平台解决方案，真正做到了一次编写，多处运行，它的发展超出了很多人的想象，值得前端开发者去关注，今天我们来体验一下Flutter Web</p>
-        <p>在前些日子举办的Google IO 2019 年度开发者大会上，Flutter web作为一个很亮眼的技术受到了开发者的追捧。这是继Flutter支持Android</p>
-        <p>IOS等设备之后，又一个里程碑式的版本，后续还会支持windows、linux、Macos、chroms等其他嵌入式设备。Flutter本身是一个类似于RN、WEEX、hHybrid等多端</p>
-        <p>统一跨平台解决方案，真正做到了一次编写，多处运行，它的发展超出了很多人的想象，值得前端开发者去关注，今天我们来体验一下Flutter Web</p>
-        <p>在前些日子举办的Google IO 2019 年度开发者大会上，Flutter web作为一个很亮眼的技术受到了开发者的追捧。这是继Flutter支持Android</p>
-        <p>IOS等设备之后，又一个里程碑式的版本，后续还会支持windows、linux、Macos、chroms等其他嵌入式设备。Flutter本身是一个类似于RN、WEEX、hHybrid等多端</p>
-        <p>统一跨平台解决方案，真正做到了一次编写，多处运行，它的发展超出了很多人的想象，值得前端开发者去关注，今天我们来体验一下Flutter Web</p>
-      </div>
-
-    </el-dialog>
   </div>
 </template>
 
@@ -142,11 +128,11 @@
         isFirst: true,//第一步
         isBackups: false,//备份账户
         keyDialog: false, //key弹框
-        userDialog: false,//用户协议弹框
         ifAddressInfo: localStorage.hasOwnProperty(chainIdNumber),//判断是否账户地址
         passwordForm: {
           pass: '',
           checkPass: '',
+          agreement: '',
         },
         passwordRules: {
           pass: [
@@ -154,6 +140,9 @@
           ],
           checkPass: [
             {validator: validatePassTwo, trigger: 'blur'}
+          ],
+          agreement: [
+            {required: true, message: '请选择知晓密码提示', trigger: 'change'}
           ]
         },
         newAddressInfo: {}, //新建的地址信息

@@ -135,6 +135,7 @@
                   return console.error(err);
                 } else {
                   that.keystoreInfo = JSON.parse(data.toString());
+                  console.log(that.keystoreInfo);
                   that.$refs.password.showPassword(true)
                 }
               });
@@ -153,17 +154,32 @@
        **/
       passSubmit(password) {
         const pri = nuls.decrypteOfAES(this.keystoreInfo.encryptedPrivateKey, password);
-        const newAddressInfo = nuls.importByKey(2, pri, password);
+        const newAddressInfo = nuls.importByKey(chainID(), pri, password);
+        console.log(newAddressInfo);
         if (newAddressInfo.address === this.keystoreInfo.address) {
-          let addressInfo = {
+          let newImportAddressInfo = {
             address: newAddressInfo.address,
             aesPri: newAddressInfo.aesPri,
             pub: newAddressInfo.pub,
-            alias: '',
-            remark: '',
             selection: false,
+            alias: "",
+            remark:"",
+            balance: 0,
+            consensusLock: 0,
+            totalReward: 0,
+            tokens: []
           };
-          localStorage.setItem(newAddressInfo.address, JSON.stringify(addressInfo));
+          let addressList = [];
+          let newAddressList = [];
+          newAddressList.push(newImportAddressInfo);
+          let newArr = addressInfo(0);
+          if (newArr.length !== 0) {
+            addressList = [...newAddressList, ...newArr];
+          } else {
+            newImportAddressInfo.selection = true;
+            addressList[0] = newImportAddressInfo
+          }
+          localStorage.setItem(chainIdNumber(), JSON.stringify(addressList));
           this.toUrl('address')
         } else {
           this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
