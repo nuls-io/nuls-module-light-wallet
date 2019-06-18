@@ -17,14 +17,17 @@
           </span>
         </h5>
         <ul>
-          <li>{{$t('public.usableBalance')}}<label>{{contractInfo.balance}}<span class="fCN">NULS</span></label></li>
+          <li>{{$t('public.usableBalance')}}<label>{{contractInfo.balance}}<span
+                  class="fCN">{{addressInfo.symbol}}</span></label></li>
           <li>{{$t('contractInfo.contractInfo2')}}<label>{{contractInfo.txCount}}</label></li>
           <li>
             {{$t('contractInfo.contractInfo3')}}
             <label>
-              <u class="click" @click="toUrl('consensusList')">{{contractInfo.creater}}</u>
+              <u class="click" @click="toUrl('http://alpha.nulscan.io/address/info?address='+contractInfo.creater,1)">
+                {{contractInfo.creater}}
+              </u>
               at TxID
-              <u class="click" @click="toUrl('consensusList')">{{contractInfo.createTxHashs}}</u>
+              <u class="click" @click="toUrl('transferInfo',0,contractInfo.createTxHash)">{{contractInfo.createTxHashs}}</u>
             </label>
           </li>
           <li>{{$t('contractInfo.contractInfo4')}}<label>{{contractInfo.symbol}}</label></li>
@@ -50,7 +53,7 @@
             </el-table-column>
             <el-table-column label="TXID" min-width="280" align="left">
               <template slot-scope="scope">
-                <span class="cursor-p click" @click="toUrl('transactionInfo',scope.row.txHash)">
+                <span class="cursor-p click" @click="toUrl('transactionInfo',0,scope.row.txHash)">
                   {{ scope.row.txHashs }}
                 </span>
               </template>
@@ -114,9 +117,10 @@
   import BackBar from '@/components/BackBar'
   import SelectBar from '@/components/SelectBar';
   import Call from './Call'
-  import {timesDecimals, getLocalTime, superLong,addressInfo} from '@/api/util'
+  import {timesDecimals, getLocalTime, superLong, addressInfo} from '@/api/util'
   import {getNulsBalance, inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
   import Password from '@/components/PasswordBar'
+  import {shell} from 'electron'
 
   export default {
     data() {
@@ -149,7 +153,7 @@
       setInterval(() => {
         this.addressInfo = addressInfo(1);
       }, 500);
-      this.getBalanceByAddress(this.addressInfo.chainId,1,this.addressInfo.address);
+      this.getBalanceByAddress(this.addressInfo.chainId, 1, this.addressInfo.address);
     },
     mounted() {
       this.contractInfoByAddress(this.contractAddress);
@@ -176,7 +180,7 @@
         if (val.address !== old.address && old.address) {
           this.addressInfo = val;
           this.isCancel = this.addressInfo.address === this.contractInfo.creater;
-          this.getBalanceByAddress(this.addressInfo.chainId,1,this.addressInfo.address);
+          this.getBalanceByAddress(this.addressInfo.chainId, 1, this.addressInfo.address);
         }
       }
     },
@@ -202,7 +206,11 @@
               this.modeList = response.result.methods;
               this.isCancel = this.addressInfo.address === this.contractInfo.creater
             } else {
-              this.$message({message: this.$t('contractInfo.contractInfo9') + response.error, type: 'error', duration: 1000});
+              this.$message({
+                message: this.$t('contractInfo.contractInfo9') + response.error,
+                type: 'error',
+                duration: 1000
+              });
             }
           })
           .catch((error) => {
@@ -227,7 +235,11 @@
               this.contractTxData = response.result.list;
               this.pageTotal = response.result.totalCount;
             } else {
-              this.$message({message: this.$t('contractInfo.contractInfo11') + response.error, type: 'error', duration: 1000});
+              this.$message({
+                message: this.$t('contractInfo.contractInfo11') + response.error,
+                type: 'error',
+                duration: 1000
+              });
             }
           })
           .catch((error) => {
@@ -253,8 +265,8 @@
        * 获取账户余额
        * @param address
        **/
-      getBalanceByAddress(assetChainId, assetId,address) {
-        getNulsBalance(assetChainId, assetId,address).then((response) => {
+      getBalanceByAddress(assetChainId, assetId, address) {
+        getNulsBalance(assetChainId, assetId, address).then((response) => {
           if (response.success) {
             this.balanceInfo = response.data;
           } else {
@@ -313,7 +325,11 @@
           };
           let deleteValidateResult = await this.validateContractDelete(contractDelete.sender, contractDelete.contractAddress);
           if (!deleteValidateResult.success) {
-            this.$message({message: this.$t('contractInfo.contractInfo13') +deleteValidateResult.msg, type: 'error', duration: 3000});
+            this.$message({
+              message: this.$t('contractInfo.contractInfo13') + deleteValidateResult.msg,
+              type: 'error',
+              duration: 3000
+            });
             return;
           }
           let remark = '';
@@ -344,15 +360,17 @@
        * @param name
        * @param type
        */
-      toUrl(name, type = 0) {
+      toUrl(name, type = 0,params) {
         //console.log(name)
-        if (type.toString() === '0') {
+        if (type === 0) {
+          let newQuery = {hash: params};
           this.$router.push({
-            name: name
-          });
+            name: name,
+            query: newQuery
+          })
         } else {
-          //shell.openExternal(newUrl);
-          window.open(name, '_blank');
+          shell.openExternal(name);
+          //window.open(name, '_blank');
         }
       },
 

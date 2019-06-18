@@ -57,7 +57,7 @@
               {{$t('contract.contract7')}}
             </el-button>
             <u class="click td"
-               @click="toUrl('http://alpha.nulscan.io/contracts',1)">{{$t('contract.contract8')}}</u>
+               @click="toUrl('http://alpha.nulscan.io/contracts','',1)">{{$t('contract.contract8')}}</u>
           </div>
           <div class="contract-info bg-gray" v-show="contractInfo.contractAddress">
             <div class="contract-address font18">

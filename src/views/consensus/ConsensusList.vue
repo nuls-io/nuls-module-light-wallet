@@ -9,7 +9,7 @@
 
     <div class="w1200 mt_20">
       <div class="top_total font12">
-        {{$t('public.totalStake')}}：{{totalAmount}} <span class="fCN">NULS</span>
+        {{$t('public.totalStake')}}：{{totalAmount}} <span class="fCN">{{addressInfo.symbol}}</span>
       </div>
       <el-table :data="consensusData" stripe border v-loading="consensusDataLoading">
         <el-table-column prop="blockHeight" :label="$t('public.height')" align="center">
@@ -21,7 +21,7 @@
             <span class="click uppercase" @click="toUrl('consensusInfo',scope.row.agentHash)">{{scope.row.agendID}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="amount" :label="$t('public.amount') + '(NULS)'" align="center">
+        <el-table-column prop="amount" :label="$t('public.amount') + '('+addressInfo.symbol+')'" align="center">
         </el-table-column>
       </el-table>
       <div class="pages">

@@ -21,8 +21,8 @@ export function post(url, methodName, data = []) {
   return new Promise((resolve, reject) => {
     data.unshift(chainID());
     const params = {"jsonrpc": "2.0", "method": methodName, "params": data, "id": 5898};
-   /* console.log(url);
-    console.log(params);*/
+    /*console.log(url);
+     console.log(params);*/
     axios.post(url, params)
       .then(response => {
         resolve(response.data)

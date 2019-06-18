@@ -16,7 +16,7 @@
           <el-table-column prop="account" :label="$t('tab.tab0')" align="center">
           </el-table-column>
           <el-table-column :label="$t('tab.tab1')" align="center" width="150">
-            <template slot-scope="scope"><span>{{ $t('addressType.'+scope.row.type) }}</span></template>
+            <template slot-scope="scope"><span>{{ $t('assetsType.'+scope.row.type) }}</span></template>
           </el-table-column>
           <el-table-column prop="balance" :label="$t('tab.tab4')">
           </el-table-column>
@@ -69,7 +69,7 @@
           </el-table-column>
           <el-table-column fixed="right" :label="$t('public.operation')" align="center" min-width="120">
             <template slot-scope="scope">
-              <label class="click tab_bn" @click="toUrl('transfer',scope.row.address)">{{$t('nav.transfer')}}</label>
+              <label class="click tab_bn" @click="toUrl('transfer',scope.row.symbol)">{{$t('nav.transfer')}}</label>
               <span class="tab_line">|</span>
               <label class="click tab_bn" @click="toUrl('txList')">{{$t('home.home2')}}</label>
             </template>
@@ -205,7 +205,7 @@
       getAddressInfoByNode(address) {
         this.$post('/', 'getAccountLedgerList', [address])
           .then((response) => {
-            //console.log(response.result);
+            //console.log(response);
             this.addressAssetsData = [];
             let newAssetsList = {};
             if (response.hasOwnProperty("result")) {
@@ -319,6 +319,7 @@
       /**
        * 连接跳转
        * @param name
+       * @param parms
        */
       toUrl(name, parms) {
         //console.log(name)

@@ -10,9 +10,9 @@
         <h5 class="card-title font18">{{$t('consensus.consensus0')}}</h5>
         <ul>
           <li>{{$t('consensus.consensus1')}} <label><u class="click" @click="toUrl('consensusList')">{{addressInfo.consensusLock}}</u><span
-                  class="fCN">NULS</span></label></li>
-          <li>{{$t('consensus.consensus2')}} <label>{{addressInfo.balance}}<span class="fCN">NULS</span></label></li>
-          <li>{{$t('consensus.consensus3')}} <label>{{addressInfo.totalReward}}<span class="fCN">NULS</span></label>
+                  class="fCN">{{addressInfo.symbol}}</span></label></li>
+          <li>{{$t('consensus.consensus2')}} <label>{{addressInfo.balance}}<span class="fCN">{{addressInfo.symbol}}</span></label></li>
+          <li>{{$t('consensus.consensus3')}} <label>{{addressInfo.totalReward}}<span class="fCN">{{addressInfo.symbol}}</span></label>
           </li>
         </ul>
       </div>
@@ -25,7 +25,7 @@
         <ul>
           <li>{{$t('consensus.consensus6')}} <label>{{nodeCount.agentCount}}</label></li>
           <li>{{$t('consensus.consensus7')}} <label>{{nodeCount.totalCount}}</label></li>
-          <li>{{$t('consensus.consensus8')}} <label>{{nulsCount.consensusTotal}}<span class="fCN">NULS</span></label>
+          <li>{{$t('consensus.consensus8')}} <label>{{nulsCount.consensusTotal}}<span class="fCN">{{addressInfo.symbol}}</span></label>
           </li>
         </ul>
       </div>
@@ -95,7 +95,7 @@
 
 <script>
   import SelectBar from '@/components/SelectBar';
-  import {timesDecimals, copys, addressInfo,chainIdNumber} from '@/api/util'
+  import {timesDecimals, copys, addressInfo, chainIdNumber} from '@/api/util'
 
   export default {
     name: 'consensus',
@@ -213,12 +213,13 @@
       async getAddressInfoByNode(addressInfos) {
         await this.$post('/', 'getAccount', [addressInfos.address])
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             if (response.hasOwnProperty("result")) {
               let newAddressInfo = addressInfo(0);
-              for(let item of newAddressInfo){
-                if(item.address === addressInfos.address){
+              for (let item of newAddressInfo) {
+                if (item.address === addressInfos.address) {
                   item.alias = response.result.alias;
+                  item.symbol = response.result.symbol;
                   item.balance = timesDecimals(response.result.balance);
                   item.consensusLock = timesDecimals(response.result.consensusLock);
                   item.totalReward = timesDecimals(response.result.totalReward);
@@ -226,7 +227,7 @@
                   item.totalOut = timesDecimals(response.result.totalOut);
                 }
               }
-              localStorage.setItem(chainIdNumber(),JSON.stringify(newAddressInfo));
+              localStorage.setItem(chainIdNumber(), JSON.stringify(newAddressInfo));
             }
           })
           .catch((error) => {

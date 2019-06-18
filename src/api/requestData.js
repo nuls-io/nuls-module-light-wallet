@@ -6,10 +6,7 @@ import {Plus, chainID} from './util'
  * @param chainId
  **/
 export function isMainNet(chainId) {
-  if (chainId === 2) {
-    return true;
-  }
-  return false;
+  return chainId === 2;
 }
 
 /**
@@ -119,6 +116,8 @@ export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
 
 /**
  * 获取账户的余额及nonce
+ * @param assetChainId
+ * @param assetId
  * @param address
  * @returns {Promise<any>}
  */

@@ -158,13 +158,17 @@
       getTxlistByAddress(pageSize, pageRows, address, type, isHide) {
         this.$post('/', 'getAccountTxs', [pageSize, pageRows, address, type, isHide])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               for (let item of response.result.list) {
                 item.createTime = moment(getLocalTime(item.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
                 item.txid = superLong(item.txHash, 8);
                 item.balance = timesDecimals(item.balance);
-                item.amount = timesDecimals(Plus(item.values, item.fee));
+                if(item.status !==0){
+                  item.amount = timesDecimals(Plus(item.values, item.fee));
+                }else {
+                  item.amount = timesDecimals(item.values);
+                }
               }
               this.txListData = response.result.list;
               this.pageTotal = response.result.totalCount;

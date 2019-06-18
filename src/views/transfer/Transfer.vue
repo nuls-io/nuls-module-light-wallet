@@ -54,10 +54,11 @@
             <div slot="content">{{$t('transfer.transfer5')}}</div>
             <i class="el-icon-warning"></i>
           </el-tooltip>
-          {{$t('public.fee')}}: {{fee}} <span class="fCN">NULS</span>
+          {{$t('public.fee')}}: {{fee}} <span class="fCN">{{changeAssets.symbol}}</span>
         </div>
         <el-form-item class="form-next">
-          <el-button type="success" @click="submitForm('transferForm')">{{$t('public.next')}}</el-button>
+          <el-button type="success" @click="submitForm('transferForm')" :disabled="isNext">{{$t('public.next')}}
+          </el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -76,7 +77,7 @@
         </div>
         <div class="div-data">
           <p>{{$t('public.fee')}}: &nbsp;</p>
-          <label>{{fee}} <span class="fCN">NULS</span></label>
+          <label>{{fee}} <span class="fCN">{{changeAssets.symbol}}</span></label>
         </div>
         <div class="div-data">
           <p>{{$t('tab.tab6')}}:&nbsp;</p>
@@ -198,6 +199,7 @@
         fee: 0.001, //手续费
         transferVisible: false,//转账确认弹框
         isCross: false,//是否跨链交易
+        isNext: false,//是否可用点击下一步
       };
     },
     created() {
@@ -260,7 +262,7 @@
             console.log("getAccountLedgerList:" + error);
             this.assetsListLoading = false;
           });
-        //console.log(basicAssets);
+        ///console.log(basicAssets);
 
         //获取本连的合约资产
         let contractAssets = [];
@@ -327,7 +329,8 @@
           };
           this.assetsList.unshift(newNulsAssets);
         }
-        this.changeNuls();
+        //console.log(this.assetsList);
+        this.changeNuls(0);
       },
 
       /**
@@ -342,9 +345,15 @@
             this.isCross = false;
           } else {
             this.isCross = true;
-            if(this.changeAssets.type === 2){
+            if (this.changeAssets.type === 2) {
               this.changeNuls();
             }
+          }
+        }
+        for (let item of this.assetsList) {
+          if (item.symbol === "NULS" && Number(item.balance) < 100000) {
+            this.isNext = true;
+            this.$message({message: "付款地址的NULS不足，请切换账户", type: 'error', duration: 2000});
           }
         }
         //合约地址转账交易
@@ -386,10 +395,19 @@
         this.transferForm.type = type.symbol;
       },
 
-      //默认选择nuls资产
-      changeNuls() {
+      /**
+       *  默认资产类型
+       * @param type 0：首次进入加载 1：填写地址以后判断默认为nuls
+       **/
+      changeNuls(type = 1) {
+        let defaultType = 'NULS';
+        if (type === 0) {
+          if (this.$route.query.accountType) {
+            defaultType = this.$route.query.accountType
+          }
+        }
         for (let item of this.assetsList) {
-          if (item.symbol === 'NULS') {
+          if (item.symbol === defaultType) {
             this.changeAssets = item;
             this.transferForm.type = item.symbol;
           }

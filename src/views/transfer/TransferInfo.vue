@@ -175,7 +175,7 @@
         txInfo: [],//交易信息
         inputData: [],//输入
         outputData: [],//输出
-        tokenTransfersData:[],//代币转账data
+        tokenTransfersData: [],//代币转账data
         dataDialog: false,//data 弹框
       };
     },
@@ -218,7 +218,7 @@
                 this.outputData = response.result.coinTos
               }
 
-              if(response.result.type ===16 && response.result.txData.methodName ==='transfer'){
+              if (response.result.type === 16 && response.result.txData.methodName === 'transfer') {
                 this.tokenTransfersData = response.result.txData.resultInfo.tokenTransfers
               }
 

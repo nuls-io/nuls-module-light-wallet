@@ -17,11 +17,11 @@
       </h5>
       <ul>
         <li>{{$t('public.createAddress')}} <label>{{nodeInfo.agentAddress}}</label></li>
-        <li>{{$t('public.deposit')}} <label>{{nodeInfo.deposits}}<span class="fCN">NULS</span></label></li>
+        <li>{{$t('public.deposit')}} <label>{{nodeInfo.deposits}}<span class="fCN">{{addressInfo.symbol}}</span></label></li>
         <li>{{$t('public.rewardAddress')}} <label>{{nodeInfo.rewardAddress}}</label></li>
-        <li>{{$t('public.totalStake')}} <label>{{nodeInfo.totalDeposit}}<span class="fCN">NULS</span></label></li>
+        <li>{{$t('public.totalStake')}} <label>{{nodeInfo.totalDeposit}}<span class="fCN">{{addressInfo.symbol}}</span></label></li>
         <li>{{$t('public.packingAddress')}} <label>{{nodeInfo.packingAddress}}</label></li>
-        <li>{{$t('consensusInfo.consensusInfo7')}} <label>{{nodeInfo.totalReward}}<span class="fCN">NULS</span></label>
+        <li>{{$t('consensusInfo.consensusInfo7')}} <label>{{nodeInfo.totalReward}}<span class="fCN">{{addressInfo.symbol}}</span></label>
         </li>
         <li>{{$t('consensusInfo.consensusInfo8')}} <label>{{nodeInfo.agentAlias ? nodeInfo.agentAlias :'--' }}</label>
         </li>
@@ -49,13 +49,13 @@
       <div class="entrust w1200 bg-white" v-show="jionNode">
         <div class="entrust_add w630">
           <el-form :model="jionNodeForm" status-icon :rules="jionNodeRules" ref="jionNodeForm">
-            <el-form-item :label="$t('consensusInfo.consensusInfo1') + '(NULS)'" prop="amount">
+            <el-form-item :label="$t('consensusInfo.consensusInfo1') + '('+addressInfo.symbol+')'" prop="amount">
               <span class="balance font12 fr">{{$t('consensus.consensus2')}}：{{addressInfo.balance}}</span>
               <el-input v-model="jionNodeForm.amount">
               </el-input>
             </el-form-item>
             <div class="font14">
-              {{$t('public.fee')}}: {{fee}} <span class="fCN">NULS</span>
+              {{$t('public.fee')}}: {{fee}} <span class="fCN">{{addressInfo.symbol}}</span>
             </div>
             <el-form-item class="form-next">
               <el-button type="success" @click="jionNodeSubmitForm('jionNodeForm')">{{$t('password.password3')}}
@@ -66,7 +66,7 @@
       </div>
       <div class="entrust_list w1200 bg-white" v-show="!jionNode">
         <div class="top_total font12">
-          {{$t('public.totalStake')}}：{{nodeInfo.totalDeposit}} <span class="fCN">NULS</span>
+          {{$t('public.totalStake')}}：{{nodeInfo.totalDeposit}} <span class="fCN">{{addressInfo.symbol}}</span>
         </div>
 
         <div class="top_ico">
@@ -77,7 +77,7 @@
           </el-table-column>
           <el-table-column prop="createTime" :label="$t('consensusList.consensusList1')" align="center">
           </el-table-column>
-          <el-table-column prop="amount" :label="$t('public.amount') + '(NULS)'" align="center">
+          <el-table-column prop="amount" :label="$t('public.amount') + '('+addressInfo.symbol+')'" align="center">
           </el-table-column>
           <el-table-column :label="$t('public.operation')" align="center">
             <template slot-scope="scope">

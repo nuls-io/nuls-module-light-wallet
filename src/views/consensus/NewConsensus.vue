@@ -22,7 +22,7 @@
           <el-input v-model.trim="createrForm.blockAddress" maxlength="50">
           </el-input>
         </el-form-item>
-        <el-form-item :label="$t('public.deposit') + '(NULS)'" prop="amount">
+        <el-form-item :label="$t('public.deposit') + '('+addressInfo.symbol+')'" prop="amount">
           <span class="balance font12 fr">{{$t('consensus.consensus2')}}: {{addressInfo.balance}}</span>
           <el-input v-model.trim="createrForm.amount">
           </el-input>
@@ -36,7 +36,7 @@
             <div slot="content">{{$t('transfer.transfer5')}}</div>
             <i class="el-icon-warning"></i>
           </el-tooltip>
-          {{$t('public.fee')}}: 0.01 <span class="fCN">NULS</span>
+          {{$t('public.fee')}}: 0.001 <span class="fCN">{{addressInfo.symbol}}</span>
         </div>
         <el-form-item class="form-next">
           <el-button type="success" @click="submitForm('createrForm')" :disabled="isRed">{{$t('password.password3')}}</el-button>
@@ -62,15 +62,15 @@
         </div>
         <div class="div-data">
           <p>{{$t('public.commission')}}:&nbsp;</p>
-          <label class="yellow">{{createrForm.rate}}% <span class="fCN">NULS</span></label>
+          <label class="yellow">{{createrForm.rate}}% <span class="fCN">{{addressInfo.symbol}}</span></label>
         </div>
         <div class="div-data">
           <p>{{$t('public.fee')}}:&nbsp;</p>
-          <label>0.001 <span class="fCN">NULS</span></label>
+          <label>0.001 <span class="fCN">{{addressInfo.symbol}}</span></label>
         </div>
         <div class="div-data">
           <p>{{$t('public.deposit')}}:&nbsp;</p>
-          <label class="yellow">{{createrForm.amount}} <span class="fCN">NULS</span></label>
+          <label class="yellow">{{createrForm.amount}} <span class="fCN">{{addressInfo.symbol}}</span></label>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">

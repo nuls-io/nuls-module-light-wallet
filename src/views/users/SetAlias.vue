@@ -19,7 +19,7 @@
             <el-input type="text" v-model="aliasForm.alias" maxlength="20" autocomplete="off"></el-input>
           </el-form-item>
           <div class="div-data font14">
-            {{$t('public.fee')}}: <label>0.001 <span class="fCN">NULS</span></label>
+            {{$t('public.fee')}}: <label>0.001 <span class="fCN">{{addressInfo.symbol}}</span></label>
           </div>
           <el-form-item class="form-next">
             <el-button type="success" @click="submitAliasForm('aliasForm')"> {{$t('public.next')}}</el-button>
