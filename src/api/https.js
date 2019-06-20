@@ -2,7 +2,7 @@ import axios from 'axios'
 import * as config from './../config.js'
 import {chainID} from './util'
 
-axios.defaults.timeout = config.API_URL;
+axios.defaults.timeout = config.API_TIME;
 axios.defaults.baseURL = config.API_URL;
 setInterval(() => {
   axios.defaults.baseURL = config.API_URL;

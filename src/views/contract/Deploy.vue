@@ -7,10 +7,14 @@
       </el-radio-group>
     </div>
 
-    <el-form :model="deployForm" :rules="deployRules" ref="deployForm">
+    <el-form :model="deployForm" :rules="deployRules" ref="deployForm" status-icon>
       <div class="modes bg-white w1200">
-        <el-form-item label="" prop="hex" v-show="resource ==='0'" class="hex">
-          <el-input type="textarea" :rows="10" v-model.trim="deployForm.hex" @change="getParameter"></el-input>
+        <el-form-item label="合约名称" prop="alias">
+          <el-input v-model="deployForm.alias" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="HEX" prop="hex" v-show="resource ==='0'" class="hex">
+          <el-input type="textarea" :rows="10" v-model.trim="deployForm.hex" @change="getParameter"
+                    autocomplete="off"></el-input>
         </el-form-item>
 
         <div class="upload_jar" v-show="resource==='1'">
@@ -74,16 +78,27 @@
     broadcastTx,
   } from '@/api/requestData'
   import Password from '@/components/PasswordBar'
-  import {getArgs,chainID} from '@/api/util'
+  import {getArgs, chainID} from '@/api/util'
 
   export default {
     name: "deploy",
     data() {
+      let validateAlias = (rule, value, callback) => {
+        let patrn = /^(?!_)(?!.*?_$)[a-z0-9_]+$/;
+        if (value === '') {
+          callback(new Error("请输入合约名称"));
+        } else if (!patrn.exec(value)) {
+          callback(new Error("合约名称(只允许使用小写字母、数字、下划线（下划线不能在两端）)"));
+        } else {
+          callback();
+        }
+      };
       return {
         //选择部署
         resource: '1',
-        //不是表单
+        //部署表单
         deployForm: {
+          alias: '',
           hex: '',
           parameterList: [],
           senior: false,
@@ -92,6 +107,9 @@
           addtion: '',
         },
         deployRules: {
+          alias: [
+            {validator: validateAlias, trigger: 'blur'}
+          ],
           hex: [
             {required: true, message: this.$t('deploy.deploy7'), trigger: 'blur'},
           ],
@@ -119,7 +137,7 @@
     },
     created() {
       this.createAddress = this.addressInfo.address;
-      this.getBalanceByAddress(this.addressInfo.chainId,1,this.createAddress);
+      this.getBalanceByAddress(this.addressInfo.chainId, 1, this.createAddress);
     },
     mounted() {
       //this.getTxInfoByHash(this.hash);
@@ -128,7 +146,7 @@
       addressInfo(val, old) {
         if (val.address !== old.address && old.address) {
           this.createAddress = val.address;
-          this.getBalanceByAddress(this.addressInfo.chainId,1,this.createAddress);
+          this.getBalanceByAddress(this.addressInfo.chainId, 1, this.createAddress);
         }
       }
     },
@@ -180,7 +198,7 @@
           .then((response) => {
             //console.log(response.result);
             if (response.result.success) {
-              this.imputedContractCreateGas(createAddress, contractCode, args);
+              this.imputedContractCreateGas(createAddress, contractCode, args, this.deployForm.alias);
             } else {
               this.$message({message: this.$t('deploy.deploy11') + response.error, type: 'error', duration: 1000});
             }
@@ -195,14 +213,15 @@
        * @param createAddress
        * @param contractCode
        * @param args
+       * @param alias
        */
-      async imputedContractCreateGas(createAddress, contractCode, args) {
+      async imputedContractCreateGas(createAddress, contractCode, args, alias) {
         return await this.$post('/', 'imputedContractCreateGas', [createAddress, contractCode, args])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
               this.deployForm.gas = response.result.gasLimit;
-              this.makeCreateData(response.result.gasLimit, createAddress, contractCode, args);
+              this.makeCreateData(response.result.gasLimit, createAddress, contractCode, args, this.deployForm.alias);
             } else {
               this.$message({message: this.$t('deploy.deploy13') + response.error, type: 'error', duration: 1000});
             }
@@ -234,14 +253,16 @@
        * @param gasLimit
        * @param contractCode
        * @param args
+       * @param alias
        */
-      async makeCreateData(gasLimit, createAddress, contractCode, args) {
+      async makeCreateData(gasLimit, createAddress, contractCode, args, alias) {
         let contractCreate = {};
         contractCreate.chainId = chainID();
         contractCreate.sender = createAddress;
         contractCreate.gasLimit = gasLimit;
         contractCreate.price = sdk.CONTRACT_MINIMUM_PRICE;
         contractCreate.contractCode = contractCode;
+        contractCreate.alias = alias;
         let constructor = this.deployForm.parameterList;
         let contractConstructorArgsTypes = this.makeContractConstructorArgsTypes(constructor);
         contractCreate.args = await utils.twoDimensionalArray(args, contractConstructorArgsTypes);
@@ -268,7 +289,6 @@
             this.$message({message: this.$t('public.err2') + response, type: 'error', duration: 1000});
           }
         }).catch((error) => {
-          console.log(error);
           this.$message({message: this.$t('public.err3') + error, type: 'error', duration: 1000});
         });
       },
@@ -336,7 +356,7 @@
             txhex = await nuls.transactionSerialize(pri, pub, tAssemble);
           }
           //console.log(transferInfo);
-          //console.log(txhex);
+          console.log(txhex);
           await validateTx(txhex).then((response) => {
             //console.log(response);
             if (response.success) {
@@ -392,7 +412,7 @@
                     this.$message({message: this.$t('deploy.deploy17'), type: 'error', duration: 1000});
                   }
                 }).catch((err) => {
-                this.$message({message: this.$t('deploy.deploy18')+err, type: 'error', duration: 1000});
+                this.$message({message: this.$t('deploy.deploy18') + err, type: 'error', duration: 1000});
               })
             });
           }

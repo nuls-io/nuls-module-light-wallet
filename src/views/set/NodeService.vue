@@ -88,7 +88,7 @@
 
 <script>
   import axios from 'axios'
-  import {defaultData, API_CHAIN_ID} from '@/config'
+  import {defaultData} from '@/config'
 
   export default {
     data() {
@@ -249,7 +249,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             that.nodeServiceDialogLoading = true;
-            const params = {jsonrpc: "2.0", method: "getBestBlockHeader", "params": [API_CHAIN_ID], "id": 5898};
+            const params = {jsonrpc: "2.0", method: "getChainInfo", "params": [], "id": 5898};
             axios.post(this.nodeServiceForm.urls, params)
               .then(function (response) {
                 //console.log(response.data);

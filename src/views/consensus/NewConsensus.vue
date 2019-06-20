@@ -39,7 +39,8 @@
           {{$t('public.fee')}}: 0.001 <span class="fCN">{{addressInfo.symbol}}</span>
         </div>
         <el-form-item class="form-next">
-          <el-button type="success" @click="submitForm('createrForm')" :disabled="isRed">{{$t('password.password3')}}</el-button>
+          <el-button type="success" @click="submitForm('createrForm')" :disabled="isRed">{{$t('password.password3')}}
+          </el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -84,7 +85,7 @@
 <script>
   import nuls from 'nuls-sdk-js'
   import {getNulsBalance, inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
-  import {Times,addressInfo} from '@/api/util'
+  import {Times, addressInfo} from '@/api/util'
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
 
@@ -132,11 +133,10 @@
         }
       };
       let checkRate = (rule, value, callback) => {
-        let re = /^\d+(?=\.{0,1}\d+$|$)/;
-        let res = /^\d{1,8}(\.\d{1,8})?$/;
+        let res = /^([1]?\d{1,2})$/;
         if (!value) {
           return callback(new Error(this.$t('newConsensus.newConsensus9')));
-        } else if (!re.exec(value) || !res.exec(value)) {
+        } else if (!res.exec(value)) {
           callback(new Error(this.$t('newConsensus.newConsensus10')));
         } else if (value < 10 || value > 100) {
           callback(new Error(this.$t('newConsensus.newConsensus11')));
@@ -147,7 +147,7 @@
       return {
         addressInfo: {},//账户信息
         balanceInfo: {},//账户余额信息
-        isRed:false,//创建地址是否有红牌惩罚
+        isRed: false,//创建地址是否有红牌惩罚
         //创建节点表单
         createrForm: {
           rewardAddress: '',
@@ -180,14 +180,14 @@
     },
     mounted() {
       this.getPunishByAddress(this.addressInfo.address);
-      this.getBalanceByAddress(this.addressInfo.chainId,1,this.addressInfo.address);
+      this.getBalanceByAddress(this.addressInfo.chainId, 1, this.addressInfo.address);
     },
     watch: {
       addressInfo(val, old) {
         if (val) {
           if (val.address !== old.address && old.address) {
             this.getPunishByAddress(this.addressInfo.address);
-            this.getBalanceByAddress(this.addressInfo.chainId,1,this.addressInfo.address);
+            this.getBalanceByAddress(this.addressInfo.chainId, 1, this.addressInfo.address);
           }
         }
       }
@@ -216,8 +216,8 @@
        * 获取账户余额
        * @param address
        **/
-      getBalanceByAddress(assetChainId,assetId,address) {
-        getNulsBalance(assetChainId,assetId,address).then((response) => {
+      getBalanceByAddress(assetChainId, assetId, address) {
+        getNulsBalance(assetChainId, assetId, address).then((response) => {
           if (response.success) {
             this.balanceInfo = response.data;
           } else {
@@ -233,16 +233,16 @@
        * @param address
        **/
       getPunishByAddress(address) {
-        this.$post('/', 'getPunishList', [1, 1,2,address])
+        this.$post('/', 'getPunishList', [1, 1, 2, address])
           .then((response) => {
             //console.log(response);
-            if (response.result.list.length !== 0 ) {
-              this.isRed= true;
+            if (response.result.list.length !== 0) {
+              this.isRed = true;
               this.$message({message: "创建地址有过红牌惩罚不能再创建节点", type: 'error', duration: 3000});
             } else {
               this.isRed = false;
             }
-        }).catch((error) => {
+          }).catch((error) => {
           this.$message({message: this.$t('public.err3') + error, type: 'error', duration: 1000});
         });
       },
@@ -295,7 +295,7 @@
             }).catch((err) => {
               this.$message({message: this.$t('public.err0') + err, type: 'error', duration: 1000});
             });
-          }else {
+          } else {
             this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
           }
         } else {

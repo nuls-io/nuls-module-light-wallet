@@ -1,5 +1,8 @@
 import {BigNumber} from 'bignumber.js'
 import copy from 'copy-to-clipboard'
+import {RUN_PATTERN, explorerUrl} from '@/config.js'
+//浏览器模式注释下面一行代码
+//import {shell} from 'electron'
 
 /**
  * 10的N 次方
@@ -206,16 +209,25 @@ export function getArgs(parameterList) {
  * @param parameter
  * @param type 0:路由跳转 1：跳转到浏览器
  */
-export function connect(name, parameter, type = 0) {
-  //console.log(name)
-  if (type === 0) {
-    this.$router.push({
-      name: name
-    });
-  } else {
-    //shell.openExternal(newUrl);
-    window.open(name, '_blank');
+export function connectToExplorer(name, parameter) {
+  let newUrl = '';
+  if (name === 'height') {
+    newUrl = explorerUrl + 'block/info?height=' + parameter
+  } else if (name === 'address') {
+    newUrl = explorerUrl + 'address/info?address=' + parameter
+  } else if (name === 'hash') {
+    newUrl = explorerUrl + 'consensus/info?hash=' + parameter
+  } else if (name === 'rotation') {
+    newUrl = explorerUrl + 'rotation/info?rotation=' + parameter
+  } else if (name === 'contractsInfo') {
+    newUrl = explorerUrl + 'contracts/info?contractAddress=' + parameter
+  } else if (name === 'contracts') {
+    newUrl = explorerUrl + 'contracts'
   }
-
-
+  //console.log(newUrl);
+  if (RUN_PATTERN) {
+    shell.openExternal(newUrl);
+  } else {
+    window.open(newUrl, '_blank');
+  }
 }

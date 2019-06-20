@@ -351,7 +351,7 @@
           }
         }
         for (let item of this.assetsList) {
-          if (item.symbol === "NULS" && Number(item.balance) < 100000) {
+          if (item.symbol === "NULS" && Number(item.balance) < 0.01) {
             this.isNext = true;
             this.$message({message: "付款地址的NULS不足，请切换账户", type: 'error', duration: 2000});
           }

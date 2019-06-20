@@ -6,6 +6,8 @@ export const API_CHAIN_ID = sessionStorage.hasOwnProperty('chainID') ?  Number(s
 export const API_BURNING_ADDRESS = 'tNULSeBaMgLW3Wrt8Eh8Av5MinETdiXhfGg61u';
 //运行环境（true:正式环境，false:测试环境）
 export const RUN_DEV = false;
+//运行模式（true:electron窗体模式，false:浏览器模式）
+export const RUN_PATTERN = false;
 //正式、测试网络的api
 export let API_URL = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/';
 setInterval(() => {
@@ -20,5 +22,5 @@ export const defaultData = [
 ];
 //默认服务节点地址
 export const defaultUrl ={name: 'Official',chainId:2,chainName:'tNULS', urls: 'http://192.168.1.40:18003/', delay: '10ms', state: 1, isDelete: false};
-//默认浏览器连接地址
-export const explorerUrl = localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')).urls : 'http://192.168.1.40:18003/';
+//默认浏览器地址（跳转地址）
+export const explorerUrl = 'http://alpha.nulscan.io/';

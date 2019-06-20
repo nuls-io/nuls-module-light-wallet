@@ -45,7 +45,7 @@
           </el-table-column>
           <el-table-column :label="$t('tab.tab6')" align="center">
             <template slot-scope="scope">
-              <span :class="scope.row.fee !== 0 ? 'fred':'fCN'">
+              <span :class="scope.row.transferType === -1 ? 'fred':'fCN'">
                 {{scope.row.transferType !== 0 ? scope.row.amount*scope.row.transferType : scope.row.amount*-1}}
               </span>
             </template>
@@ -158,14 +158,14 @@
       getTxlistByAddress(pageSize, pageRows, address, type, isHide) {
         this.$post('/', 'getAccountTxs', [pageSize, pageRows, address, type, isHide])
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             if (response.hasOwnProperty("result")) {
               for (let item of response.result.list) {
                 item.createTime = moment(getLocalTime(item.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
                 item.txid = superLong(item.txHash, 8);
                 item.balance = timesDecimals(item.balance);
                 if(item.status !==0){
-                  item.amount = timesDecimals(Plus(item.values, item.fee));
+                  item.amount = timesDecimals(Plus(item.values, item.fee.value));
                 }else {
                   item.amount = timesDecimals(item.values);
                 }

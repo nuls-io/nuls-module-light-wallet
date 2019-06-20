@@ -23,11 +23,11 @@
           <li>
             {{$t('contractInfo.contractInfo3')}}
             <label>
-              <u class="click" @click="toUrl('http://alpha.nulscan.io/address/info?address='+contractInfo.creater,1)">
+              <u class="click td" @click="toUrl('contractsInfo',contractInfo.creater,1)">
                 {{contractInfo.creater}}
               </u>
               at TxID
-              <u class="click" @click="toUrl('transferInfo',0,contractInfo.createTxHash)">{{contractInfo.createTxHashs}}</u>
+              <u class="click" @click="toUrl('transferInfo',contractInfo.createTxHash,0)">{{contractInfo.createTxHashs}}</u>
             </label>
           </li>
           <li>{{$t('contractInfo.contractInfo4')}}<label>{{contractInfo.symbol}}</label></li>
@@ -53,7 +53,7 @@
             </el-table-column>
             <el-table-column label="TXID" min-width="280" align="left">
               <template slot-scope="scope">
-                <span class="cursor-p click" @click="toUrl('transactionInfo',0,scope.row.txHash)">
+                <span class="cursor-p click" @click="toUrl('transactionInfo',scope.row.txHash,0)">
                   {{ scope.row.txHashs }}
                 </span>
               </template>
@@ -117,10 +117,9 @@
   import BackBar from '@/components/BackBar'
   import SelectBar from '@/components/SelectBar';
   import Call from './Call'
-  import {timesDecimals, getLocalTime, superLong, addressInfo} from '@/api/util'
+  import {timesDecimals, getLocalTime, superLong, addressInfo,connectToExplorer} from '@/api/util'
   import {getNulsBalance, inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
   import Password from '@/components/PasswordBar'
-  import {shell} from 'electron'
 
   export default {
     data() {
@@ -360,7 +359,7 @@
        * @param name
        * @param type
        */
-      toUrl(name, type = 0,params) {
+      toUrl(name,params, type = 0) {
         //console.log(name)
         if (type === 0) {
           let newQuery = {hash: params};
@@ -369,8 +368,7 @@
             query: newQuery
           })
         } else {
-          shell.openExternal(name);
-          //window.open(name, '_blank');
+          connectToExplorer(name,params)
         }
       },
 

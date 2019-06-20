@@ -416,6 +416,14 @@ const cn = {
     "3": "大使节点"
   },
 
+  "lockType": {
+    "undefined": "",
+    "4": "创建节点锁定",
+    "5": "加入共识锁定",
+    "8": "红牌惩罚锁定",
+    "9": "注销节点锁定",
+  },
+
   "contractStatus": {
     "undefined": "",
     "-1": "创建失败",
@@ -488,7 +496,7 @@ const cn = {
     "newConsensus7": "对不起，余额不足",
     "newConsensus8": "保证金不小于20000并且不大于500000",
     "newConsensus9": "请输入佣金比例",
-    "newConsensus10": "佣金比例必须数字值",
+    "newConsensus10": "佣金比例为10-100直接的整数",
     "newConsensus11": "保证金不小于10并且不大于100",
   },
 

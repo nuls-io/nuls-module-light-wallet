@@ -133,7 +133,7 @@
       <div class="inorou-info bg-white">
         <div class="card-info left fl">
           <ul>
-            <li v-for="itme of inputData" :key="itme.assetKey">
+            <li v-for="itme of inputData" :key="itme.nonce">
               <font class="click td" @click="toUrl('address',itme.address)">{{itme.address}}</font>
               <label>{{itme.amount}}<span class="fCN">{{itme.symbol}}</span></label>
             </li>
@@ -142,9 +142,15 @@
         </div>
         <div class="card-info right fr">
           <ul>
-            <li v-for="itme of outputData" :key="itme.assetKey">
+            <li v-for="itme of outputData" :key="itme.nonce">
               <font class="click td" @click="toUrl('address',itme.address)">{{itme.address}}</font>
-              <label>{{itme.amount}}<span class="fCN">{{itme.symbol}}</span></label>
+              <label>
+                {{itme.amount}}
+                <span class="fCN">{{itme.symbol}}</span>&nbsp;
+                <el-tooltip :content="$t('lockType.'+txInfo.type)" placement="top" v-if="itme.lockTime !==0">
+                  <i class="iconfont iconmima yellow"></i>
+                </el-tooltip>
+              </label>
             </li>
             <li v-if="outputData.length ===0"></li>
           </ul>
@@ -162,10 +168,8 @@
 
 <script>
   import moment from 'moment'
-  import {shell} from 'electron'
-  import {timesDecimals, getLocalTime, copys} from '@/api/util'
+  import {timesDecimals, getLocalTime, copys, connectToExplorer} from '@/api/util'
   import BackBar from '@/components/BackBar'
-  import {explorerUrl} from '@/config.js'
 
   export default {
     data() {
@@ -198,7 +202,7 @@
         this.txInfoLoading = true;
         this.$post('/', 'getTx', [hash])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               response.result.createTime = moment(getLocalTime(response.result.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
               response.result.fee = timesDecimals(response.result.fee);
@@ -237,21 +241,7 @@
        * @param parameter
        */
       toUrl(name, parameter) {
-        let newUrl = '';
-        if (name === 'height') {
-          newUrl = explorerUrl + 'block/info?height=' + parameter
-        } else if (name === 'address') {
-          newUrl = explorerUrl + 'address/info?address=' + parameter
-        } else if (name === 'hash') {
-          newUrl = explorerUrl + 'consensus/info?hash=' + parameter
-        } else if (name === 'rotation') {
-          newUrl = explorerUrl + 'rotation/info?rotation=' + parameter
-        } else if (name === 'contractsInfo') {
-          newUrl = explorerUrl + 'contracts/info?contractAddress=' + parameter
-        }
-        //console.log(newUrl);
-        shell.openExternal(newUrl);
-        //window.open(newUrl,'_blank');
+        connectToExplorer(name, parameter);
       },
 
       /**
@@ -262,7 +252,6 @@
         copys(sting);
         this.$message({message: this.$t('public.copySuccess'), type: 'success', duration: 1000});
       },
-
     }
   }
 </script>
