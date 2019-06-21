@@ -27,7 +27,7 @@
                 {{contractInfo.creater}}
               </u>
               at TxID
-              <u class="click" @click="toUrl('transferInfo',contractInfo.createTxHash,0)">{{contractInfo.createTxHashs}}</u>
+              <u class="click td" @click="toUrl('transactionInfo',contractInfo.createTxHash,1)">{{contractInfo.createTxHashs}}</u>
             </label>
           </li>
           <li>{{$t('contractInfo.contractInfo4')}}<label>{{contractInfo.symbol}}</label></li>
@@ -61,7 +61,7 @@
             <el-table-column prop="time" :label="$t('public.time')" width="180" align="left">
             </el-table-column>
             <el-table-column :label="$t('public.fee')" width="180" align="left">
-              <template slot-scope="scope">{{scope.row.fee}}</template>
+              <template slot-scope="scope">{{scope.row.fees}}</template>
             </el-table-column>
           </el-table>
           <div class="pages">
@@ -219,6 +219,9 @@
 
       /**
        * 合约交易列表
+       * @param pageIndex
+       * @param pageSize
+       * @param type
        * @param address
        **/
       async contractTxList(pageIndex, pageSize, type, address) {
@@ -229,7 +232,7 @@
               for (let item of response.result.list) {
                 item.time = moment(getLocalTime(item.time * 1000)).format('YYYY-MM-DD HH:mm:ss');
                 item.txHashs = superLong(item.txHash, 20);
-                item.fee = timesDecimals(item.fee);
+                item.fees = timesDecimals(item.fee.value);
               }
               this.contractTxData = response.result.list;
               this.pageTotal = response.result.totalCount;
@@ -262,6 +265,8 @@
 
       /**
        * 获取账户余额
+       * @param assetChainId
+       * @param assetId
        * @param address
        **/
       getBalanceByAddress(assetChainId, assetId, address) {
@@ -357,6 +362,7 @@
       /**
        * 连接跳转
        * @param name
+       * @param params
        * @param type
        */
       toUrl(name,params, type = 0) {

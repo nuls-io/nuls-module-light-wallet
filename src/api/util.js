@@ -2,7 +2,7 @@ import {BigNumber} from 'bignumber.js'
 import copy from 'copy-to-clipboard'
 import {RUN_PATTERN, explorerUrl} from '@/config.js'
 //浏览器模式注释下面一行代码
-//import {shell} from 'electron'
+import {shell} from 'electron'
 
 /**
  * 10的N 次方
@@ -187,19 +187,23 @@ export function getLocalTime(time) {
 export function getArgs(parameterList) {
   let newArgs = [];
   let allParameter = false;
-  //循环获取必填参数
-  for (let itme of parameterList) {
-    if (itme.required && itme.value) {
-      allParameter = true;
-      newArgs.push(itme.value)
-    } else {
-      allParameter = false
+  if (parameterList.length !== 0) {
+    //循环获取必填参数
+    for (let itme of parameterList) {
+      if (itme.required && itme.value) {
+        allParameter = true;
+        newArgs.push(itme.value)
+      } else {
+        allParameter = false
+      }
     }
-  }
-  if (allParameter) {
-    return {allParameter: allParameter, args: newArgs};
+    if (allParameter) {
+      return {allParameter: allParameter, args: newArgs};
+    } else {
+      return {allParameter: allParameter, args: newArgs};
+    }
   } else {
-    return {allParameter: allParameter, args: newArgs};
+    return {allParameter: true, args: newArgs};
   }
 }
 
@@ -223,6 +227,8 @@ export function connectToExplorer(name, parameter) {
     newUrl = explorerUrl + 'contracts/info?contractAddress=' + parameter
   } else if (name === 'contracts') {
     newUrl = explorerUrl + 'contracts'
+  } else if (name === 'transactionInfo') {
+    newUrl = explorerUrl + 'transaction/info?hash=' + parameter
   }
   //console.log(newUrl);
   if (RUN_PATTERN) {

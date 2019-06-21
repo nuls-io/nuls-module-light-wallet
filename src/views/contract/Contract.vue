@@ -5,7 +5,7 @@
       <span v-show="addressInfo.alias">({{addressInfo.alias}})</span>
       <i class="iconfont icon-fuzhi clicks"></i>
     </h3>
-    <el-tabs v-model="contractActive" @tab-click="handleClick" class="w1200">
+    <el-tabs v-model="contractActive" class="w1200">
       <el-tab-pane :label="$t('contract.contract1')" name="contractFirst">
         <div class="my_contract">
           <el-table :data="myContractData" stripe border>
@@ -20,7 +20,7 @@
             </el-table-column>
             <el-table-column :label="$t('contract.contract3')" align="center">
               <template slot-scope="scope">
-                <span class="click" @click="toUrl()">{{scope.row.tag}}</span>
+                <span>{{scope.row.alias}}</span>
               </template>
             </el-table-column>
             <el-table-column :label="$t('public.status')" align="center">
@@ -28,7 +28,7 @@
             </el-table-column>
             <el-table-column :label="$t('public.operation')" align="center">
               <template slot-scope="scope">
-                <label class="tab_bn" v-if="scope.row.status ===3">--</label>
+                <label class="tab_bn" v-if="scope.row.status ===3 || scope.row.status ===-1">--</label>
                 <label class="click tab_bn" v-else @click="toUrl('contractInfo',scope.row.contractAddress,0,'fourth')">{{$t('contract.contract4')}}</label>
               </template>
             </el-table-column>
@@ -78,7 +78,7 @@
 
 <script>
   import moment from 'moment'
-  import {getLocalTime, addressInfo,connectToExplorer} from '@/api/util'
+  import {getLocalTime, addressInfo, connectToExplorer} from '@/api/util'
   import Deploy from './Deploy'
   import Call from './Call'
 
@@ -206,7 +206,7 @@
             });
           }
         } else {
-          connectToExplorer(name,parms)
+          connectToExplorer(name, parms)
         }
       },
 

@@ -24,7 +24,7 @@
           </el-select>
         </el-form-item>
         <div class="cross yellow font12" v-show="isCross">
-          提示：您填写的地址是跨链地址这笔交易将是跨链交易，您只能选择基本资产...
+          {{$t('transfer.transfer15')}}
         </div>
         <el-form-item :label="$t('transfer.transfer3')" prop="amount">
           <span class="balance font12 fr">{{$t('public.usableBalance')}}: {{changeAssets.balance}}</span>
@@ -54,7 +54,8 @@
             <div slot="content">{{$t('transfer.transfer5')}}</div>
             <i class="el-icon-warning"></i>
           </el-tooltip>
-          {{$t('public.fee')}}: {{fee}} <span class="fCN">{{changeAssets.symbol}}</span>
+          {{$t('public.fee')}}: {{fee}}
+          <span class="fCN" >{{isCross ? 'NULS':changeAssets.symbol}}</span>
         </div>
         <el-form-item class="form-next">
           <el-button type="success" @click="submitForm('transferForm')" :disabled="isNext">{{$t('public.next')}}
@@ -147,18 +148,18 @@
       };
       let validateGas = (rule, value, callback) => {
         if (!value) {
-          callback(new Error("请输入Gas Limit"));
+          callback(new Error(this.$t('deploy.deploy8')));
         } else if (value < 1 || value > 10000000) {
-          callback(new Error("Gag Limit范围;1~10000000"));
+          callback(new Error(this.$t('deploy.deploy81')));
         } else {
           callback();
         }
       };
       let validatePrice = (rule, value, callback) => {
         if (!value) {
-          callback(new Error("请输入Price"));
+          callback(new Error(this.$t('deploy.deploy9')));
         } else if (value < 1) {
-          callback(new Error("Price必须大于1"));
+          callback(new Error(this.$t('deploy.deploy91')));
         } else {
           callback();
         }
@@ -217,6 +218,7 @@
         if (val.address !== old.address && old.address) {
           this.transferForm.fromAddress = this.addressInfo.address;
           this.getCapitalListByAddress(this.transferForm.fromAddress);
+          this.changeParameter();
         }
       },
       gasNumber(val, old) {
@@ -353,7 +355,9 @@
         for (let item of this.assetsList) {
           if (item.symbol === "NULS" && Number(item.balance) < 0.01) {
             this.isNext = true;
-            this.$message({message: "付款地址的NULS不足，请切换账户", type: 'error', duration: 2000});
+            this.$message({message: this.$t('transfer.transfer16'), type: 'error', duration: 2000});
+          }else {
+            this.isNext = false;
           }
         }
         //合约地址转账交易

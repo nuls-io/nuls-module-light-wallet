@@ -186,7 +186,7 @@
               response.result.deposits = timesDecimals(response.result.deposit);
               response.result.totalDeposit = timesDecimals(response.result.totalDeposit);
               response.result.totalReward = timesDecimals(response.result.totalReward);
-              response.result.createTime = moment(getLocalTime(response.result.createTime)).format('YYYY-MM-DD HH:mm:ss');
+              response.result.createTime = moment(getLocalTime(response.result.createTime*1000)).format('YYYY-MM-DD HH:mm:ss');
               this.nodeInfo = response.result;
             }
           })
@@ -210,7 +210,7 @@
               for (let itme of response.result.list) {
                 itme.amount = timesDecimals(itme.amount);
                 itme.fee = timesDecimals(itme.fee);
-                itme.createTime = moment(getLocalTime(itme.createTime)).format('YYYY-MM-DD HH:mm:ss');
+                itme.createTime = moment(getLocalTime(itme.createTime*1000)).format('YYYY-MM-DD HH:mm:ss');
               }
               this.nodeDepositData = response.result.list;
               if (response.result.totalCount === 0) {

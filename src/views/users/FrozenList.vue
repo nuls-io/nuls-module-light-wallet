@@ -24,7 +24,7 @@
                 <el-table-column prop="lockedValue" :label=" $t('tab.tab7')" align="center">
                 </el-table-column>
                 <el-table-column :label="$t('tab.tab8')" align="center">
-                    <template slot-scope="scope"><span>{{scope.row.type === 3 ? $t('type.5'):  scope.row.reason}}</span>
+                    <template slot-scope="scope"><span>{{scope.row.type === 3 ? $t('type.5'):  $t('frozenType.'+scope.row.type)}}</span>
                     </template>
                 </el-table-column>
             </el-table>
@@ -81,7 +81,7 @@
       getTxListByAddress(pageIndex, pageSize, address) {
         this.$post('/', 'getAccountFreezes', [pageIndex, pageSize, address])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               for (let item of response.result.list) {
                 item.createTime = moment(getLocalTime(item.createTime)).format('YYYY-MM-DD HH:mm:ss');

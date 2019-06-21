@@ -9,12 +9,17 @@
 
     <el-form :model="deployForm" :rules="deployRules" ref="deployForm" status-icon>
       <div class="modes bg-white w1200">
-        <el-form-item label="合约名称" prop="alias">
-          <el-input v-model="deployForm.alias" autocomplete="off"></el-input>
-        </el-form-item>
+        <div class="parameter" style="padding-top: 1rem">
+          <el-form-item :label="$t('deploy.deploy21')" prop="alias">
+            <el-input v-model="deployForm.alias" autocomplete="off">
+            </el-input>
+          </el-form-item>
+        </div>
+
         <el-form-item label="HEX" prop="hex" v-show="resource ==='0'" class="hex">
           <el-input type="textarea" :rows="10" v-model.trim="deployForm.hex" @change="getParameter"
-                    autocomplete="off"></el-input>
+                    autocomplete="off">
+          </el-input>
         </el-form-item>
 
         <div class="upload_jar" v-show="resource==='1'">
@@ -31,24 +36,29 @@
                         :prop="'parameterList.' + index + '.value'"
                         :rules="{required: domain.required,message:domain.name+$t('call.call2'), trigger: 'blur'}"
           >
-            <el-input v-model.trim="domain.value" @change="changeParameter"></el-input>
+            <el-input v-model.trim="domain.value" @change="changeParameter">
+            </el-input>
           </el-form-item>
         </div>
       </div>
 
       <el-form-item :label="$t('call.call3')" class="senior">
-        <el-switch v-model="deployForm.senior"></el-switch>
+        <el-switch v-model="deployForm.senior">
+        </el-switch>
       </el-form-item>
 
       <div v-if="deployForm.senior" class="senior-div">
         <el-form-item label="Gas Limit" prop="gas">
-          <el-input v-model="deployForm.gas"></el-input>
+          <el-input v-model="deployForm.gas">
+          </el-input>
         </el-form-item>
         <el-form-item label="Price" prop="price">
-          <el-input v-model="deployForm.price"></el-input>
+          <el-input v-model="deployForm.price">
+          </el-input>
         </el-form-item>
         <el-form-item :label="$t('public.remarks')" prop="addtion">
-          <el-input v-model="deployForm.addtion"></el-input>
+          <el-input v-model="deployForm.addtion">
+          </el-input>
         </el-form-item>
       </div>
       <el-form-item class="form-next">
@@ -86,9 +96,9 @@
       let validateAlias = (rule, value, callback) => {
         let patrn = /^(?!_)(?!.*?_$)[a-z0-9_]+$/;
         if (value === '') {
-          callback(new Error("请输入合约名称"));
+          callback(new Error(this.$t('deploy.deploy19')));
         } else if (!patrn.exec(value)) {
-          callback(new Error("合约名称(只允许使用小写字母、数字、下划线（下划线不能在两端）)"));
+          callback(new Error(this.$t('deploy.deploy20')));
         } else {
           callback();
         }
@@ -167,7 +177,11 @@
         if (this.deployForm.hex.length > 500) {
           let parameter = await getContractConstructor(this.deployForm.hex);
           if (parameter.success) {
-            this.deployForm.parameterList = parameter.data.args
+            if( parameter.data.args.length !== 0){
+              this.deployForm.parameterList = parameter.data.args
+            }else {
+              this.changeParameter();
+            }
           } else {
             this.$message({message: this.$t('deploy.deploy10') + parameter.data.error, type: 'error', duration: 1000});
           }
@@ -265,9 +279,13 @@
         contractCreate.alias = alias;
         let constructor = this.deployForm.parameterList;
         let contractConstructorArgsTypes = this.makeContractConstructorArgsTypes(constructor);
-        contractCreate.args = await utils.twoDimensionalArray(args, contractConstructorArgsTypes);
+        if(args.length !==0){
+          contractCreate.args = await utils.twoDimensionalArray(args, contractConstructorArgsTypes);
+        }else {
+          contractCreate.args = null;
+        }
         contractCreate.contractAddress = sdk.getStringContractAddress(chainID());
-        if (!contractCreate.args || !contractCreate.chainId || !contractCreate.contractAddress || !contractCreate.contractCode || !contractCreate.gasLimit || !contractCreate.price || !contractCreate.sender) {
+        if (!contractCreate.chainId || !contractCreate.contractAddress || !contractCreate.contractCode || !contractCreate.gasLimit || !contractCreate.price || !contractCreate.sender) {
           this.$message({message: this.$t('deploy.deploy15'), type: 'error', duration: 1000});
         } else {
           this.contractCreateTxData = contractCreate;
@@ -356,7 +374,7 @@
             txhex = await nuls.transactionSerialize(pri, pub, tAssemble);
           }
           //console.log(transferInfo);
-          console.log(txhex);
+          //console.log(txhex);
           await validateTx(txhex).then((response) => {
             //console.log(response);
             if (response.success) {
@@ -404,7 +422,7 @@
             reader.onload = (() => {
               _this.$post('/', 'uploadContractJar', [reader.result])
                 .then((response) => {
-                  console.log(response);
+                  //console.log(response);
                   if (response.hasOwnProperty("result")) {
                     _this.deployForm.hex = response.result.code;
                     _this.getParameter();
@@ -433,7 +451,7 @@
         margin: 0 0 -10px 0;
       }
       .upload_jar {
-        padding: 20px 0;
+        padding: 5px 0;
         .upload {
           width: 200px;
           height: 200px;

@@ -41,7 +41,7 @@
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
   import * as config from '@/config.js'
-  import {addressInfo} from '@/api/util'
+  import {addressInfo, chainID} from '@/api/util'
 
   export default {
     data() {
@@ -74,7 +74,7 @@
           this.addressInfo = item
         }
       }
-      this.getNulsBalance(2, 1, this.$route.query.address);
+      this.getNulsBalance(chainID(), 1, this.$route.query.address);
     },
     watch: {
       addressInfo(val, old) {
@@ -96,7 +96,6 @@
       submitAliasForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            //console.log(this.balanceInfo.balance);
             if (this.balanceInfo.balance > 100100000) {
               this.$refs.password.showPassword(true);
             } else {
@@ -110,10 +109,11 @@
 
       /**
        * 获取转出账户余额信息
+       *  @param chainId
        *  @param assetsId
        *  @param address
        **/
-      async getNulsBalance(chainId = 2, assetsId = 1, address) {
+      async getNulsBalance(chainId, assetsId, address) {
         await this.$post('/', 'getAccountBalance', [chainId, assetsId, address])
           .then((response) => {
             //console.log(response);
@@ -136,12 +136,15 @@
       async passSubmit(password) {
 
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(2, pri, password);
+        const newAddressInfo = nuls.importByKey(chainID(), pri, password);
         if (newAddressInfo.address === this.addressInfo.address) {
+          //根据公钥获取地址
+          let burningAddress = nuls.getAddressByPub(chainID(), 1, config.API_BURNING_ADDRESS_PUB);
+          //console.log(burningAddress);
           let transferInfo = {
             fromAddress: this.addressInfo.address,
-            toAddress: config.API_BURNING_ADDRESS,
-            assetsChainId: 2,
+            toAddress: burningAddress,
+            assetsChainId: chainID(),
             assetsId: 1,
             amount: 100000000,
             fee: 100000

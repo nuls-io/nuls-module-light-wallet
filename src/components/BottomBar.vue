@@ -89,7 +89,6 @@
 
       /**
        * 获取地址网络信息
-       * @param addressInfo
        **/
       async getAddressInfo() {
         let addressInfos = addressInfo(1);
@@ -142,7 +141,7 @@
        * 后台运行
        **/
       afterRun() {
-        console.log(this.updateDialogVisible);
+        //console.log(this.updateDialogVisible);
         this.updateDialogVisible = false;
       },
 

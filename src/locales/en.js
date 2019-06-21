@@ -42,6 +42,13 @@ const en = {
     "remarks":"Remarks",
     "participants":"Participants",
     "totalStake":"Total stake",
+    "method": "Method",
+    "results": "Results",
+    "success":"Success",
+    "fail":"Fail",
+    "tokenTransfer":"Token transfer",
+    "":"",
+
     "err":"Verify and broadcast transaction failure:",
     "err0":"Verify and broadcast transaction exceptions:",
     "err1":"Input and outputs assembly errors:",
@@ -369,7 +376,9 @@ const en = {
     "undefined":"",
     "1": "Highly locking",
     "2": "Time locking",
-    "3": "Consensus locking"
+    "3": "Consensus locking",
+    "4": "Create Nodes",
+    "11": "Registration Cross-Chain",
   },
 
   "addressType": {
@@ -457,6 +466,9 @@ const en = {
     "transfer12":"The amount must be a number.",
     "transfer13":"The amount must be greater than 0.001",
     "transfer14":"The amount should not be greater than the available balance.",
+    "transfer15": "Tip: The address you fill in is a cross-chain address. This transaction will be a cross-chain transaction. You can only choose basic assets.",
+    "transfer16": "The NULS of payment address is insufficient. Please switch accounts.",
+    "transfer": "transfer",
   },
 
   "consensus":{
@@ -535,6 +547,7 @@ const en = {
     "nodeService21":"Tips",
     "nodeService22":"Remove success",
     "official": "Official",
+    "nodeService23": "Chain name",
   },
 
   "address":{
@@ -586,6 +599,7 @@ const en = {
     "newAddress26":"Keystore save failed, please restart and try again ",
     "newAddress27":"File save completed, location:",
     "newAddress28":"Select the location where the keystore file is saved",
+    "newAddress29": "Please choose a password-aware prompt",
     "newAddress":"",
   },
 
@@ -678,7 +692,9 @@ const en = {
     "deploy6":"Deploy",
     "deploy7":"Enter the hex code",
     "deploy8":"Please input gas",
+    "deploy81":"Gag Limit range;1~10000000",
     "deploy9":"Please input price",
+    "deploy91":"Price must be greater than 1",
     "deploy10":"Getting constructor errors",
     "deploy11":"Verify the creation contract transaction error",
     "deploy12":"Verify Creating Contract Transaction Exceptions",
@@ -688,6 +704,9 @@ const en = {
     "deploy16":"Test pass",
     "deploy17":"Error uploading jar package",
     "deploy18":"Upload jar package exception",
+    "deploy19":"Please enter the contract name.",
+    "deploy20":"Contract name (only lowercase letters, numbers, underscores are allowed (underscores cannot be at both ends)",
+    "deploy21":"Contract Name",
     "deploy":"deploy",
   },
 

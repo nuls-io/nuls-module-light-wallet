@@ -110,9 +110,7 @@
           return callback(new Error(this.$t('newConsensus.newConsensus4')));
         } else if (!patrn.exec(value)) {
           return callback(new Error(this.$t('newConsensus.newConsensus31')))
-        } else if (value === this.createrForm.rewardAddress) {
-          return callback(new Error("打包地址不能为奖励地址"))
-        } else {
+        }  else {
           callback();
         }
       };
@@ -214,6 +212,8 @@
 
       /**
        * 获取账户余额
+       * @param assetChainId
+       * @param assetId
        * @param address
        **/
       getBalanceByAddress(assetChainId, assetId, address) {
@@ -238,7 +238,7 @@
             //console.log(response);
             if (response.result.list.length !== 0) {
               this.isRed = true;
-              this.$message({message: "创建地址有过红牌惩罚不能再创建节点", type: 'error', duration: 3000});
+              this.$message({message: this.$t('newConsensus.newConsensus12') , type: 'error', duration: 3000});
             } else {
               this.isRed = false;
             }

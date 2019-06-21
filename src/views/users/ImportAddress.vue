@@ -2,7 +2,7 @@
   <div class="import_address bg-gray">
     <div class="bg-white">
       <div class="w1200">
-        <BackBar :backTitle="this.$route.query.address ? '修改密码' : $t('importAddress.importAddress0')"></BackBar>
+        <BackBar :backTitle="this.$route.query.address ? $t('address.address6') : $t('importAddress.importAddress0')"></BackBar>
         <h3 class="title" v-if="this.$route.query.address">{{this.$route.query.address}}</h3>
         <h3 class="title" v-else>{{$t('importAddress.importAddress1')}}</h3>
       </div>
@@ -155,7 +155,6 @@
       passSubmit(password) {
         const pri = nuls.decrypteOfAES(this.keystoreInfo.encryptedPrivateKey, password);
         const newAddressInfo = nuls.importByKey(chainID(), pri, password);
-        console.log(newAddressInfo);
         if (newAddressInfo.address === this.keystoreInfo.address) {
           let newImportAddressInfo = {
             address: newAddressInfo.address,

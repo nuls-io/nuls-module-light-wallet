@@ -208,12 +208,12 @@
 
       /**
        * 获取地址网络信息
-       * @param addressInfo
+       * @param addressInfos
        **/
       async getAddressInfoByNode(addressInfos) {
         await this.$post('/', 'getAccount', [addressInfos.address])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               let newAddressInfo = addressInfo(0);
               for (let item of newAddressInfo) {

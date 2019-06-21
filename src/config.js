@@ -2,8 +2,8 @@
 export const IS_DEV = process.env.NODE_ENV !== 'production';
 //链ID
 export const API_CHAIN_ID = sessionStorage.hasOwnProperty('chainID') ?  Number(sessionStorage.getItem('chainID')): 100;
-//燃烧地址
-export const API_BURNING_ADDRESS = 'tNULSeBaMgLW3Wrt8Eh8Av5MinETdiXhfGg61u';
+//燃烧地址的公钥
+export const API_BURNING_ADDRESS_PUB = '0298f88c3cae67385ce3cbee00f78816db3e56e566b62bd0f4c5b45f205d3021c3';
 //运行环境（true:正式环境，false:测试环境）
 export const RUN_DEV = false;
 //运行模式（true:electron窗体模式，false:浏览器模式）

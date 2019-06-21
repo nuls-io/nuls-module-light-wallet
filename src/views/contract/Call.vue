@@ -48,7 +48,7 @@
   import utils from 'nuls-sdk-js/lib/utils/utils'
   import {getNulsBalance, countFee, inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
   import Password from '@/components/PasswordBar'
-  import {getArgs, Times, Plus,addressInfo} from '@/api/util'
+  import {getArgs, Times, Plus,addressInfo,chainID} from '@/api/util'
   import * as config from '@/config.js'
 
   export default {
@@ -68,10 +68,10 @@
         },
         callRules: {
           gas: [
-            {type: 'number', required: true, message: '请输入gas', trigger: 'blur'},
+            {type: 'number', required: true, message: this.$t('deploy.deploy8'), trigger: 'blur'},
           ],
           price: [
-            {type: 'number', required: true, message: '请输入price', trigger: 'blur'},
+            {type: 'number', required: true, message: this.$t('deploy.deploy9'), trigger: 'blur'},
           ]
         },
         //选中的方法
@@ -248,7 +248,7 @@
               let newArgs = utils.twoDimensionalArray(args, contractConstructorArgsTypes);
 
               this.contractCallData = {
-                chainId: config.API_CHAIN_ID,
+                chainId: chainID(),
                 sender: sender,
                 contractAddress: contractAddress,
                 value: value,
@@ -288,6 +288,8 @@
 
       /**
        * 获取账户余额
+       * @param assetChainId
+       * @param assetId
        * @param address
        **/
       getBalanceByAddress(assetChainId, assetId,address) {
@@ -318,7 +320,7 @@
           amount = Number(Plus(this.callForm.values, amount));
           let transferInfo = {
             fromAddress: this.addressInfo.address,
-            assetsChainId: config.API_CHAIN_ID,
+            assetsChainId: chainID(),
             assetsId: 1,
             amount: amount,
             fee: 100000
@@ -333,6 +335,7 @@
           let txhex = '';
           //获取手续费
           let newFee = countFee(tAssemble, 1);
+          //console.log(this.balanceInfo);
           //手续费大于0.001的时候重新组装交易及签名
           if (transferInfo.fee !== newFee) {
             transferInfo.fee = newFee;

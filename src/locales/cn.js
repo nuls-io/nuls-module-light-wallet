@@ -42,6 +42,12 @@ const cn = {
     "remarks": "备注",
     "participants": "参与人数",
     "totalStake": "总委托量",
+    "method": "方法",
+    "results": "执行结果",
+    "success":"成功",
+    "fail":"失败",
+    "tokenTransfer":"代币转账",
+    "":"",
 
     "err": "验证并广播交易失败:",
     "err0": "验证并广播交易异常:",
@@ -370,7 +376,9 @@ const cn = {
     "undefined": "",
     "1": "高度锁定",
     "2": "时间锁定",
-    "3": "共识锁定"
+    "3": "共识锁定",
+    "4": "创建节点",
+    "11": "注册跨链",
   },
 
   "addressType": {
@@ -466,6 +474,9 @@ const cn = {
     "transfer12": "金额必须为数字",
     "transfer13": "金额必须大于0.001",
     "transfer14": "金额不能大于可用余额",
+    "transfer15": "提示：您填写的地址是跨链地址这笔交易将是跨链交易，您只能选择基本资产...",
+    "transfer16": "付款地址的NULS不足，请切换账户",
+    "transfer": "transfer",
   },
 
   "consensus": {
@@ -498,6 +509,7 @@ const cn = {
     "newConsensus9": "请输入佣金比例",
     "newConsensus10": "佣金比例为10-100直接的整数",
     "newConsensus11": "保证金不小于10并且不大于100",
+    "newConsensus12": "创建地址有过红牌惩罚不能再创建节点",
   },
 
   "consensusList": {
@@ -546,6 +558,7 @@ const cn = {
     "nodeService21": "提示",
     "nodeService22": "移除成功",
     "official": "官方",
+    "nodeService23": "链名",
   },
 
   "address": {
@@ -597,6 +610,7 @@ const cn = {
     "newAddress26": "keystore保存失败，请重启再试一次 ",
     "newAddress27": "文件保存完成，位置:",
     "newAddress28": "请选择keystore文件的保存位置",
+    "newAddress29": "请选择知晓密码提示",
     "newAddress": "",
 
   },
@@ -690,7 +704,9 @@ const cn = {
     "deploy6":"部署",
     "deploy7":"请输入hex编码",
     "deploy8":"请输入gas",
+    "deploy81":"Gag Limit范围;1~10000000",
     "deploy9":"请输入price",
+    "deploy91":"Price必须大于1",
     "deploy10":"获取构造函数错误:",
     "deploy11":"验证创建合约交易错误",
     "deploy12":"验证创建合约交易异常",
@@ -700,6 +716,9 @@ const cn = {
     "deploy16":"测试通过",
     "deploy17":"上传jar包错误",
     "deploy18":"上传jar包异常",
+    "deploy19":"请输入合约名称",
+    "deploy20":"合约名称(只允许使用小写字母、数字、下划线（下划线不能在两端）)",
+    "deploy21":"合约名称",
     "deploy":"deploy",
   },
 

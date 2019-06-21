@@ -12,12 +12,12 @@
       <h5 class="card-title font18">{{$t('public.basicData')}}</h5>
       <ul>
         <li>{{$t('public.time')}} <label>{{txInfo.createTime}}</label></li>
-        <li>{{$t('public.amount')}} <label>{{txInfo.value}}<span class="fCN">NULS</span></label></li>
+        <li>{{$t('public.amount')}} <label>{{txInfo.value}}</label></li>
         <li>
           {{$t('public.height')}}
           <label class="click"><u class="td" @click="toUrl('height',txInfo.height)">{{txInfo.height}}</u></label>
         </li>
-        <li>{{$t('public.fee')}} <label>{{txInfo.fee}}<span class="fCN">NULS</span></label></li>
+        <li>{{$t('public.fee')}} <label>{{txInfo.fees}}<span class="fCN">{{symbol}}</span></label></li>
         <li>{{$t('public.type')}} <label>{{$t('type.'+txInfo.type)}}</label></li>
         <li>
           {{$t('public.status')}}
@@ -88,9 +88,9 @@
         <li v-if="txInfo.type ===15 || txInfo.type ===16">Gas Limit<label>{{txInfo.txData.resultInfo.gasLimit}}
           GAS</label></li>
 
-        <li v-if="txInfo.type ===16">方法<label>{{txInfo.txData.methodName}}</label></li>
-        <li v-if="txInfo.type ===16">执行结果
-          <label>{{txInfo.txData.resultInfo.success ? '成功':'失败'}}
+        <li v-if="txInfo.type ===16">{{$t('public.method')}}<label>{{txInfo.txData.methodName}}</label></li>
+        <li v-if="txInfo.type ===16">{{$t('public.results')}}
+          <label>{{txInfo.txData.resultInfo.success ? $t('public.success'):$t('public.fail')}}
             <span class="click" @click="dataDialog=true">View</span>
           </label>
         </li>
@@ -105,7 +105,7 @@
     <div class="cb"></div>
 
     <div class="card_long mzt_20 w1200 inorouput" v-if="tokenTransfersData.length !==0">
-      <h5 class="card-title font18">代币转账</h5>
+      <h5 class="card-title font18">{{$t('public.tokenTransfer')}}</h5>
       <div class="inorou-info bg-white">
         <div class="card-info left fl">
           <ul>
@@ -181,6 +181,7 @@
         outputData: [],//输出
         tokenTransfersData: [],//代币转账data
         dataDialog: false,//data 弹框
+        symbol: 'NULS',
       };
     },
     created() {
@@ -202,10 +203,10 @@
         this.txInfoLoading = true;
         this.$post('/', 'getTx', [hash])
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             if (response.hasOwnProperty("result")) {
               response.result.createTime = moment(getLocalTime(response.result.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
-              response.result.fee = timesDecimals(response.result.fee);
+              response.result.fees = timesDecimals(response.result.fee.value);
               response.result.value = timesDecimals(response.result.value);
               //输入
               if (response.result.coinFroms) {
@@ -227,6 +228,7 @@
               }
 
               this.txInfo = response.result;
+              this.symbol = this.txInfo.fee.symbol;
               this.txInfoLoading = false;
             }
           })

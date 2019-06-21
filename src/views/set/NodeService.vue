@@ -7,7 +7,7 @@
         <i class="el-icon-plus click" @click="addNodeService"></i>
       </div>
       <el-table :data="nodeServiceData" stripe border>
-        <el-table-column prop="chainName" label="链名" align="center">
+        <el-table-column prop="chainName" :label="$t('nodeService.nodeService23')" align="center">
         </el-table-column>
         <el-table-column :label="$t('nodeService.nodeService2')" align="center">
           <template slot-scope="scope">

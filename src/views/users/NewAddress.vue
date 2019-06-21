@@ -142,7 +142,7 @@
             {validator: validatePassTwo, trigger: 'blur'}
           ],
           agreement: [
-            {required: true, message: '请选择知晓密码提示', trigger: 'change'}
+            {required: true, message:this.$t('newAddress.newAddress29'), trigger: 'change'}
           ]
         },
         newAddressInfo: {}, //新建的地址信息
