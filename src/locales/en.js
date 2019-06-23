@@ -378,6 +378,7 @@ const en = {
     "2": "Time locking",
     "3": "Consensus locking",
     "4": "Create Nodes",
+    "5": "Stake",
     "11": "Registration Cross-Chain",
   },
 

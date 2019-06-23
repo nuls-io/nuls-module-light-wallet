@@ -81,8 +81,9 @@
       getTxListByAddress(pageIndex, pageSize, address) {
         this.$post('/', 'getAccountFreezes', [pageIndex, pageSize, address])
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             if (response.hasOwnProperty("result")) {
+              //let long = 1000000000; 4294967295
               for (let item of response.result.list) {
                 item.createTime = moment(getLocalTime(item.createTime)).format('YYYY-MM-DD HH:mm:ss');
                 item.txHashs = superLong(item.txHash, 16);

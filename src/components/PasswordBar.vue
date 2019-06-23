@@ -32,7 +32,7 @@
       return {
         passwordVisible: false,
         passwordForm: {
-          password: 'nuls1234',
+          password: 'nuls123456',
         },
         passwordRules: {
           password: [
