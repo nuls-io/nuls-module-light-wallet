@@ -174,6 +174,8 @@
           this.pageSize = 10;
           this.pageCount = 0;
           this.getAccountCrossLedgerList(this.addressInfo.address)
+        }else {
+          this.getAddressInfoByNode(this.addressInfo.address);
         }
       },
 
@@ -205,7 +207,7 @@
       getAddressInfoByNode(address) {
         this.$post('/', 'getAccountLedgerList', [address])
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             this.addressAssetsData = [];
             let newAssetsList = {};
             if (response.hasOwnProperty("result")) {

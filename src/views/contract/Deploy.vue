@@ -56,8 +56,8 @@
           <el-input v-model="deployForm.price">
           </el-input>
         </el-form-item>
-        <el-form-item :label="$t('public.remarks')" prop="addtion">
-          <el-input v-model="deployForm.addtion">
+        <el-form-item :label="$t('public.contractInfo')" prop="addtion">
+          <el-input type="textarea" :rows="3" v-model="deployForm.addtion">
           </el-input>
         </el-form-item>
       </div>
@@ -168,6 +168,15 @@
        */
       changeRadio(e) {
         this.resource = e;
+        this.deployForm = {
+          alias: '',
+          hex: '',
+          parameterList: [],
+          senior: false,
+          gas: '',
+          price: '',
+          addtion: '',
+        };
       },
 
       /**
@@ -177,9 +186,9 @@
         if (this.deployForm.hex.length > 500) {
           let parameter = await getContractConstructor(this.deployForm.hex);
           if (parameter.success) {
-            if( parameter.data.args.length !== 0){
+            if (parameter.data.args.length !== 0) {
               this.deployForm.parameterList = parameter.data.args
-            }else {
+            } else {
               this.changeParameter();
             }
           } else {
@@ -279,9 +288,9 @@
         contractCreate.alias = alias;
         let constructor = this.deployForm.parameterList;
         let contractConstructorArgsTypes = this.makeContractConstructorArgsTypes(constructor);
-        if(args.length !==0){
+        if (args.length !== 0) {
           contractCreate.args = await utils.twoDimensionalArray(args, contractConstructorArgsTypes);
-        }else {
+        } else {
           contractCreate.args = null;
         }
         contractCreate.contractAddress = sdk.getStringContractAddress(chainID());

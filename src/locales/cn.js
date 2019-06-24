@@ -47,6 +47,9 @@ const cn = {
     "success":"成功",
     "fail":"失败",
     "tokenTransfer":"代币转账",
+    "contractName":"合约名称",
+    "cancelCollection":"取消收藏",
+    "contractInfo":"合约描述",
     "":"",
 
     "err": "验证并广播交易失败:",
@@ -431,6 +434,7 @@ const cn = {
     "5": "加入共识锁定",
     "8": "红牌惩罚锁定",
     "9": "注销节点锁定",
+    "11": "注册跨链",
   },
 
   "contractStatus": {
@@ -672,7 +676,7 @@ const cn = {
     "contract6":"请输入合约地址",
     "contract7":"搜索",
     "contract8":"所有合约",
-    "contract9":"合约",
+    "contract9":"合约地址",
     "contract10":"部署合约",
     "contract11":"获取合约列表失败:",
     "contract12":"获取合约列表异常:",

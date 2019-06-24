@@ -48,8 +48,7 @@
   import utils from 'nuls-sdk-js/lib/utils/utils'
   import {getNulsBalance, countFee, inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
   import Password from '@/components/PasswordBar'
-  import {getArgs, Times, Plus,addressInfo,chainID} from '@/api/util'
-  import * as config from '@/config.js'
+  import {getArgs, Times, Plus, addressInfo, chainID} from '@/api/util'
 
   export default {
     data() {
@@ -91,11 +90,11 @@
     },
     created() {
       this.callForm.modelData = this.modelList;
-      this.addressInfo =  addressInfo(1);
+      this.addressInfo = addressInfo(1);
       setInterval(() => {
-        this.addressInfo =  addressInfo(1);
+        this.addressInfo = addressInfo(1);
       }, 500);
-      this.getBalanceByAddress(2,1,this.addressInfo.address);
+      this.getBalanceByAddress(chainID(), 1, this.addressInfo.address);
     },
     mounted() {
 
@@ -106,7 +105,7 @@
       },
       addressInfo(val, old) {
         if (val.address !== old.address && old.address) {
-          this.getBalanceByAddress(2,1,this.addressInfo.address);
+          this.getBalanceByAddress(chainID(), 1, this.addressInfo.address);
         }
       }
     },
@@ -292,8 +291,8 @@
        * @param assetId
        * @param address
        **/
-      getBalanceByAddress(assetChainId, assetId,address) {
-        getNulsBalance(assetChainId, assetId,address).then((response) => {
+      getBalanceByAddress(assetChainId, assetId, address) {
+        getNulsBalance(assetChainId, assetId, address).then((response) => {
           //console.log(response);
           if (response.success) {
             this.balanceInfo = response.data;
@@ -350,7 +349,7 @@
           await validateAndBroadcast(txhex).then((response) => {
             //console.log(response);
             if (response.success) {
-             this.callResult = response
+              this.callResult = response
             } else {
               this.$message({message: this.$t('error.' + response.data.code), type: 'error', duration: 3000});
             }

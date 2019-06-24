@@ -1,52 +1,53 @@
 <template>
-    <div class="frozen_list bg-gray">
-        <div class="bg-white">
-            <div class="w1200">
-                <BackBar :backTitle="$t('nav.wallet')"></BackBar>
-                <h3 class="title">{{$t('frozenList.frozenList0')}}</h3>
-            </div>
-        </div>
-
-        <div class="w1200 mt_20">
-            <el-table :data="txListData" stripe border>
-                <el-table-column :label="$t('tab.tab1')" align="center">
-                    <template slot-scope="scope"><span>{{ $t('frozenType.'+scope.row.type) }}</span></template>
-                </el-table-column>
-                <el-table-column label="txHash" align="center" min-width="150">
-                    <template slot-scope="scope">
-                        <span class="click" @click="toUrl('transferInfo',scope.row.txHash)">{{scope.row.txHashs}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="createTime" :label="$t('tab.tab5')" align="center">
-                </el-table-column>
-                <el-table-column prop="values" :label="$t('tab.tab6')" align="center">
-                </el-table-column>
-                <el-table-column prop="lockedValue" :label=" $t('tab.tab7')" align="center">
-                </el-table-column>
-                <el-table-column :label="$t('tab.tab8')" align="center">
-                    <template slot-scope="scope"><span>{{scope.row.type === 3 ? $t('type.5'):  $t('frozenType.'+scope.row.type)}}</span>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <div class="pages">
-                <div class="page-total">
-                    {{$t('public.display')}} {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
-                    {{$t('public.total')}} {{pageTotal}}
-                </div>
-                <el-pagination @current-change="frozenListPages" class="fr" background
-                               v-show="pageTotal>pageSize"
-                               :page-size=pageSize
-                               layout=" prev, pager, next, jumper"
-                               :total=pageTotal>
-                </el-pagination>
-            </div>
-        </div>
+  <div class="frozen_list bg-gray">
+    <div class="bg-white">
+      <div class="w1200">
+        <BackBar :backTitle="$t('nav.wallet')"></BackBar>
+        <h3 class="title">{{$t('frozenList.frozenList0')}}</h3>
+      </div>
     </div>
+
+    <div class="w1200 mt_20">
+      <el-table :data="txListData" stripe border>
+        <el-table-column :label="$t('tab.tab1')" align="center">
+          <template slot-scope="scope"><span>{{ $t('frozenType.'+scope.row.type) }}</span></template>
+        </el-table-column>
+        <el-table-column label="txHash" align="center" min-width="150">
+          <template slot-scope="scope">
+            <span class="click" @click="toUrl('transferInfo',scope.row.txHash)">{{scope.row.txHashs}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" :label="$t('tab.tab5')" align="center">
+        </el-table-column>
+        <el-table-column prop="values" :label="$t('tab.tab6')" align="center">
+        </el-table-column>
+        <el-table-column prop="lockedValue" :label=" $t('tab.tab7')" align="center">
+        </el-table-column>
+        <el-table-column :label="$t('tab.tab8')" align="center">
+          <template slot-scope="scope">
+            <span>{{scope.row.type === 3 ? $t('type.5'):  $t('frozenType.'+scope.row.type)}}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="pages">
+        <div class="page-total">
+          {{$t('public.display')}} {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
+          {{$t('public.total')}} {{pageTotal}}
+        </div>
+        <el-pagination @current-change="frozenListPages" class="fr" background
+                       v-show="pageTotal>pageSize"
+                       :page-size=pageSize
+                       layout=" prev, pager, next, jumper"
+                       :total=pageTotal>
+        </el-pagination>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
   import moment from 'moment'
-  import {timesDecimals, getLocalTime, superLong,addressInfo} from '@/api/util'
+  import {timesDecimals, getLocalTime, superLong, addressInfo} from '@/api/util'
   import BackBar from '@/components/BackBar'
 
   export default {
@@ -72,6 +73,7 @@
       BackBar
     },
     methods: {
+
       /**
        * 获取地址的锁定列表
        * @param pageIndex
@@ -81,11 +83,11 @@
       getTxListByAddress(pageIndex, pageSize, address) {
         this.$post('/', 'getAccountFreezes', [pageIndex, pageSize, address])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               //let long = 1000000000; 4294967295
               for (let item of response.result.list) {
-                item.createTime = moment(getLocalTime(item.createTime)).format('YYYY-MM-DD HH:mm:ss');
+                item.createTime = moment(getLocalTime(item.time * 1000)).format('YYYY-MM-DD HH:mm:ss');
                 item.txHashs = superLong(item.txHash, 16);
                 item.balance = timesDecimals(item.amount);
                 item.values = timesDecimals(item.amount);

@@ -184,7 +184,8 @@
               balance: 0,
               consensusLock: 0,
               totalReward: 0,
-              tokens: []
+              tokens: [],
+              contractList:[],
             };
             let addressList = [];
             let newAddressList = [];

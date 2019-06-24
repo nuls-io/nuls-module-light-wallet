@@ -124,8 +124,7 @@
        */
       getAddressList() {
         this.addressList = addressInfo(0);
-        //console.log(this.addressList);
-        if (this.addressList.length !== 0) {
+        if (this.addressList) {
           for (let item  of this.addressList) {
             item.addresss = superLong(item.address, 8);
           }

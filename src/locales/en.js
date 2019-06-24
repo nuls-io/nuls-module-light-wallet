@@ -47,6 +47,9 @@ const en = {
     "success":"Success",
     "fail":"Fail",
     "tokenTransfer":"Token transfer",
+    "contractName":"Contract Name",
+    "cancelCollection":"Cancel Collection",
+    "contractInfo":"Contract Info",
     "":"",
 
     "err":"Verify and broadcast transaction failure:",
@@ -423,6 +426,15 @@ const en = {
     "1": "General nodes",
     "2": "Developer nodes",
     "3": "Ambassador nodes"
+  },
+
+  "lockType": {
+    "undefined": "",
+    "4": "Create Node Lock",
+    "5": "Join consensus lock-in",
+    "8": "Red card penalty lock-in",
+    "9": "Logout Node Locking",
+    "11": "Registration Cross-Chain",
   },
 
   "contractStatus": {

@@ -33,7 +33,7 @@
         <el-table :data="txListData" stripe border>
           <el-table-column prop="symbol" :label="$t('tab.tab0')" align="center" width="100">
           </el-table-column>
-          <el-table-column :label="$t('tab.tab1')" align="center" width="100">
+          <el-table-column :label="$t('tab.tab1')" align="center" width="150">
             <template slot-scope="scope"><span>{{ $t('type.'+scope.row.type) }}</span></template>
           </el-table-column>
           <el-table-column label="TxID" align="center">
