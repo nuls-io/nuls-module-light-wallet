@@ -238,7 +238,7 @@
        * @param args
        * @param alias
        */
-      async imputedContractCreateGas(createAddress, contractCode, args, alias) {
+      async imputedContractCreateGas(createAddress, contractCode, args) {
         return await this.$post('/', 'imputedContractCreateGas', [createAddress, contractCode, args])
           .then((response) => {
             //console.log(response);

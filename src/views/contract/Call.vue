@@ -351,7 +351,12 @@
             if (response.success) {
               this.callResult = response
             } else {
-              this.$message({message: this.$t('error.' + response.data.code), type: 'error', duration: 3000});
+              if(response.data.code ==='err_0014'){
+                this.$message({message: response.data.message, type: 'error', duration: 3000});
+              }else {
+                this.$message({message: this.$t('error.' + response.data.code), type: 'error', duration: 3000});
+              }
+
             }
           }).catch((err) => {
             this.$message({message: this.$t('public.err1') + err, type: 'error', duration: 1000});

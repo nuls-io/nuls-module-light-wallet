@@ -48,6 +48,7 @@
             </el-form-item>
           </div>
         </div>
+        <div class="cb"></div>
         <el-form-item :label="$t('transfer.transfer4')">
           <el-input type="textarea" v-model="transferForm.remarks" maxlength="100" show-word-limit>
           </el-input>
@@ -256,7 +257,6 @@
                   symbol: item.symbol,
                   chainId: item.chainId,
                   assetId: item.assetId,
-                  //TODO 默认为8的进度系数 待完善
                   balance: timesDecimals(item.balance)
                 });
                 chainId = item.chainId;
@@ -348,17 +348,24 @@
           let toAddress = nuls.verifyAddress(this.transferForm.toAddress);
           if (fromAddress.chainId === toAddress.chainId) {
             this.isCross = false;
+            this.fee = 0.001;
           } else {
             this.isCross = true;
             this.fee = 0.01;
+            //跨链交易默认选中NULS
             if (this.changeAssets.type === 2) {
               this.changeNuls();
             }
+            //跨链交易判断本资产及NULS是否够手续费
             for (let item of this.assetsList) {
-              if (item.symbol === "NULS" && Number(item.balance) < 0.01) {
+              //判断nuls资产是否够手续费
+              let isNulsFee = item.symbol === "NULS" && Number(item.balance) < 0.01;
+              //判断本链资产是否够手续费
+              let isChainFee = chainID() === item.chainId && Number(item.balance) < 0.01;
+              if (isNulsFee) {
                 this.isNext = false;
                 this.$message({message: this.$t('transfer.transfer16'), type: 'error', duration: 2000});
-              } else if (item.chainId === fromAddress.chainId && Number(item.balance) < 0.01) {
+              } else if (isChainFee) {
                 this.isNext = false;
                 this.$message({message: this.$t('transfer.transfer17'), type: 'error', duration: 2000});
               } else {
@@ -879,13 +886,14 @@
           }
         }
         .div-senior {
-          margin: -15px 0;
+          margin: -15px 0 0 0;
           .senior {
             margin: 0 0 0 0;
             .el-form-item__label {
               line-height: 40px;
-              position: absolute;
-              right: 420px;
+              position: relative;
+              left: 500px;
+              float: left;
             }
             .el-form-item__content {
               text-align: right;

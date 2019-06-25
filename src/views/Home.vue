@@ -149,13 +149,13 @@
             if (this.homeActive === 'homeFirst') {
               this.getAddressInfoByNode(this.addressInfo.address);
               setTimeout(() => {
-                this.getTokenListByAddress(this.pageNumber, this.pageSize, this.addressInfo.address)
+                this.getTokenListByAddress(this.pageNumber, this.pageSize, this.addressInfo.address);
               }, 200);
             } else {
               this.pageNumber = 1;
               this.pageSize = 10;
               this.pageCount = 0;
-              this.getAccountCrossLedgerList(this.addressInfo.address)
+              this.getAccountCrossLedgerList(this.addressInfo.address);
             }
           }
         }
@@ -246,7 +246,7 @@
             let newAssetsList = {};
             if (response.hasOwnProperty("result")) {
               for (let itme of response.result.list) {
-                itme.account = itme.tokenName;
+                itme.account = itme.tokenSymbol;
                 itme.type = 2;
                 itme.total = timesDecimals(itme.balance, itme.decimals);
                 itme.locking = '--';
@@ -295,8 +295,8 @@
        * @param val
        **/
       addressAssetsListPages(val) {
-        //TODO 资产数据是否会有很多分页功能
-        console.log(val);
+        this.pageNumber = val;
+        this.getTokenListByAddress(this.pageNumber, this.pageSize, this.addressInfo.address);
       },
 
       /**
@@ -355,7 +355,6 @@
   .home {
     background-color: @Bcolour1;
     .title {
-      height: 100px;
     }
     .el-tabs {
       margin: 30px auto 0;

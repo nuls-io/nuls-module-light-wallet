@@ -114,7 +114,9 @@
           return 'transfer'
         } else if (val.indexOf('/consensus') === 0) {
           return 'consensus'
-        } else {
+        } else if(val.indexOf('/contract') === 0){
+          return 'contract'
+        }else {
           return 'home'
         }
       },
@@ -145,7 +147,6 @@
        * @param name
        */
       toUrl(name) {
-        //console.log(name,params);
         this.$router.push({
           name: name
         })

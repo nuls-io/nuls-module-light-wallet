@@ -58,7 +58,7 @@
         </el-table>
         <div class="pages">
           <div class="page-total">
-            {{$t('public.display')}} {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
+            {{$t('public.display')}} {{pageIndex-1 === 0 ? 1 : (pageIndex-1) * pageSize}}-{{pageIndex * pageSize}}
             {{$t('public.total')}} {{pageTotal}}
           </div>
           <el-pagination v-show="pageTotal > pageSize" @current-change="txListPages" class="fr"
@@ -76,41 +76,41 @@
 
 <script>
   import moment from 'moment'
-  import {timesDecimals, Plus, getLocalTime, superLong, addressInfo} from '@/api/util'
+  import {timesDecimals, getLocalTime, superLong, addressInfo} from '@/api/util'
   import BackBar from '@/components/BackBar'
 
   export default {
     data() {
       return {
         assetsOptions: [
-          {value: '0', label: '所有资产'},
-          {value: '1', label: '普通资产'},
-          {value: '2', label: '合约资产'}
+          {value: '0', label: '0'},
+          {value: '1', label: '1'},
+          {value: '2', label: '2'}
         ], //资产类型
         assetsValue: "所有资产",
         typeOptions: [
-          {value: '0', label: '所有交易'},
-          {value: '1', label: '共识奖励'},
-          {value: '2', label: '转账交易'},
-          {value: '3', label: '设置别名'},
-          {value: '4', label: '创建节点'},
-          {value: '5', label: '加入共识'},
-          {value: '6', label: '退出共识'},
-          {value: '7', label: '黄牌惩罚'},
-          {value: '8', label: '红牌惩罚'},
-          {value: '9', label: '注销节点'},
-          {value: '10', label: '通用数据'},
-          {value: '15', label: '创建合约'},
-          {value: '16', label: '调用合约'},
-          {value: '17', label: '删除合约'},
-          {value: '18', label: '合约转账'},
-          {value: '19', label: '合约返还'},
+          {value: '0', label: '0'},
+          {value: '1', label: '1'},
+          {value: '2', label: '2'},
+          {value: '3', label: '3'},
+          {value: '4', label: '4'},
+          {value: '5', label: '5'},
+          {value: '6', label: '6'},
+          {value: '7', label: '7'},
+          {value: '8', label: '8'},
+          {value: '9', label: '9'},
+          {value: '10', label: '10'},
+          {value: '15', label: '15'},
+          {value: '16', label: '16'},
+          {value: '17', label: '17'},
+          {value: '18', label: '18'},
+          {value: '19', label: '19'},
         ], //交易类型
         typeValue: '0',
         inAndOutOptions: [
-          {value: '0', label: '收入/支出'},
-          {value: '1', label: '收入'},
-          {value: '2', label: '支出'},
+          {value: '0', label: '0'},
+          {value: '1', label: '1'},
+          {value: '2', label: '2'},
         ], //收入/支出
         inAndOutValue: '0',
         txListDataLoading: true,//资产加载动画
@@ -199,7 +199,6 @@
        * * @param e
        **/
       channgeInAndOut(e) {
-        //console.log(e)
         this.inAndOutValue = Number(e);
       },
 
@@ -229,7 +228,6 @@
        * @param params
        */
       toUrl(name, params) {
-        //console.log(name,params);
         let newQuery = {hash: params};
         this.$router.push({
           name: name,
