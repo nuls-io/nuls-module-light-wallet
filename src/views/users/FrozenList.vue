@@ -21,7 +21,10 @@
         </el-table-column>
         <el-table-column prop="values" :label="$t('tab.tab6')" align="center">
         </el-table-column>
-        <el-table-column prop="lockedValue" :label=" $t('tab.tab7')" align="center">
+        <el-table-column :label=" $t('tab.tab7')" align="center">
+          <template slot-scope="scope">
+            <span>{{scope.row.lockedValue === -1 ? '--': scope.row.lockedTime}}</span>
+          </template>
         </el-table-column>
         <el-table-column :label="$t('tab.tab8')" align="center">
           <template slot-scope="scope">
@@ -91,6 +94,7 @@
                 item.txHashs = superLong(item.txHash, 16);
                 item.balance = timesDecimals(item.amount);
                 item.values = timesDecimals(item.amount);
+                item.lockedTime = moment(getLocalTime(item.lockedValue)).format('YYYY-MM-DD HH:mm:ss');
                 if (item.type === 2) {
                   item.reason = "注销节点";
                   item.lockedValue = moment(getLocalTime(item.lockedValue)).format('YYYY-MM-DD HH:mm:ss');

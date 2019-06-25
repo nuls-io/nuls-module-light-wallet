@@ -53,7 +53,7 @@
             </el-table-column>
             <el-table-column label="TXID" min-width="280" align="left">
               <template slot-scope="scope">
-                <span class="cursor-p click" @click="toUrl('transactionInfo',scope.row.txHash,0)">
+                <span class="cursor-p click td" @click="toUrl('transactionInfo',scope.row.txHash,1)">
                   {{ scope.row.txHashs }}
                 </span>
               </template>

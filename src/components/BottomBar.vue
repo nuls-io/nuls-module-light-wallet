@@ -77,11 +77,14 @@
             //console.log(response.data);
             if (response.data.hasOwnProperty("result")) {
               this.heightInfo = response.data.result;
+              sessionStorage.setItem("info",JSON.stringify(response.data.result))
             } else {
               this.heightInfo = {localHeight: 0, networkHeight: 0};
+              sessionStorage.removeItem("info")
             }
           })
           .catch((error) => {
+            sessionStorage.removeItem("info");
             this.heightInfo = {localHeight: 0, networkHeight: 0};
             console.log("getInfo:" + error)
           })

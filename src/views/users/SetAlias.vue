@@ -10,8 +10,8 @@
       <div class="w630">
         <h3 class="tc mzt_20">{{this.$route.query.address}}</h3>
         <div class="tip bg-gray">
-          <p>• {{$t('setAlias.setAlias1')}}</p>
-          <p>• {{$t('setAlias.setAlias2')}}</p>
+          <p>• {{$t('setAlias.setAlias1')}}{{addressInfo.symbol}}{{$t('setAlias.setAlias11')}}</p>
+          <p>• {{$t('setAlias.setAlias2')}}{{addressInfo.symbol}}</p>
         </div>
         <el-form :model="aliasForm" status-icon :rules="aliasRules" ref="aliasForm" class="mb_20">
           <el-form-item :label="$t('public.alias')" prop="alias">

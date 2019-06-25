@@ -382,6 +382,8 @@ const en = {
     "3": "Consensus locking",
     "4": "Create Nodes",
     "5": "Stake",
+    "8": "Red card",
+    "9": "Unregister node",
     "11": "Registration Cross-Chain",
   },
 
@@ -481,6 +483,7 @@ const en = {
     "transfer14":"The amount should not be greater than the available balance.",
     "transfer15": "Tip: The address you fill in is a cross-chain address. This transaction will be a cross-chain transaction. You can only choose basic assets.",
     "transfer16": "The NULS of payment address is insufficient. Please switch accounts.",
+    "transfer17": "Cross-Chain Transaction Chain is insufficient, please switch accounts",
     "transfer": "transfer",
   },
 

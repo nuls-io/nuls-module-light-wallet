@@ -422,8 +422,8 @@
 
           //console.log(txhex);
           await validateAndBroadcast(txhex).then((response) => {
+            //console.log(response);
             if (response.success) {
-              //console.log(response.hash);
               this.$router.push({
                 name: "txList"
               })

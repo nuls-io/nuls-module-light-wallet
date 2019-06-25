@@ -33,15 +33,18 @@
         </el-form-item>
         <div class="div-senior" v-show="changeAssets.type !== 1">
           <el-form-item :label="$t('call.call3')" class="senior">
-            <el-switch v-model="transferForm.senior"></el-switch>
+            <el-switch v-model="transferForm.senior">
+            </el-switch>
           </el-form-item>
           <div class="senior-div" v-if="transferForm.senior">
             <el-form-item label="Gas Limit" prop="gas">
-              <el-input v-model="transferForm.gas" @change="changeGas"></el-input>
+              <el-input v-model="transferForm.gas" @change="changeGas">
+              </el-input>
               <div class="font12 yellow" v-show="gasTips">{{$t('call.call10')}}</div>
             </el-form-item>
             <el-form-item label="Price" prop="price">
-              <el-input v-model="transferForm.price"></el-input>
+              <el-input v-model="transferForm.price">
+              </el-input>
             </el-form-item>
           </div>
         </div>
@@ -55,7 +58,7 @@
             <i class="el-icon-warning"></i>
           </el-tooltip>
           {{$t('public.fee')}}: {{fee}}
-          <span class="fCN" >{{isCross ? 'NULS':changeAssets.symbol}}</span>
+          <span class="fCN">{{isCross ? 'NULS':changeAssets.symbol}}</span>
         </div>
         <el-form-item class="form-next">
           <el-button type="success" @click="submitForm('transferForm')" :disabled="isNext">{{$t('public.next')}}
@@ -347,17 +350,21 @@
             this.isCross = false;
           } else {
             this.isCross = true;
+            this.fee = 0.01;
             if (this.changeAssets.type === 2) {
               this.changeNuls();
             }
-          }
-        }
-        for (let item of this.assetsList) {
-          if (item.symbol === "NULS" && Number(item.balance) < 0.01) {
-            this.isNext = true;
-            this.$message({message: this.$t('transfer.transfer16'), type: 'error', duration: 2000});
-          }else {
-            this.isNext = false;
+            for (let item of this.assetsList) {
+              if (item.symbol === "NULS" && Number(item.balance) < 0.01) {
+                this.isNext = false;
+                this.$message({message: this.$t('transfer.transfer16'), type: 'error', duration: 2000});
+              } else if (item.chainId === fromAddress.chainId && Number(item.balance) < 0.01) {
+                this.isNext = false;
+                this.$message({message: this.$t('transfer.transfer17'), type: 'error', duration: 2000});
+              } else {
+                this.isNext = true;
+              }
+            }
           }
         }
         //合约地址转账交易
