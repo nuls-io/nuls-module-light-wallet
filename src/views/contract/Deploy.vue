@@ -11,7 +11,7 @@
       <div class="modes bg-white w1200">
         <div class="parameter" style="padding-top: 1rem">
           <el-form-item :label="$t('deploy.deploy21')" prop="alias">
-            <el-input v-model="deployForm.alias" autocomplete="off">
+            <el-input v-model="deployForm.alias" autocomplete="off" @change="changeAlias">
             </el-input>
           </el-form-item>
         </div>
@@ -57,7 +57,7 @@
           </el-input>
         </el-form-item>
         <el-form-item :label="$t('public.contractInfo')" prop="addtion">
-          <el-input type="textarea" :rows="3" v-model="deployForm.addtion">
+          <el-input type="textarea" :rows="3" maxlength="200" show-word-limit v-model="deployForm.addtion">
           </el-input>
         </el-form-item>
       </div>
@@ -158,7 +158,7 @@
           this.createAddress = val.address;
           this.getBalanceByAddress(this.addressInfo.chainId, 1, this.createAddress);
         }
-      }
+      },
     },
     methods: {
 
@@ -177,6 +177,15 @@
           price: '',
           addtion: '',
         };
+      },
+
+      /**
+       * 合约名称 重新调取方法
+       **/
+      changeAlias() {
+        if(this.deployForm.hex){
+          this.changeParameter();
+        }
       },
 
       /**
@@ -385,12 +394,14 @@
           //console.log(transferInfo);
           //console.log(txhex);
           await validateTx(txhex).then((response) => {
-            //console.log(response);
+            console.log(this.deployForm.alias);
+            console.log(response);
             if (response.success) {
               if (this.isTestSubmit) {
                 this.$message({message: this.$t('deploy.deploy16'), type: 'success', duration: 1000});
               } else {
                 broadcastTx(txhex).then((response) => {
+                  console.log(response);
                   if (response.success) {
                     this.$router.push({
                       name: "txList"

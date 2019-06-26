@@ -50,7 +50,7 @@
         </div>
         <div class="cb"></div>
         <el-form-item :label="$t('transfer.transfer4')">
-          <el-input type="textarea" v-model="transferForm.remarks" maxlength="100" show-word-limit>
+          <el-input type="textarea" v-model="transferForm.remarks" maxlength="200" show-word-limit>
           </el-input>
         </el-form-item>
         <div class="font14">
@@ -59,7 +59,7 @@
             <i class="el-icon-warning"></i>
           </el-tooltip>
           {{$t('public.fee')}}: {{fee}}
-          <span class="fCN">{{isCross ? 'NULS':changeAssets.symbol}}</span>
+          <span class="fCN">{{feeSymbol}}</span>
         </div>
         <el-form-item class="form-next">
           <el-button type="success" @click="submitForm('transferForm')" :disabled="isNext">{{$t('public.next')}}
@@ -82,7 +82,7 @@
         </div>
         <div class="div-data">
           <p>{{$t('public.fee')}}: &nbsp;</p>
-          <label>{{fee}} <span class="fCN">{{changeAssets.symbol}}</span></label>
+          <label>{{fee}} <span class="fCN">{{feeSymbol}}</span></label>
         </div>
         <div class="div-data">
           <p>{{$t('tab.tab6')}}:&nbsp;</p>
@@ -115,7 +115,7 @@
     validateAndBroadcast
   } from '@/api/requestData'
   import * as config from '@/config.js'
-  import {Times, Power, Plus, timesDecimals, addressInfo} from '@/api/util'
+  import {Times, Power, Plus, timesDecimals,chainID, addressInfo} from '@/api/util'
   import Password from '@/components/PasswordBar'
 
   export default {
@@ -202,6 +202,7 @@
           ],
         }, //验证信息
         fee: 0.001, //手续费
+        feeSymbol:"NULS",//手续费显示单位
         transferVisible: false,//转账确认弹框
         isCross: false,//是否跨链交易
         isNext: false,//是否可用点击下一步
@@ -237,6 +238,15 @@
       Password,
     },
     methods: {
+
+      //获取收付费单位
+      getSymbol(){
+        for (let item of this.assetsList) {
+          if(item.chainId === chainID() && item.type === 1){
+            this.feeSymbol = item.symbol;
+          }
+        }
+      },
 
       /**
        * 获取地址的资金列表
@@ -336,6 +346,7 @@
         }
         //console.log(this.assetsList);
         this.changeNuls(0);
+        this.getSymbol();
       },
 
       /**
@@ -349,9 +360,22 @@
           if (fromAddress.chainId === toAddress.chainId) {
             this.isCross = false;
             this.fee = 0.001;
+            this.getSymbol();
+            for(let item of this.assetsList){
+              //console.log(item);
+              if(item.chainId === chainID() && item.type === 1){
+                if(Number(item.balance) < 0.001){
+                  this.isNext = true;
+                  this.$message({message: this.$t('transfer.transfer17'), type: 'error', duration: 2000});
+                }else{
+                  this.isNext = false;
+                }
+              }
+            }
           } else {
             this.isCross = true;
             this.fee = 0.01;
+            this.feeSymbol = "NULS";
             //跨链交易默认选中NULS
             if (this.changeAssets.type === 2) {
               this.changeNuls();
@@ -363,13 +387,13 @@
               //判断本链资产是否够手续费
               let isChainFee = chainID() === item.chainId && Number(item.balance) < 0.01;
               if (isNulsFee) {
-                this.isNext = false;
+                this.isNext = true;
                 this.$message({message: this.$t('transfer.transfer16'), type: 'error', duration: 2000});
               } else if (isChainFee) {
-                this.isNext = false;
+                this.isNext = true;
                 this.$message({message: this.$t('transfer.transfer17'), type: 'error', duration: 2000});
               } else {
-                this.isNext = true;
+                //this.isNext = true;
               }
             }
           }

@@ -44,8 +44,10 @@ export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
   let newNonce = balanceInfo.nonce;
   let newoutputAmount = transferInfo.amount;
   let newLockTime = 0;
-  if (balanceInfo.balance < newAmount) {
-    return {success: false, data: "Your balance is not enough."}
+  if (type !== 6 || type !== 2) {
+    if (balanceInfo.balance < newAmount) {
+      return {success: false, data: "Your balance is not enough."}
+    }
   }
   if (type === 4) {
     newLockTime = -1;

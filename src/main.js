@@ -5,8 +5,10 @@ import store from './store'
 import './plugins/element.js'
 import i18n from './i18n'
 import {post} from './api/https'
+/*import logger from './api/logger';
+
 //浏览器模式注释下面两行代码
-/*import VueElectron from 'vue-electron'
+import VueElectron from 'vue-electron'
 Vue.use(VueElectron);*/
 
 Vue.config.productionTip = false;

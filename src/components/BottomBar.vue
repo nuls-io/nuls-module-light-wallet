@@ -37,7 +37,7 @@
 <script>
   import nuls from 'nuls-sdk-js'
   import axios from 'axios'
-  import {defaultUrl} from '@/config.js'
+  import {defaultUrl,defaultData} from '@/config.js'
   import {chainID, chainIdNumber, addressInfo, timesDecimals} from '@/api/util'
 
   export default {
@@ -56,6 +56,15 @@
       setInterval(() => {
         this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")) : defaultUrl;
       }, 500);
+
+      if (!localStorage.hasOwnProperty('urlsData')) {
+        localStorage.setItem("urlsData", JSON.stringify(defaultData));
+        for (let item of defaultData) {
+          if (item.state === 1) {
+            localStorage.setItem("urls", JSON.stringify(item))
+          }
+        }
+      }
     },
     mounted() {
       setInterval(() => {

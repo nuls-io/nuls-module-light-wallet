@@ -659,8 +659,9 @@ const en = {
 
   "setAlias":{
     "setAlias0":"Setting aliases",
-    "setAlias1":"Aliases can be used as payees of NULS transfers. For account security, after the alias setting is determined, it will not be able to be modified. Please operate with caution.",
-    "setAlias2":"Setting aliases costs 1 NULS",
+    "setAlias1":"Aliases can be used as payees of ",
+    "setAlias11":" transfers. For account security, after the alias setting is determined, it will not be able to be modified. Please operate with caution.",
+    "setAlias2":"Setting aliases costs 1 ",
     "setAlias3":"Total cost",
     "setAlias4":"Please enter an alias",
     "setAlias5":"Please enter an alias (only lowercase letters, numbers, underscores are allowed (underscores cannot be at both ends)",

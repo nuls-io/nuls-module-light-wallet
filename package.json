@@ -17,6 +17,7 @@
     "element-ui": "^2.4.5",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
+    "log4js": "^4.4.0",
     "moment": "^2.24.0",
     "nuls-sdk-js": "^2.2.3",
     "vue": "^2.6.6",

@@ -2,7 +2,7 @@ import {BigNumber} from 'bignumber.js'
 import copy from 'copy-to-clipboard'
 import {RUN_PATTERN, explorerUrl} from '@/config.js'
 //浏览器模式注释下面一行代码
-//import {shell} from 'electron'
+/*import {shell} from 'electron'*/
 
 /**
  * 10的N 次方

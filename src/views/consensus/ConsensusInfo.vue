@@ -328,7 +328,7 @@
             fromAddress: this.addressInfo.address,
             assetsChainId: this.addressInfo.chainId,
             assetsId: 1,
-            amount: Number(Times(this.jionNodeForm.amount, 100000000).toString()),
+            amount: Number(Times(this.jionNodeForm.amount, 100000000)),
             fee: 100000
           };
           let inOrOutputs = {};
@@ -340,7 +340,7 @@
             let depositInfo = {
               address: this.addressInfo.address,
               agentHash: this.$route.query.hash,
-              deposit: Number(Times(this.jionNodeForm.amount, 100000000).toString())
+              deposit: Number(Times(this.jionNodeForm.amount, 100000000))
             };
             if (inOrOutputs.success) {
               let tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, remark, 5, depositInfo);
@@ -350,9 +350,10 @@
               this.$message({message: this.$t('public.err1') + inOrOutputs.data, type: 'error', duration: 1000});
             }
           } else if (this.passwordType === 1) { //退出共识
-            transferInfo.amount = Number(Times(this.outInfo.amount, 100000000).toString());
+            transferInfo.amount = Number(Times(this.outInfo.amount, 100000000));
             transferInfo.depositHash = this.outInfo.txHash;
             inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 6);
+            //console.log(inOrOutputs);
             if (inOrOutputs.success) {
               let tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, remark, 6, this.outInfo.txHash);
               txhex = await nuls.transactionSerialize(pri, pub, tAssemble);
@@ -422,13 +423,13 @@
 
           //console.log(txhex);
           await validateAndBroadcast(txhex).then((response) => {
-            //console.log(response);
+            console.log(response);
             if (response.success) {
               this.$router.push({
                 name: "txList"
               })
             } else {
-              this.$message({message: this.$t('public.err') + response.data, type: 'error', duration: 1000});
+              this.$message({message: this.$t('public.err') + response.data.code, type: 'error', duration: 1000});
             }
           }).catch((err) => {
             this.$message({message: this.$t('public.err0') + err, type: 'error', duration: 1000});
