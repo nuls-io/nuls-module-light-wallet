@@ -1,10 +1,9 @@
-let log4js = require('log4js');//使用log4js作为全局日志模块
-//log4js配置项
+//const log4js = require('log4js');
 log4js.configure({
   appenders: {
     everything: {
       type: 'dateFile',
-      filename: __dirname + '/../log/framework.log',
+      filename: 'log/data.log',
       pattern: '.yyyy-MM-dd-hh',
       keepFileExt: true
     }
@@ -12,12 +11,20 @@ log4js.configure({
   categories: {
     default: {
       appenders: ['everything'],
-      level: 'all'
+      level: 'info'
     }
   }
 });
+
 //获取logger对象
 let logger = log4js.getLogger();
+
+/*logger.trace('Entering cheese testing');
+logger.debug('Got cheese.');
+logger.info('Cheese is Comté.');
+logger.warn('Cheese is quite smelly.');
+logger.error('Cheese is too ripe!');
+logger.fatal('Cheese was breeding ground for listeria.');*/
 
 /**
  * trace级别
@@ -100,3 +107,5 @@ function fatal(data) {
 module.exports = {
   trace, debug, info, warn, log, error, fatal
 };
+
+

@@ -93,7 +93,6 @@
 
 <script>
   import {timesDecimals, copys, addressInfo} from '@/api/util'
-
   export default {
     name: 'home',
     data() {
@@ -140,7 +139,6 @@
 
     },
     mounted() {
-
     },
     watch: {
       addressInfo(val, old) {
@@ -205,7 +203,7 @@
        * @param address
        **/
       getAddressInfoByNode(address) {
-        this.$post('/', 'getAccountLedgerList', [address])
+        this.$post('/', 'getAccountLedgerList', [address],'Home')
           .then((response) => {
             //console.log(response);
             this.addressAssetsData = [];
@@ -227,10 +225,6 @@
             this.addressAssetsData.push(newAssetsList);
             this.assetsListLoading = false;
           })
-          .catch((error) => {
-            console.log("getAccount:" + error);
-            this.assetsListLoading = false;
-          });
       },
 
       /**
@@ -240,7 +234,7 @@
        * @param address
        **/
       getTokenListByAddress(pageSize, pageRows, address) {
-        this.$post('/', 'getAccountTokens', [pageSize, pageRows, address])
+        this.$post('/', 'getAccountTokens', [pageSize, pageRows, address],'Home')
           .then((response) => {
             //console.log(response);
             let newAssetsList = {};
@@ -260,10 +254,6 @@
             //localStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
             this.assetsListLoading = false;
           })
-          .catch((error) => {
-            console.log("getAccountTokens:" + error);
-            this.assetsListLoading = false;
-          });
       },
 
       /**
@@ -272,7 +262,7 @@
        **/
       getAccountCrossLedgerList(address) {
         //this.txListDataLoading = true;
-        this.$post('/', 'getAccountCrossLedgerList', [address])
+        this.$post('/', 'getAccountCrossLedgerList', [address],'Home')
           .then((response) => {
             //console.log(response);
             this.crossLinkDataLoading = false;
@@ -285,9 +275,7 @@
               this.crossLinkData = response.result;
               this.txListDataLoading = false;
             }
-          }).catch((err) => {
-          console.log("getAccountCrossLedgerList:" + err);
-        })
+          })
       },
 
       /**

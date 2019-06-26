@@ -17,15 +17,27 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
  * @param data
  * @returns {Promise}
  */
-export function post(url, methodName, data = []) {
+export function post(url, methodName, data = [], templateName = '') {
   return new Promise((resolve, reject) => {
     data.unshift(chainID());
     const params = {"jsonrpc": "2.0", "method": methodName, "params": data, "id": 5898};
     //console.log(params);
     axios.post(url, params)
       .then(response => {
-        resolve(response.data)
+        if (config.RUN_PATTERN) {
+          const logger = require('@/api/logger');
+          if (!response.data.hasOwnProperty('error')) {
+            logger.info(methodName + ' ' + templateName);
+          } else {
+            logger.warn(methodName + ' ' + JSON.stringify(response.data.error) + ' ' + templateName);
+          }
+        }
+        resolve(response.data);
       }, err => {
+        if (config.RUN_PATTERN) {
+          const logger = require('@/api/logger');
+          logger.error(err + ' params:' + params + ' ' + templateName);
+        }
         reject(err)
       })
   })

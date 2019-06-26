@@ -106,7 +106,7 @@
         let addressInfos = addressInfo(1);
         let addressList = addressInfo(0);
         if (addressInfos) {
-          await this.$post('/', 'getAccount', [addressInfos.address])
+          await this.$post('/', 'getAccount', [addressInfos.address],'BottomBar')
             .then((response) => {
               //console.log(response);
               if (response.hasOwnProperty("result")) {
@@ -120,12 +120,10 @@
                     item.chainId = nuls.verifyAddress(item.address).chainId;
                   }
                 }
-                localStorage.setItem(chainIdNumber(), JSON.stringify(addressList))
+                localStorage.setItem(chainIdNumber(), JSON.stringify(addressList));
+                //this.$store.commit('setAddressInfo', addressList);
               }
             })
-            .catch((error) => {
-              console.log("getAccount:" + error);
-            });
         }
       },
 
