@@ -1,8 +1,6 @@
 import {BigNumber} from 'bignumber.js'
 import copy from 'copy-to-clipboard'
 import {RUN_PATTERN, explorerUrl} from '@/config.js'
-//浏览器模式注释下面一行代码
-/*import {shell} from 'electron'*/
 
 /**
  * 10的N 次方
@@ -232,6 +230,7 @@ export function connectToExplorer(name, parameter) {
   }
   //console.log(newUrl);
   if (RUN_PATTERN) {
+    const shell = require('electron');
     shell.openExternal(newUrl);
   } else {
     window.open(newUrl, '_blank');

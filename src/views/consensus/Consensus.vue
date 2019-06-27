@@ -290,7 +290,7 @@
       getConsensusNodes(pageIndex, pageSize, type) {
         this.$post('/', 'getConsensusNodes', [pageIndex, pageSize, type])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               if (!this.addressInfo.collectList) {
                 this.addressInfo.collectList = [];

@@ -182,7 +182,6 @@
               } else {
                 this.getContractListById(this.pageIndex, this.pageSize, this.addressInfo.contractList.length, this.addressInfo.contractList);
               }
-
             } else {
               this.$message({message: this.$t('contract.contract11') + response.error, type: 'error', duration: 1000});
             }
