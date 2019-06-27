@@ -20,7 +20,7 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <el-select :value="$t('budgetType.'+inAndOutValue)" @change="channgeInAndOut" :disabled="types !==2">
+          <el-select :value="$t('budgetType.'+inAndOutValue)" @change="channgeInAndOut" :disabled="types !==2" v-if="false">
             <el-option v-for="item in inAndOutOptions" :key="item.value" :label="$t('budgetType.'+item.value)"
                        :value="item.value">
             </el-option>
@@ -87,7 +87,7 @@
           {value: '1', label: '1'},
           {value: '2', label: '2'}
         ], //资产类型
-        assetsValue: "所有资产",
+        assetsValue: "0",
         typeOptions: [
           {value: '0', label: '0'},
           {value: '1', label: '1'},

@@ -236,3 +236,45 @@ export function connectToExplorer(name, parameter) {
     window.open(newUrl, '_blank');
   }
 }
+
+//地址必须参数列表
+export const defaultAddressInfo = {
+  address: '', //地址
+  aesPri: '',//加密私钥
+  pub: '',//公钥
+  selection: false,//是否选中
+  alias: "",//别名
+  remark: "",//标签（备注）
+  balance: 0,//余额
+  consensusLock: 0,//锁定金额
+  totalReward: 0,//总奖励
+  tokens: [],//代币列表
+  contractList: [],//合约列表（收藏的合约）
+};
+
+//地址信息写入localStorage
+export function localStorageByAddressInfo(newAddressInfo) {
+  let addressList = [];
+  let newAddressList =[];
+  newAddressList.push(newAddressInfo);
+  let newArr = addressInfo(0);
+  if (newArr.length !== 0) {
+    let ifAddress = false;
+    for (let item of newArr) {
+      if (item.address === newAddressInfo.address) {
+        item.aesPri = newAddressInfo.aesPri;
+        item.pub = newAddressInfo.pub;
+        ifAddress = true
+      }
+    }
+    if (ifAddress) {
+      addressList.push(newArr);
+    } else {
+      addressList = [...newArr, ...newAddressList]
+    }
+  } else {
+    newAddressInfo.selection = true;
+    addressList.push(newAddressInfo);
+  }
+  localStorage.setItem(chainIdNumber(), JSON.stringify(addressList));
+}

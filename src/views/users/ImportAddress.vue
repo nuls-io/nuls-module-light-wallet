@@ -2,7 +2,8 @@
   <div class="import_address bg-gray">
     <div class="bg-white">
       <div class="w1200">
-        <BackBar :backTitle="this.$route.query.address ? $t('address.address6') : $t('importAddress.importAddress0')"></BackBar>
+        <BackBar
+                :backTitle="this.$route.query.address ? $t('address.address6') : $t('importAddress.importAddress0')"></BackBar>
         <h3 class="title" v-if="this.$route.query.address">{{this.$route.query.address}}</h3>
         <h3 class="title" v-else>{{$t('importAddress.importAddress1')}}</h3>
       </div>
@@ -45,7 +46,7 @@
   import nuls from 'nuls-sdk-js'
   import BackBar from '@/components/BackBar'
   import Password from '@/components/PasswordBar'
-  import {chainID, chainIdNumber, addressInfo} from '@/api/util'
+  import {chainID, chainIdNumber, addressInfo, defaultAddressInfo,localStorageByAddressInfo} from '@/api/util'
 
   export default {
     data() {
@@ -156,30 +157,11 @@
         const pri = nuls.decrypteOfAES(this.keystoreInfo.encryptedPrivateKey, password);
         const newAddressInfo = nuls.importByKey(chainID(), pri, password);
         if (newAddressInfo.address === this.keystoreInfo.address) {
-          let newImportAddressInfo = {
-            address: newAddressInfo.address,
-            aesPri: newAddressInfo.aesPri,
-            pub: newAddressInfo.pub,
-            selection: false,
-            alias: "",
-            remark:"",
-            balance: 0,
-            consensusLock: 0,
-            totalReward: 0,
-            tokens: [],
-            contractList:[],
-          };
-          let addressList = [];
-          let newAddressList = [];
-          newAddressList.push(newImportAddressInfo);
-          let newArr = addressInfo(0);
-          if (newArr.length !== 0) {
-            addressList = [...newAddressList, ...newArr];
-          } else {
-            newImportAddressInfo.selection = true;
-            addressList[0] = newImportAddressInfo
-          }
-          localStorage.setItem(chainIdNumber(), JSON.stringify(addressList));
+          let newImportAddressInfo = defaultAddressInfo;
+          newImportAddressInfo.address = newAddressInfo.address;
+          newImportAddressInfo.aesPri = newAddressInfo.aesPri;
+          newImportAddressInfo.pub = newAddressInfo.pub;
+          localStorageByAddressInfo(newImportAddressInfo);
           this.toUrl('address')
         } else {
           this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
@@ -205,30 +187,11 @@
        */
       importWallet() {
         const importAddressInfo = nuls.importByKey(chainID(), this.importKeyForm.key, this.importKeyForm.pass);
-        let newImportAddressInfo = {
-          address: importAddressInfo.address,
-          aesPri: importAddressInfo.aesPri,
-          pub: importAddressInfo.pub,
-          selection: false,
-          alias: "",
-          remark:"",
-          balance: 0,
-          consensusLock: 0,
-          totalReward: 0,
-          tokens: [],
-          contractList:[],
-        };
-        let addressList = [];
-        let newAddressList = [];
-        newAddressList.push(newImportAddressInfo);
-        let newArr = addressInfo(0);
-        if (newArr.length !== 0) {
-          addressList = [...newAddressList, ...newArr];
-        } else {
-          newImportAddressInfo.selection = true;
-          addressList[0] = newImportAddressInfo
-        }
-        localStorage.setItem(chainIdNumber(), JSON.stringify(addressList));
+        let newImportAddressInfo = defaultAddressInfo;
+        newImportAddressInfo.address = importAddressInfo.address;
+        newImportAddressInfo.aesPri = importAddressInfo.aesPri;
+        newImportAddressInfo.pub = importAddressInfo.pub;
+        localStorageByAddressInfo(newImportAddressInfo);
         this.toUrl('address')
       },
 

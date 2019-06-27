@@ -98,7 +98,7 @@
   import nuls from 'nuls-sdk-js'
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
-  import {copys, chainID, chainIdNumber, addressInfo} from '@/api/util'
+  import {copys, chainID, chainIdNumber, addressInfo,defaultAddressInfo,localStorageByAddressInfo} from '@/api/util'
 
   export default {
     data() {
@@ -174,30 +174,11 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.newAddressInfo = nuls.newAddress(chainID(), this.passwordForm.pass);
-            let newAddressInfo = {
-              address: this.newAddressInfo.address,
-              aesPri: this.newAddressInfo.aesPri,
-              pub: this.newAddressInfo.pub,
-              selection: false,
-              alias: "",
-              remark: "",
-              balance: 0,
-              consensusLock: 0,
-              totalReward: 0,
-              tokens: [],
-              contractList:[],
-            };
-            let addressList = [];
-            let newAddressList = [];
-            newAddressList.push(newAddressInfo);
-            let newArr = addressInfo(0);
-            if (newArr.length !== 0) {
-              addressList = [...newAddressList, ...newArr];
-            } else {
-              newAddressInfo.selection = true;
-              addressList[0] = newAddressInfo
-            }
-            localStorage.setItem(chainIdNumber(), JSON.stringify(addressList));
+            let newAddressInfo = defaultAddressInfo;
+            newAddressInfo.address = this.newAddressInfo.address;
+            newAddressInfo.aesPri = this.newAddressInfo.aesPri;
+            newAddressInfo.pub = this.newAddressInfo.pub;
+            localStorageByAddressInfo(newAddressInfo);
             this.isFirst = false;
           } else {
             return false;
@@ -272,7 +253,6 @@
        */
       goWallet() {
         this.toUrl('home');
-        //this.getAccount(newAddressInfo);
       },
 
       /**
