@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="bottom">
-      {{dirname}}
+      <div v-show="false">{{dirname}}</div>
       <div class="w1200 font14">
         <div class="left fl">
           <p class="fl">
