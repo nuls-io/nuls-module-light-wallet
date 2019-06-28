@@ -268,10 +268,6 @@ export function localStorageByAddressInfo(newAddressInfo) {
         ifAddress = true
       }
     }
-    console.log(ifAddress);
-    console.log(newArr);
-    console.log(newAddressList);
-
     if (ifAddress) {
       addressList = [...newArr]
     } else {
@@ -281,6 +277,6 @@ export function localStorageByAddressInfo(newAddressInfo) {
     newAddressInfo.selection = true;
     addressList.push(newAddressInfo);
   }
-  console.log(addressList);
+  //console.log(addressList);
   localStorage.setItem(chainIdNumber(), JSON.stringify(addressList));
 }

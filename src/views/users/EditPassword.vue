@@ -35,7 +35,7 @@
 <script>
   import nuls from 'nuls-sdk-js'
   import BackBar from '@/components/BackBar'
-  import {addressInfo} from '@/api/util'
+  import {addressInfo, chainIdNumber} from '@/api/util'
 
   export default {
     data() {
@@ -112,10 +112,10 @@
        */
       submitPasswordForm(formName) {
         let address = this.$route.query.address;
-        let oldAddressInfo ={};
-        for(let item of addressInfo(0)){
-          if(item.address === address){
-             oldAddressInfo = item
+        let oldAddressInfo = {};
+        for (let item of addressInfo(0)) {
+          if (item.address === address) {
+            oldAddressInfo = item
           }
         }
         this.$refs[formName].validate((valid) => {
@@ -126,8 +126,13 @@
               const importAddressInfo = nuls.importByKey(2, pri, this.passwordForm.newPass);
               oldAddressInfo.aesPri = importAddressInfo.aesPri;
               oldAddressInfo.pub = importAddressInfo.pub;
-              localStorage.setItem(oldAddressInfo.address, JSON.stringify(oldAddressInfo));
-              //sessionStorage.setItem(importAddressInfo.address, JSON.stringify(newAddressInfo));
+              let addressList = addressInfo(0);
+              for (let item of addressList) {
+                if (item.address === oldAddressInfo.address) {
+                  item.aesPri = oldAddressInfo.aesPri
+                }
+              }
+              localStorage.setItem(chainIdNumber(), JSON.stringify(addressList));
               this.$message({message: this.$t('editPassword.editPassword12'), type: 'success', duration: 1000});
               this.toUrl("address");
             } else {
