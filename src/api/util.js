@@ -1,4 +1,5 @@
 import {BigNumber} from 'bignumber.js'
+import {shell} from 'electron';
 import copy from 'copy-to-clipboard'
 import {RUN_PATTERN, explorerUrl} from '@/config.js'
 
@@ -230,7 +231,7 @@ export function connectToExplorer(name, parameter) {
   }
   //console.log(newUrl);
   if (RUN_PATTERN) {
-    const shell = require('electron');
+    //const shell = require('electron');
     shell.openExternal(newUrl);
   } else {
     window.open(newUrl, '_blank');
@@ -255,7 +256,7 @@ export const defaultAddressInfo = {
 //地址信息写入localStorage
 export function localStorageByAddressInfo(newAddressInfo) {
   let addressList = [];
-  let newAddressList =[];
+  let newAddressList = [];
   newAddressList.push(newAddressInfo);
   let newArr = addressInfo(0);
   if (newArr.length !== 0) {
@@ -267,8 +268,12 @@ export function localStorageByAddressInfo(newAddressInfo) {
         ifAddress = true
       }
     }
+    console.log(ifAddress);
+    console.log(newArr);
+    console.log(newAddressList);
+
     if (ifAddress) {
-      addressList.push(newArr);
+      addressList = [...newArr]
     } else {
       addressList = [...newArr, ...newAddressList]
     }
@@ -276,5 +281,6 @@ export function localStorageByAddressInfo(newAddressInfo) {
     newAddressInfo.selection = true;
     addressList.push(newAddressInfo);
   }
+  console.log(addressList);
   localStorage.setItem(chainIdNumber(), JSON.stringify(addressList));
 }

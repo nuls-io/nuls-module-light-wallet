@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="bottom">
+      {{dirname}}
       <div class="w1200 font14">
         <div class="left fl">
           <p class="fl">
@@ -49,6 +50,7 @@
         updateDialogVisible: false,//更新弹框
         tips: {},//提示信息
         downloadPercent: 0,//下载进度
+        dirname:__dirname,
       }
     },
     created() {

@@ -433,7 +433,7 @@
     .result {
       width: 500px;
       margin: 0 auto;
-      border-top: 20px solid #ffffff;
+      border-top: 0 solid #ffffff;
       padding: 20px;
     }
   }
