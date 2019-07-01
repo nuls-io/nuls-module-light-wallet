@@ -208,6 +208,7 @@
       }, 500);
       this.transferForm.fromAddress = this.addressInfo.address;
       this.getCapitalListByAddress(this.transferForm.fromAddress);
+
     },
     mounted() {
     },
@@ -950,7 +951,7 @@
        * TODO 待开发...
        **/
       showBook() {
-        this.$message({message: "开发者......", duration: 1000});
+        this.$message({message: "开发中......", duration: 1000});
       },
 
       /**

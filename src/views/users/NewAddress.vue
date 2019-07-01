@@ -173,6 +173,7 @@
       submitPasswordForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            console.log(chainID());
             this.newAddressInfo = nuls.newAddress(chainID(), this.passwordForm.pass);
             let newAddressInfo = defaultAddressInfo;
             newAddressInfo.address = this.newAddressInfo.address;

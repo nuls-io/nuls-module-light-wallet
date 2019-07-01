@@ -19,10 +19,10 @@
         </el-table-column>
         <el-table-column :label="$t('nodeService.nodeService4')" align="center">
           <template slot-scope="scope">
-            <span v-if="scope.row.delay === '-1'">{{ $t('nodeService.nodeService17') }}</span>
-            <span v-else-if="scope.row.delay === '-2'">{{ $t('nodeService.nodeService18') }}</span>
-            <span v-else-if="scope.row.delay === '-3'"><i class="el-icon-loading"></i></span>
-            <span v-else>{{ scope.row.delay }}</span>
+            <span v-if="scope.row.delay === '100000'">{{ $t('nodeService.nodeService17') }}</span>
+            <span v-else-if="scope.row.delay === '200000'">{{ $t('nodeService.nodeService18') }}</span>
+            <span v-else-if="scope.row.delay === '300000'"><i class="el-icon-loading"></i></span>
+            <span v-else>{{ scope.row.delay }} ms</span>
           </template>
         </el-table-column>
         <el-table-column prop="state" :label="$t('nodeService.nodeService5')" align="center">
@@ -50,6 +50,7 @@
                :close-on-click-modal="false"
                :close-on-press-escape="false"
                v-loading="nodeServiceDialogLoading"
+               @close="resetForm('nodeServiceForm')"
     >
       <span>{{$t('nodeService.nodeService10')}}</span>
 
@@ -60,25 +61,27 @@
             </el-input>
           </el-form-item>
           <el-form-item :label="$t('nodeService.nodeService3')" prop="urls">
-            <el-input type="text" v-model="nodeServiceForm.urls" autocomplete="off" maxlength="50">
+            <el-input type="text" v-model="nodeServiceForm.urls" autocomplete="off" maxlength="50" @change="changeUrls">
             </el-input>
           </el-form-item>
           <el-form-item class="btns tl">
             <el-button type="success" class="fl" @click="testSubmitForm('nodeServiceForm')">
               {{$t('nodeService.nodeService11')}}
             </el-button>
-            <div class="fl ml_50" v-show="testInfo">
-              <i :class="testInfo === '0' ? 'el-icon-circle-check fCN' : 'el-icon-circle-close fred' "></i>&nbsp;
-              <span v-show="testInfo !== '0'" class="fred font12">{{testInfo}}</span>
+            <div class="fl ml_50" v-show="testInfo.state !==0">
+              <i :class="testInfo.state === 1 ? 'el-icon-circle-check fCN' : 'el-icon-circle-close fred' "></i>&nbsp;
+              <span v-show="testInfo.state ===2" class="fred font12">{{testInfo.result}}</span>
             </div>
           </el-form-item>
-          <el-form-item>
-            <el-checkbox v-model="nodeServiceForm.resource">{{$t('nodeService.nodeService12')}}</el-checkbox>
-          </el-form-item>
-          <el-form-item class="btns tc">
-            <el-button @click="resetForm('nodeServiceForm')">{{$t('password.password2')}}</el-button>
-            <el-button type="success" @click="submitForm('nodeServiceForm')">{{$t('password.password3')}}</el-button>
-          </el-form-item>
+          <div v-show="testInfo.state ===1">
+            <el-form-item>
+              <el-checkbox v-model="nodeServiceForm.resource">{{$t('nodeService.nodeService12')}}</el-checkbox>
+            </el-form-item>
+            <el-form-item class="btns tc">
+              <el-button @click="resetForm('nodeServiceForm')">{{$t('password.password2')}}</el-button>
+              <el-button type="success" @click="submitForm('nodeServiceForm')">{{$t('password.password3')}}</el-button>
+            </el-form-item>
+          </div>
           <div class="cb"></div>
         </el-form>
       </div>
@@ -130,7 +133,10 @@
             {validator: validateUrls, trigger: 'blur'}
           ]
         },
-        testInfo: '',//测试连接提示信息
+        testInfo: {
+          state: 0,
+          result: {}
+        },//测试连接提示信息
         editIndex: 10000, //编辑ID
       };
     },
@@ -177,7 +183,7 @@
       async getDelay() {
         let newData = [];
         for (let item of this.nodeServiceData) {
-          item.delay = '-3';
+          item.delay = '300000';
           newData.push(item);
         }
         this.nodeServiceData = newData;
@@ -188,10 +194,9 @@
 
       async getDelays() {
         let newData = [];
+        let isUrl = true;//是否有可用连接
         for (let item of this.nodeServiceData) {
-          if (item.state === 1) {
-            localStorage.setItem("urls", JSON.stringify(item))
-          }
+
           let startTime = (new Date()).valueOf();
           let endTime = 0;
           const params = {jsonrpc: "2.0", method: "getChainInfo", "params": [], "id": 5898};
@@ -200,21 +205,41 @@
               //console.log(response);
               if (response.data.hasOwnProperty("result")) {
                 endTime = (new Date()).valueOf();
-                item.delay = endTime - startTime + "ms";
+                item.delay = endTime - startTime;
                 item.chainId = response.data.result.chainId;
                 item.chainName = response.data.result.chainName;
               } else {
-                item.delay = "-1";
+                item.delay = "100000";
                 item.state = 0;
               }
             })
             .catch(function (error) {
-              item.delay = "-2";
+              item.delay = "200000";
               item.state = 0;
               console.log(error);
             });
+
+          //console.log(item);
+          if (item.state === 1) {
+            isUrl = false;
+            localStorage.setItem("urls", JSON.stringify(item));
+          }
           newData.push(item);
         }
+
+        //没有选中的连接默认选中一个
+        if (isUrl) {
+          let minDelay = Math.min.apply(Math, newData.map(function (o) {
+            return o.delay
+          }));
+          for (let item of newData) {
+            if (item.delay === minDelay) {
+              item.state = 1;
+              localStorage.setItem("urls", JSON.stringify(item));
+            }
+          }
+        }
+
         this.nodeServiceData = newData;
         this.nodeServiceLoading = false;
         localStorage.setItem("urlsData", JSON.stringify(this.nodeServiceData));
@@ -229,11 +254,6 @@
         await axios.post(url, params)
           .then((response) => {
             return response;
-            /*console.log(response);
-            if (response.data.hasOwnProperty("result")) {
-              console.log(response.data.result);
-              return response.data.result;
-            }*/
           })
           .catch((error) => {
             console.log("getChainInfo:" + error)
@@ -254,16 +274,20 @@
               .then(function (response) {
                 //console.log(response.data);
                 if (response.data.hasOwnProperty("result")) {
-                  that.testInfo = '0';
+                  that.testInfo.state = 1;
+                  that.testInfo.result = response.data.result;
                   that.nodeServiceDialogLoading = false;
                 } else {
-                  that.testInfo = response.data;
+                  that.testInfo.state = 2;
+                  that.testInfo.result = response.data;
                   that.nodeServiceDialogLoading = false;
                 }
               })
               .catch(function (error) {
+                console.log(that.testInfo.success);
+                that.testInfo.state = 2;
+                that.testInfo.result = error;
                 console.log("getBestBlockHeader:" + error);
-                that.testInfo = error;
                 that.nodeServiceDialogLoading = false;
               });
           } else {
@@ -284,7 +308,7 @@
        * 添加节点提交
        * @param formName
        */
-      submitForm(formName) {
+      async submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let newNodeInfo = {
@@ -292,7 +316,11 @@
               urls: this.nodeServiceForm.urls,
               delay: '',
               state: 0,
-              isDelete: true
+              isDelete: true,
+              chainId: this.testInfo.result.chainId,
+              assetId: this.testInfo.result.assetId,
+              chainName: this.testInfo.result.chainName,
+              decimals: this.testInfo.result.defaultAsset.decimals
             };
             //立即使用
             if (this.nodeServiceForm.resource) {
@@ -320,11 +348,22 @@
       },
 
       /**
+       * Url改变
+       **/
+      changeUrls(e) {
+        console.log(e);
+        this.testInfo.state = 0;
+        this.testInfo.result = {}
+      },
+
+      /**
        * 取消
        * @param formName
        **/
       resetForm(formName) {
         this.nodeServiceDialog = false;
+        this.testInfo.state = 0;
+        this.testInfo.result = {};
         this.$refs[formName].resetFields();
       },
 
@@ -350,6 +389,7 @@
         }).then(() => {
           this.$message({type: 'success', message: this.$t('nodeService.nodeService22')});
           this.nodeServiceData.splice(index, 1);
+          this.getDelays();
           localStorage.setItem("urlsData", JSON.stringify(this.nodeServiceData));
         }).catch(() => {
         });

@@ -10,16 +10,18 @@
     <div class="card_long mt_20 w1200 bg-white">
       <h5 class="card-title font18">
         {{$t('consensusInfo.consensusInfo6')}}
-        <i class="iconfont" :class="nodeInfo.status === 0 ? 'icondaigongshi fred' : 'icongongshizhong fCN'" ></i>
+        <i class="iconfont" :class="nodeInfo.status === 0 ? 'icondaigongshi fred' : 'icongongshizhong fCN'"></i>
         <el-button class="fr fred" type="danger" @click="stopNode"
                    v-show="addressInfo.address === nodeInfo.agentAddress">{{$t('consensusInfo.consensusInfo5')}}
         </el-button>
       </h5>
       <ul>
         <li>{{$t('public.createAddress')}} <label>{{nodeInfo.agentAddress}}</label></li>
-        <li>{{$t('public.deposit')}} <label>{{nodeInfo.deposits}}<span class="fCN">{{addressInfo.symbol}}</span></label></li>
+        <li>{{$t('public.deposit')}} <label>{{nodeInfo.deposits}}<span class="fCN">{{addressInfo.symbol}}</span></label>
+        </li>
         <li>{{$t('public.rewardAddress')}} <label>{{nodeInfo.rewardAddress}}</label></li>
-        <li>{{$t('public.totalStake')}} <label>{{nodeInfo.totalDeposit}}<span class="fCN">{{addressInfo.symbol}}</span></label></li>
+        <li>{{$t('public.totalStake')}} <label>{{nodeInfo.totalDeposit}}<span class="fCN">{{addressInfo.symbol}}</span></label>
+        </li>
         <li>{{$t('public.packingAddress')}} <label>{{nodeInfo.packingAddress}}</label></li>
         <li>{{$t('consensusInfo.consensusInfo7')}} <label>{{nodeInfo.totalReward}}<span class="fCN">{{addressInfo.symbol}}</span></label>
         </li>
@@ -48,7 +50,7 @@
     <div v-loading="nodeDepositLoading">
       <div class="entrust w1200 bg-white" v-show="jionNode">
         <div class="entrust_add w630">
-          <el-form :model="jionNodeForm" status-icon :rules="jionNodeRules" ref="jionNodeForm">
+          <el-form :model="jionNodeForm" status-icon :rules="jionNodeRules" ref="jionNodeForm" @submit.native.prevent>
             <el-form-item :label="$t('consensusInfo.consensusInfo1') + '('+addressInfo.symbol+')'" prop="amount">
               <span class="balance font12 fr">{{$t('consensus.consensus2')}}：{{addressInfo.balance}}</span>
               <el-input v-model="jionNodeForm.amount">
@@ -109,7 +111,7 @@
   import moment from 'moment'
   import nuls from 'nuls-sdk-js'
   import {getNulsBalance, countFee, inputsOrOutputs, validateAndBroadcast, agentDeposistList} from '@/api/requestData'
-  import {timesDecimals, getLocalTime, Minus, Times,addressInfo} from '@/api/util'
+  import {timesDecimals, getLocalTime, Minus, Times, addressInfo} from '@/api/util'
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
 
@@ -163,7 +165,7 @@
       }, 500);
     },
     mounted() {
-      this.getBalanceByAddress(this.addressInfo.chainId,1,this.addressInfo.address);
+      this.getBalanceByAddress(this.addressInfo.chainId, 1, this.addressInfo.address);
       this.getNodeInfoByHash(this.$route.query.hash);
       this.getNodeDepositByHash(this.pageIndex, this.pageSize, this.addressInfo.address, this.$route.query.hash)
     },
@@ -186,7 +188,7 @@
               response.result.deposits = timesDecimals(response.result.deposit);
               response.result.totalDeposit = timesDecimals(response.result.totalDeposit);
               response.result.totalReward = timesDecimals(response.result.totalReward);
-              response.result.createTime = moment(getLocalTime(response.result.createTime*1000)).format('YYYY-MM-DD HH:mm:ss');
+              response.result.createTime = moment(getLocalTime(response.result.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
               this.nodeInfo = response.result;
             }
           })
@@ -210,7 +212,7 @@
               for (let itme of response.result.list) {
                 itme.amount = timesDecimals(itme.amount);
                 itme.fee = timesDecimals(itme.fee);
-                itme.createTime = moment(getLocalTime(itme.createTime*1000)).format('YYYY-MM-DD HH:mm:ss');
+                itme.createTime = moment(getLocalTime(itme.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
               }
               this.nodeDepositData = response.result.list;
               if (response.result.totalCount === 0) {
@@ -267,8 +269,8 @@
        * @param assetId
        * @param address
        **/
-      getBalanceByAddress(assetChainId,assetId,address) {
-        getNulsBalance(assetChainId,assetId,address).then((response) => {
+      getBalanceByAddress(assetChainId, assetId, address) {
+        getNulsBalance(assetChainId, assetId, address).then((response) => {
           if (response.success) {
             this.balanceInfo = response.data;
           } else {
@@ -285,7 +287,7 @@
        **/
       cancelDeposit(outInfo) {
         this.outInfo = outInfo;
-        getNulsBalance(this.addressInfo.chainId,1,this.addressInfo.address).then((response) => {
+        getNulsBalance(this.addressInfo.chainId, 1, this.addressInfo.address).then((response) => {
           if (response.success) {
             this.balanceInfo = response.data;
             this.$refs.password.showPassword(true);
@@ -302,7 +304,7 @@
        *  注销节点
        **/
       stopNode() {
-        getNulsBalance(this.addressInfo.chainId,1,this.addressInfo.address).then((response) => {
+        getNulsBalance(this.addressInfo.chainId, 1, this.addressInfo.address).then((response) => {
           //console.log(response);
           if (response.success) {
             this.balanceInfo = response.data;
@@ -434,7 +436,7 @@
           }).catch((err) => {
             this.$message({message: this.$t('public.err0') + err, type: 'error', duration: 1000});
           });
-        }else {
+        } else {
           this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
         }
       }

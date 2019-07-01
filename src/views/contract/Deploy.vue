@@ -7,7 +7,7 @@
       </el-radio-group>
     </div>
 
-    <el-form :model="deployForm" :rules="deployRules" ref="deployForm" status-icon>
+    <el-form :model="deployForm" :rules="deployRules" ref="deployForm" status-icon @submit.native.prevent>
       <div class="modes bg-white w1200">
         <div class="parameter" style="padding-top: 1rem">
           <el-form-item :label="$t('deploy.deploy21')" prop="alias">
