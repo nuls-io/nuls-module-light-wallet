@@ -61,7 +61,10 @@
             </el-input>
           </el-form-item>
           <el-form-item :label="$t('nodeService.nodeService3')" prop="urls">
-            <el-input type="text" v-model="nodeServiceForm.urls" autocomplete="off" maxlength="50" @change="changeUrls">
+            <el-input type="text" autocomplete="off" maxlength="50"
+                      v-model="nodeServiceForm.urls"
+                      placeholder="http://192.168.1.108:18003"
+                      @change="changeUrls">
             </el-input>
           </el-form-item>
           <el-form-item class="btns tl">
