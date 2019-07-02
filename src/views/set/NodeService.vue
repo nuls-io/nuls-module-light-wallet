@@ -304,7 +304,9 @@
        * 添加节点
        **/
       addNodeService() {
-        this.nodeServiceDialog = true
+        this.nodeServiceDialog = true;
+        this.nodeServiceForm.name='';
+        this.nodeServiceForm.urls='';
       },
 
       /**

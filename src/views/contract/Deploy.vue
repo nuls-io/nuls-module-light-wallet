@@ -2,8 +2,8 @@
   <div class="deploy">
     <div class="select_resource">
       <el-radio-group v-model="resource" @change="changeRadio">
-        <el-radio label="0">{{$t('deploy.deploy1')}}</el-radio>
         <el-radio label="1">{{$t('deploy.deploy2')}}</el-radio>
+        <el-radio label="0">{{$t('deploy.deploy1')}}</el-radio>
       </el-radio-group>
     </div>
 
@@ -183,7 +183,7 @@
        * 合约名称 重新调取方法
        **/
       changeAlias() {
-        if(this.deployForm.hex){
+        if (this.deployForm.hex) {
           this.changeParameter();
         }
       },
@@ -336,12 +336,31 @@
       testSubmitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.isTestSubmit = true;
-            this.$refs.password.showPassword(true)
+            let newArgs = getArgs(this.deployForm.parameterList);
+            if (newArgs.allParameter) {
+              this.testDeploy(this.createAddress, this.deployForm.gas, sdk.CONTRACT_MINIMUM_PRICE, this.deployForm.hex, newArgs.args);
+            }
           } else {
             return false;
           }
         });
+      },
+
+      //测试部署合约
+      async testDeploy(createAddress, gasLimit, price, contractCode, args) {
+        await this.$post('/', 'validateContractCreate', [createAddress, gasLimit, price, contractCode, args])
+          .then((response) => {
+            //console.log(response.result);
+            if (response.result.success) {
+              this.$message({message: this.$t('deploy.deploy16'), type: 'success', duration: 1000});
+            } else {
+              this.$message({message: this.$t('deploy.deploy11') + response.error, type: 'error', duration: 1000});
+            }
+          })
+          .catch((error) => {
+            this.$message({message: this.$t('deploy.deploy12') + error, type: 'error', duration: 1000});
+          });
+
       },
 
       /**
@@ -394,25 +413,20 @@
           //console.log(transferInfo);
           //console.log(txhex);
           await validateTx(txhex).then((response) => {
-            console.log(this.deployForm.alias);
-            console.log(response);
+            //console.log(response);
             if (response.success) {
-              if (this.isTestSubmit) {
-                this.$message({message: this.$t('deploy.deploy16'), type: 'success', duration: 1000});
-              } else {
-                broadcastTx(txhex).then((response) => {
-                  console.log(response);
-                  if (response.success) {
-                    this.$router.push({
-                      name: "txList"
-                    })
-                  } else {
-                    this.$message({message: this.$t('public.err') + response.data, type: 'error', duration: 1000});
-                  }
-                }).catch((err) => {
-                  this.$message({message: this.$t('public.err0') + err, type: 'error', duration: 1000});
-                });
-              }
+              broadcastTx(txhex).then((response) => {
+                //console.log(response);
+                if (response.success) {
+                  this.$router.push({
+                    name: "txList"
+                  })
+                } else {
+                  this.$message({message: this.$t('public.err') + response.data, type: 'error', duration: 1000});
+                }
+              }).catch((err) => {
+                this.$message({message: this.$t('public.err0') + err, type: 'error', duration: 1000});
+              });
             } else {
               this.$message({message: this.$t('public.err') + response.data, type: 'error', duration: 1000});
             }
@@ -468,7 +482,7 @@
     .modes {
       margin: 10px auto 0;
       .hex {
-        margin: 0 0 -10px 0;
+        margin: 0 20px -10px 20px;
       }
       .upload_jar {
         padding: 5px 0;

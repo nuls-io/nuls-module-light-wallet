@@ -39,7 +39,7 @@
             </el-tooltip>
           </label>
         </li>
-        <li>{{$t('consensusInfo.consensusInfo10')}} <label><u class="click td">{{nodeInfo.yellowCardCount}}{{$t('consensusInfo.consensusInfo11')}}</u></label>
+        <li>{{$t('consensusInfo.consensusInfo10')}} <label><u class="click td" @click="toUrl('consensusInfo',nodeInfo.txHash)">{{nodeInfo.yellowCardCount}}{{$t('consensusInfo.consensusInfo11')}}</u></label>
         </li>
         <li>{{$t('public.credit')}} <label>{{nodeInfo.creditValue}}</label></li>
         <p class="cb"></p>
@@ -66,8 +66,8 @@
           </el-form>
         </div>
       </div>
-      <div class="entrust_list w1200 bg-white" v-show="!jionNode">
-        <div class="top_total font12">
+      <div class="entrust_list w1200" v-show="!jionNode">
+        <div class="top_total font14">
           {{$t('public.totalStake')}}：{{nodeInfo.totalDeposit}} <span class="fCN">{{addressInfo.symbol}}</span>
         </div>
 
@@ -111,7 +111,7 @@
   import moment from 'moment'
   import nuls from 'nuls-sdk-js'
   import {getNulsBalance, countFee, inputsOrOutputs, validateAndBroadcast, agentDeposistList} from '@/api/requestData'
-  import {timesDecimals, getLocalTime, Minus, Times, addressInfo} from '@/api/util'
+  import {timesDecimals, getLocalTime, Minus, Times, addressInfo,connectToExplorer} from '@/api/util'
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
 
@@ -439,7 +439,16 @@
         } else {
           this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
         }
-      }
+      },
+
+      /**
+       * 连接跳转
+       * @param name
+       * @param parameter
+       */
+      toUrl(name, parameter) {
+        connectToExplorer(name, parameter);
+      },
     },
     watch: {
       addressInfo(val, old) {

@@ -8,7 +8,7 @@ const cn = {
     "contracts": "合约",
     "application": "应用",
     "set": "设置",
-    "addressList": "地址管理",
+    "addressList": "账户管理",
     "nodeList": "服务节点",
     "help": "帮助",
   },
@@ -50,6 +50,8 @@ const cn = {
     "contractName":"合约名称",
     "cancelCollection":"取消收藏",
     "contractInfo":"合约描述",
+    "input":"输入",
+    "output":"输出",
     "":"",
 
     "err": "验证并广播交易失败:",

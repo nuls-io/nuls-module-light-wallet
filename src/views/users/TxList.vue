@@ -130,6 +130,13 @@
         this.addressInfo = addressInfo(1);
       }, 500);
     },
+    watch: {
+      addressInfo(val, old) {
+        if (val.address !== old.address && old.address) {
+          this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide);
+        }
+      }
+    },
     mounted() {
       this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide);
       //10秒循环一次数据

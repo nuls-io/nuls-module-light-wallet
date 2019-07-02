@@ -2,7 +2,7 @@
   <div class="home">
     <h3 class="title" v-if="addressInfo">
       {{addressInfo.address}}
-      <span v-show="addressInfo.alias">({{addressInfo.alias}})</span>
+      <span v-show="addressInfo.alias"> | {{addressInfo.alias}}</span>
       <i class="iconfont iconfuzhi clicks" @click="copy(addressInfo.address)"></i>
     </h3>
     <el-tabs v-model="homeActive" @tab-click="handleClick" class="w1200">

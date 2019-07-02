@@ -35,7 +35,7 @@
       return {
         passwordVisible: false,
         passwordForm: {
-          password: '',
+          password: 'nuls123456',
         },
         passwordRules: {
           password: [
@@ -52,7 +52,7 @@
       passwordVisible(val) {
         if (val) {
           setTimeout(() => {
-            this.$refs['inpus'].focus()
+            //this.$refs['inpus'].focus()
           }, 200)
         }
       }

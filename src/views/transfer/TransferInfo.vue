@@ -4,7 +4,7 @@
       <div class="w1200">
         <BackBar :backTitle="$t('home.home2')"></BackBar>
         <h3 class="title">{{hash}}
-          <i class="iconfont icon-fuzhi clicks" @click="copy(hash)"></i></h3>
+          <i class="iconfont iconfuzhi clicks" @click="copy(hash)"></i></h3>
       </div>
     </div>
 
@@ -129,7 +129,7 @@
     <div class="cb"></div>
 
     <div class="card_long mzt_20 w1200 inorouput">
-      <h5 class="card-title font18">Input & Output</h5>
+      <h5 class="card-title font18">{{$t('public.input')}} & {{$t('public.output')}}</h5>
       <div class="inorou-info bg-white">
         <div class="card-info left fl">
           <ul>
@@ -203,7 +203,7 @@
         this.txInfoLoading = true;
         this.$post('/', 'getTx', [hash])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               response.result.createTime = moment(getLocalTime(response.result.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
               response.result.fees = timesDecimals(response.result.fee.value);
@@ -291,7 +291,7 @@
       }
       .inorou-info {
         border: 1px solid #dfe4ef;
-        min-height: 120px;
+        min-height: 200px;
         .card-info {
           width: 50%;
           ul {

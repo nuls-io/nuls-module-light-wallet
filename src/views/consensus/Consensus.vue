@@ -2,17 +2,21 @@
   <div class="consensus bg-gray">
     <h3 class="title">
       {{addressInfo.address}}
-      <span v-show="addressInfo.alias">({{addressInfo.alias}})</span>
+      <span v-show="addressInfo.alias"> | {{addressInfo.alias}}</span>
       <i class="iconfont icon-fuzhi clicks" @click="copy(addressInfo.address)"></i>
     </h3>
     <div class="card w1200">
       <div class="card-info left fl">
         <h5 class="card-title font18">{{$t('consensus.consensus0')}}</h5>
         <ul>
-          <li>{{$t('consensus.consensus1')}} <label><u class="click" @click="toUrl('consensusList')">{{addressInfo.consensusLock}}</u><span
-                  class="fCN">{{addressInfo.symbol}}</span></label></li>
-          <li>{{$t('consensus.consensus2')}} <label>{{addressInfo.balance}}<span class="fCN">{{addressInfo.symbol}}</span></label></li>
           <li>{{$t('consensus.consensus3')}} <label>{{addressInfo.totalReward}}<span class="fCN">{{addressInfo.symbol}}</span></label>
+          </li>
+          <li>{{$t('consensus.consensus2')}} <label>{{addressInfo.balance}}<span class="fCN">{{addressInfo.symbol}}</span></label></li>
+          <li>{{$t('consensus.consensus1')}}
+            <label>
+              <u class="click" @click="toUrl('consensusList')">{{addressInfo.consensusLock}}</u>
+              <span class="fCN">{{addressInfo.symbol}}</span>
+            </label>
           </li>
         </ul>
       </div>
@@ -23,10 +27,10 @@
                 v-show="!isNew && !isRed">{{$t('consensus.consensus5')}}</span>
         </h5>
         <ul>
-          <li>{{$t('consensus.consensus6')}} <label>{{nodeCount.agentCount}}</label></li>
-          <li>{{$t('consensus.consensus7')}} <label>{{nodeCount.totalCount}}</label></li>
           <li>{{$t('consensus.consensus8')}} <label>{{nulsCount.consensusTotal}}<span class="fCN">{{addressInfo.symbol}}</span></label>
           </li>
+          <li>{{$t('consensus.consensus7')}} <label>{{nodeCount.totalCount}}</label></li>
+          <li>{{$t('consensus.consensus6')}} <label>{{nodeCount.agentCount}}</label></li>
         </ul>
       </div>
     </div>

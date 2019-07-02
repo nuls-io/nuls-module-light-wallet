@@ -2,7 +2,7 @@
   <div class="contract">
     <h3 class="title">
       {{addressInfo.address}}
-      <span v-show="addressInfo.alias">({{addressInfo.alias}})</span>
+      <span v-show="addressInfo.alias"> | {{addressInfo.alias}}</span>
       <i class="iconfont icon-fuzhi clicks"></i>
     </h3>
     <el-tabs v-model="contractActive" class="w1200" @tab-click="handleClick">
@@ -159,6 +159,8 @@
           this.isCollection = false;
           this.contractInfo = {};
           this.modelData = [];
+        }else if(tab.name === 'contractFirst'){
+          this.getMyContractByAddress(this.addressInfo.address);
         }
       },
 

@@ -50,6 +50,8 @@ const en = {
     "contractName":"Contract Name",
     "cancelCollection":"Cancel Collection",
     "contractInfo":"Contract Info",
+    "input ":"Input",
+    "output":"Output",
     "":"",
 
     "err":"Verify and broadcast transaction failure:",

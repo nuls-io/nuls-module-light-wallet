@@ -226,7 +226,10 @@ export function connectToExplorer(name, parameter) {
     newUrl = explorerUrl + 'contracts/info?contractAddress=' + parameter
   } else if (name === 'contracts') {
     newUrl = explorerUrl + 'contracts'
-  } else if (name === 'transactionInfo') {
+  }else if(name ==='consensusInfo'){
+    newUrl = explorerUrl + 'consensus/info?hash='+parameter
+  }
+  else if (name === 'transactionInfo') {
     newUrl = explorerUrl + 'transaction/info?hash=' + parameter
   }
   //console.log(newUrl);

@@ -25,9 +25,9 @@
           </el-submenu>
           <el-submenu index="set">
             <template slot="title">{{$t('nav.set')}}</template>
-            <el-menu-item index="address" class="tc">{{$t('nav.addressList')}}</el-menu-item>
-            <el-menu-item index="nodeService" class="tc">{{$t('nav.nodeList')}}</el-menu-item>
-            <el-menu-item index="address" class="tc" v-show="false">通讯录</el-menu-item>
+            <el-menu-item index="address">{{$t('nav.addressList')}}</el-menu-item>
+            <el-menu-item index="nodeService">{{$t('nav.nodeList')}}</el-menu-item>
+            <el-menu-item index="address" v-show="false">通讯录</el-menu-item>
           </el-submenu>
           <el-submenu index="lang">
             <template slot="title">{{this.lang ==="en" ? "Eng":"中文"}}</template>
