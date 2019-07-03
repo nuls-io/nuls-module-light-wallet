@@ -35,6 +35,9 @@
             <label class="click tab_bn" @click="backAddress(scope.row)">{{$t('address.address7')}}</label>
             <span class="tab_line">|</span>
             <label class="click tab_bn" @click="deleteAddress(scope.row)">{{$t('address.address8')}}</label>
+            <span class="tab_line">|</span>
+            <el-link disabled v-if="scope.row.selection">进入</el-link>
+            <label class="click tab_bn" @click="selectionAddress(scope.row)" v-else>进入</label>
           </template>
         </el-table-column>
       </el-table>
@@ -130,6 +133,7 @@
                   addressInfo.chainId = nuls.verifyAddress(item.address).chainId;
                 }
               }
+              console.log(this.addressList);
               localStorage.setItem(chainIdNumber(),JSON.stringify(this.addressList))
             }
           })
@@ -189,6 +193,25 @@
       deleteAddress(rowInfo) {
         this.selectAddressInfo = rowInfo;
         this.$refs.password.showPassword(true)
+      },
+
+      /**
+       * 进入账户（使用账户）
+       * @param rowInfo
+       **/
+      selectionAddress(rowInfo){
+        //console.log(rowInfo);
+        for (let item  of this.addressList) {
+          //清除选中
+          if (item.selection) {
+            item.selection = false;
+          }
+          //添加选中
+          if (item.address === rowInfo.address) {
+            item.selection = true;
+          }
+        }
+        localStorage.setItem(chainIdNumber(), JSON.stringify(this.addressList));
       },
 
       /**

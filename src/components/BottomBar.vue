@@ -15,22 +15,7 @@
         </div>
       </div>
     </div>
-    <el-dialog :title="$t('bottom.updateWallet')" width="35rem"
-               :visible.sync="updateDialogVisible"
-               :show-close="tips.type===1 || tips.type===4"
-               :close-on-press-escape="false"
-               :close-on-click-modal="false">
-      <div class="upload">
-        <div class="upload-tips">{{$t('bottom.Tips')}}: {{$t('TipsType.'+tips.type) }}</div>
-        <div class="upload-percent" v-if="downloadPercent !==0 ">
-          <el-progress :text-inside="true" :stroke-width="18" :percentage="downloadPercent" status="success">
-          </el-progress>
-        </div>
-        <div class="upload-bt" v-if="tips.type === 3" v-show="false">
-          <el-button type="info" @clcik="afterRun">{{$t('bottom.Backstage')}}</el-button>
-        </div>
-      </div>
-    </el-dialog>
+
   </div>
 
 </template>
@@ -47,9 +32,6 @@
       return {
         heightInfo: [],//高度信息
         serviceUrls: localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")) : defaultUrl,
-        updateDialogVisible: false,//更新弹框
-        tips: {},//提示信息
-        downloadPercent: 0,//下载进度
         dirname:__dirname,
       }
     },
@@ -127,34 +109,6 @@
               }
             })
         }
-      },
-
-      /**
-       * 检查更新
-       **/
-      async checkUpdate() {
-        this.updateDialogVisible = true;
-        this.tips = {};
-        this.downloadPercent = 0;
-        const _this = this;
-        _this.$electron.ipcRenderer.send("checkForUpdate");
-        await _this.$electron.ipcRenderer.on("message", (event, text) => {
-          _this.tips = text;
-        });
-        _this.$electron.ipcRenderer.on("downloadProgress", (event, progressObj) => {
-          _this.downloadPercent = Number(progressObj.percent.toFixed(2)) || 0;
-        });
-        _this.$electron.ipcRenderer.on("isUpdateNow", () => {
-          _this.$electron.ipcRenderer.send("isUpdateNow");
-        });
-      },
-
-      /**
-       * 后台运行
-       **/
-      afterRun() {
-        //console.log(this.updateDialogVisible);
-        this.updateDialogVisible = false;
       },
 
       /**

@@ -3,7 +3,11 @@
     <div class="bg-white">
       <div class="w1200">
         <BackBar :backTitle="$t('address.address0')" v-show="ifAddressInfo"></BackBar>
-        <h3 class="title"><font v-if="!isBackups">{{$t('newAddress.newAddress0')}}</font><font v-else>{{$t('newAddress.newAddress1')}} : {{newAddressInfo.address}}</font>
+        <h3 class="title">
+          <font v-if="!isBackups">{{$t('newAddress.newAddress0')}} </font>
+          <font v-else>{{$t('newAddress.newAddress1')}} </font>
+          : {{newAddressInfo.address}}
+          <i class="iconfont iconfuzhi clicks" @click="copy(newAddressInfo.address)"></i>
         </h3>
       </div>
     </div>
@@ -57,7 +61,7 @@
       </div>
 
       <div class="step_tow w630" v-show="!isFirst">
-        <h3 class="title" v-show="!isBackups">
+        <h3 class="title" v-show="false">
           {{$t('newAddress.newAddress12')}}：
           <span>{{newAddressInfo.address}}</span>
           <i class="iconfont iconfuzhi clicks" @click="copy(newAddressInfo.address)"></i>
@@ -98,7 +102,7 @@
   import nuls from 'nuls-sdk-js'
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
-  import {copys, chainID, chainIdNumber, addressInfo,defaultAddressInfo,localStorageByAddressInfo} from '@/api/util'
+  import {copys, chainID, chainIdNumber,defaultAddressInfo,localStorageByAddressInfo} from '@/api/util'
 
   export default {
     data() {

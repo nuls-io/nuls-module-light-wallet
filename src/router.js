@@ -27,6 +27,11 @@ export default new Router({
       component: resolve => require(['@/views/users/TxList.vue'], resolve)
     },
     {
+      path: '/wallet/tokenTxList',
+      name: 'tokenTxList',
+      component: resolve => require(['@/views/users/TokenTxList.vue'], resolve)
+    },
+    {
       path: '/transfer',
       name: 'transfer',
       component: resolve => require(['@/views/transfer/Transfer.vue'], resolve)
@@ -95,6 +100,11 @@ export default new Router({
       path: '/nodeService',
       name: 'nodeService',
       component: resolve => require(['@/views/set/NodeService.vue'], resolve)
+    },
+    {
+      path: '/set',
+      name: 'seting',
+      component: resolve => require(['@/views/set/Set.vue'], resolve)
     }
 
 

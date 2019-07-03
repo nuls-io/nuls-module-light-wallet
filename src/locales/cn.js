@@ -52,6 +52,10 @@ const cn = {
     "contractInfo":"合约描述",
     "input":"输入",
     "output":"输出",
+    "fromAddresss":"发送者",
+    "toAddresss":"接受者",
+    "balance": "余额",
+    "allToke":"所有代币资产",
     "":"",
 
     "err": "验证并广播交易失败:",

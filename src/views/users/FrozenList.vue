@@ -61,6 +61,7 @@
         pageSize: 10, //每页条数
         pageTotal: 0,//总页数
         addressInfo: [], //账户信息
+
       };
     },
     created() {
@@ -70,7 +71,9 @@
       }, 500);
     },
     mounted() {
-      this.getTxListByAddress(this.pageIndex, this.pageSize, this.addressInfo.address);
+      if (this.$route.query.accountInfo) {
+        this.getTxListByAddress(this.$route.query.accountInfo.chainId, this.$route.query.accountInfo.assetId, this.addressInfo.address, this.pageIndex, this.pageSize);
+      }
     },
     components: {
       BackBar
@@ -79,12 +82,14 @@
 
       /**
        * 获取地址的锁定列表
+       * @param chainId
+       * @param assetId
+       * @param address
        * @param pageIndex
-       * @param pageSize,
-       * @param address,
+       * @param pageSize
        **/
-      getTxListByAddress(pageIndex, pageSize, address) {
-        this.$post('/', 'getAccountFreezes', [pageIndex, pageSize, address])
+      getTxListByAddress(chainId, assetId, address, pageIndex, pageSize) {
+        this.$post('/', 'getAccountFreezes', [chainId, assetId,address, pageIndex, pageSize])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {

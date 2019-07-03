@@ -40,27 +40,32 @@
             </el-input>
           </el-form-item>
         </div>
+
+
       </div>
 
       <el-form-item :label="$t('call.call3')" class="senior">
         <el-switch v-model="deployForm.senior">
         </el-switch>
       </el-form-item>
+      <div v-if="deployForm.senior" class="senior-div w1200 bg-white">
+        <div class="w630">
+          <el-form-item label="Gas Limit" prop="gas">
+            <el-input v-model="deployForm.gas">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="Price" prop="price">
+            <el-input v-model="deployForm.price">
+            </el-input>
+          </el-form-item>
+          <el-form-item :label="$t('public.contractInfo')" prop="addtion">
+            <el-input type="textarea" :rows="3" maxlength="200" show-word-limit v-model="deployForm.addtion">
+            </el-input>
+          </el-form-item>
+        </div>
 
-      <div v-if="deployForm.senior" class="senior-div">
-        <el-form-item label="Gas Limit" prop="gas">
-          <el-input v-model="deployForm.gas">
-          </el-input>
-        </el-form-item>
-        <el-form-item label="Price" prop="price">
-          <el-input v-model="deployForm.price">
-          </el-input>
-        </el-form-item>
-        <el-form-item :label="$t('public.contractInfo')" prop="addtion">
-          <el-input type="textarea" :rows="3" maxlength="200" show-word-limit v-model="deployForm.addtion">
-          </el-input>
-        </el-form-item>
       </div>
+
       <el-form-item class="form-next">
         <el-button type="success" @click="testSubmitForm('deployForm')">
           {{$t('deploy.deploy5')}}

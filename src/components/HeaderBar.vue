@@ -20,13 +20,14 @@
             <template slot="title"><i class="iconfont iconzhanghu"></i></template>
             <el-menu-item v-for="item of addressList" :key="item.address" :index="item.address">
               <i class="iconfont iconwo" :class="item.selection ? '' : 'transparent' "></i>
-              {{item.addresss}}<span v-show="item.alias"> | ({{item.alias}})</span> | <span>{{item.balance}}</span>
+              <font v-show="!item.alias"> {{item.addresss}} | </font><span v-show="item.alias">{{item.alias}} | </span><span>{{item.balance}}</span>
             </el-menu-item>
           </el-submenu>
           <el-submenu index="set">
             <template slot="title">{{$t('nav.set')}}</template>
             <el-menu-item index="address">{{$t('nav.addressList')}}</el-menu-item>
             <el-menu-item index="nodeService">{{$t('nav.nodeList')}}</el-menu-item>
+            <el-menu-item index="seting">关 于</el-menu-item>
             <el-menu-item index="address" v-show="false">通讯录</el-menu-item>
           </el-submenu>
           <el-submenu index="lang">
@@ -34,8 +35,8 @@
             <el-menu-item index="cn">中文</el-menu-item>
             <el-menu-item index="en">English</el-menu-item>
           </el-submenu>
-          <li class="el-menu-item">|</li>
-          <el-menu-item index="24" disabled>{{$t('nav.help')}}</el-menu-item>
+         <!-- <li class="el-menu-item">|</li>
+          <el-menu-item index="24" disabled>{{$t('nav.help')}}</el-menu-item>-->
         </el-menu>
 
       </div>

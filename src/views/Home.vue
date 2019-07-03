@@ -22,7 +22,7 @@
           </el-table-column>
           <el-table-column :label="$t('tab.tab3')">
             <template slot-scope="scope">
-              <span class="click" @click="toUrl('frozenList')"
+              <span class="click" @click="toUrl('frozenList',scope.row)"
                     v-show="scope.row.locking !== '--' && scope.row.locking !==0 ">{{scope.row.locking}}</span>
               <span v-show="scope.row.locking === '--' || scope.row.locking ===0">{{scope.row.locking}}</span>
             </template>
@@ -33,7 +33,7 @@
             <template slot-scope="scope">
               <label class="click tab_bn" @click="toUrl('transfer',scope.row.account)">{{$t('nav.transfer')}}</label>
               <span class="tab_line">|</span>
-              <label class="click tab_bn" @click="toUrl('txList')">{{$t('home.home2')}}</label>
+              <label class="click tab_bn" @click="toUrl('txList',scope.row)">{{$t('home.home2')}}</label>
             </template>
           </el-table-column>
         </el-table>
@@ -93,6 +93,7 @@
 
 <script>
   import {timesDecimals, copys, addressInfo} from '@/api/util'
+
   export default {
     name: 'home',
     data() {
@@ -172,8 +173,11 @@
           this.pageSize = 10;
           this.pageCount = 0;
           this.getAccountCrossLedgerList(this.addressInfo.address)
-        }else {
+        } else {
           this.getAddressInfoByNode(this.addressInfo.address);
+          setTimeout(() => {
+            this.getTokenListByAddress(this.pageNumber, this.pageSize, this.addressInfo.address)
+          }, 200);
         }
       },
 
@@ -203,19 +207,23 @@
        * @param address
        **/
       getAddressInfoByNode(address) {
-        this.$post('/', 'getAccountLedgerList', [address],'Home')
+        this.$post('/', 'getAccountLedgerList', [address], 'Home')
           .then((response) => {
             //console.log(response);
             this.addressAssetsData = [];
             let newAssetsList = {};
             if (response.hasOwnProperty("result")) {
               newAssetsList.account = response.result[0].symbol;
+              newAssetsList.chainId = response.result[0].chainId;
+              newAssetsList.assetId = response.result[0].assetId;
               newAssetsList.type = 1;
               newAssetsList.total = timesDecimals(response.result[0].totalBalance);
               newAssetsList.locking = timesDecimals(response.result[0].consensusLock + response.result[0].timeLock);
               newAssetsList.balance = timesDecimals(response.result[0].balance);
             } else {
               newAssetsList.account = response.result.symbol;
+              newAssetsList.chainId = response.result.chainId;
+              newAssetsList.assetId = response.result.assetId;
               newAssetsList.type = 1;
               newAssetsList.total = 0;
               newAssetsList.locking = 0;
@@ -234,7 +242,7 @@
        * @param address
        **/
       getTokenListByAddress(pageSize, pageRows, address) {
-        this.$post('/', 'getAccountTokens', [pageSize, pageRows, address],'Home')
+        this.$post('/', 'getAccountTokens', [pageSize, pageRows, address], 'Home')
           .then((response) => {
             //console.log(response);
             let newAssetsList = {};
@@ -262,7 +270,7 @@
        **/
       getAccountCrossLedgerList(address) {
         //this.txListDataLoading = true;
-        this.$post('/', 'getAccountCrossLedgerList', [address],'Home')
+        this.$post('/', 'getAccountCrossLedgerList', [address], 'Home')
           .then((response) => {
             //console.log(response);
             this.crossLinkDataLoading = false;
@@ -313,16 +321,29 @@
        */
       toUrl(name, parms) {
         //console.log(name)
+        //console.log(parms);
         let newParms = {accountType: parms};
         if (name === 'transfer') {
           this.$router.push({
             name: name,
             query: newParms
           })
-        } else {
+        }else if(name === 'frozenList'){
+          newParms = {accountInfo:parms};
           this.$router.push({
             name: name,
+            query:newParms
           })
+        }else {
+          if (parms.type === 2) {
+            this.$router.push({
+              name: 'tokenTxList'
+            })
+          } else {
+            this.$router.push({
+              name: name,
+            })
+          }
         }
       },
 

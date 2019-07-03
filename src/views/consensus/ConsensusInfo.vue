@@ -137,6 +137,7 @@
 
       return {
         addressInfo: {},//账户信息
+       balanceInfo:{},//余额信息
         agentAsset:JSON.parse(sessionStorage.getItem('info')),//pocm合约单位等信息
         nodeInfo: {},//节点详情
         fee: 0.001,//手续费

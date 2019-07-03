@@ -52,6 +52,10 @@ const en = {
     "contractInfo":"Contract Info",
     "input ":"Input",
     "output":"Output",
+    "fromAddresss":"Sender",
+    "toAddresss":"Recipient",
+    "balance": "Balance",
+    "allToke":"All Toke",
     "":"",
 
     "err":"Verify and broadcast transaction failure:",
