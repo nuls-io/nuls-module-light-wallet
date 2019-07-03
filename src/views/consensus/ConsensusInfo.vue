@@ -17,10 +17,10 @@
       </h5>
       <ul>
         <li>{{$t('public.createAddress')}} <label>{{nodeInfo.agentAddress}}</label></li>
-        <li>{{$t('public.deposit')}} <label>{{nodeInfo.deposits}}<span class="fCN">{{addressInfo.symbol}}</span></label>
+        <li>{{$t('public.deposit')}} <label>{{nodeInfo.deposits}}<span class="fCN">{{agentAsset.agentAsset.symbol}}</span></label>
         </li>
         <li>{{$t('public.rewardAddress')}} <label>{{nodeInfo.rewardAddress}}</label></li>
-        <li>{{$t('public.totalStake')}} <label>{{nodeInfo.totalDeposit}}<span class="fCN">{{addressInfo.symbol}}</span></label>
+        <li>{{$t('public.totalStake')}} <label>{{nodeInfo.totalDeposit}}<span class="fCN">{{agentAsset.agentAsset.symbol}}</span></label>
         </li>
         <li>{{$t('public.packingAddress')}} <label>{{nodeInfo.packingAddress}}</label></li>
         <li>{{$t('consensusInfo.consensusInfo7')}} <label>{{nodeInfo.totalReward}}<span class="fCN">{{addressInfo.symbol}}</span></label>
@@ -51,13 +51,13 @@
       <div class="entrust w1200 bg-white" v-show="jionNode">
         <div class="entrust_add w630">
           <el-form :model="jionNodeForm" status-icon :rules="jionNodeRules" ref="jionNodeForm" @submit.native.prevent>
-            <el-form-item :label="$t('consensusInfo.consensusInfo1') + '('+addressInfo.symbol+')'" prop="amount">
-              <span class="balance font12 fr">{{$t('consensus.consensus2')}}：{{addressInfo.balance}}</span>
+            <el-form-item :label="$t('consensusInfo.consensusInfo1') + '('+agentAsset.agentAsset.symbol+')'" prop="amount">
+              <span class="balance font12 fr">{{$t('consensus.consensus2')}}：{{balanceInfo.balance/100000000}}</span>
               <el-input v-model="jionNodeForm.amount">
               </el-input>
             </el-form-item>
             <div class="font14">
-              {{$t('public.fee')}}: {{fee}} <span class="fCN">{{addressInfo.symbol}}</span>
+              {{$t('public.fee')}}: {{fee}} <span class="fCN">{{agentAsset.agentAsset.symbol}}</span>
             </div>
             <el-form-item class="form-next">
               <el-button type="success" @click="jionNodeSubmitForm('jionNodeForm')">{{$t('password.password3')}}
@@ -68,7 +68,7 @@
       </div>
       <div class="entrust_list w1200" v-show="!jionNode">
         <div class="top_total font14">
-          {{$t('public.totalStake')}}：{{nodeInfo.totalDeposit}} <span class="fCN">{{addressInfo.symbol}}</span>
+          {{$t('public.totalStake')}}：{{nodeInfo.totalDeposit}} <span class="fCN">{{agentAsset.agentAsset.symbol}}</span>
         </div>
 
         <div class="top_ico">
@@ -79,7 +79,7 @@
           </el-table-column>
           <el-table-column prop="createTime" :label="$t('consensusList.consensusList1')" align="center">
           </el-table-column>
-          <el-table-column prop="amount" :label="$t('public.amount') + '('+addressInfo.symbol+')'" align="center">
+          <el-table-column prop="amount" :label="$t('public.amount') + '('+agentAsset.agentAsset.symbol+')'" align="center">
           </el-table-column>
           <el-table-column :label="$t('public.operation')" align="center">
             <template slot-scope="scope">
@@ -137,7 +137,7 @@
 
       return {
         addressInfo: {},//账户信息
-        balanceInfo: {},//账户余额信息
+        agentAsset:JSON.parse(sessionStorage.getItem('info')),//pocm合约单位等信息
         nodeInfo: {},//节点详情
         fee: 0.001,//手续费
         outInfo: '',//退出信息
@@ -165,7 +165,7 @@
       }, 500);
     },
     mounted() {
-      this.getBalanceByAddress(this.addressInfo.chainId, 1, this.addressInfo.address);
+      this.getBalanceByAddress(this.agentAsset.agentAsset.chainId, this.agentAsset.agentAsset.assetId, this.addressInfo.address);
       this.getNodeInfoByHash(this.$route.query.hash);
       this.getNodeDepositByHash(this.pageIndex, this.pageSize, this.addressInfo.address, this.$route.query.hash)
     },
@@ -271,6 +271,7 @@
        **/
       getBalanceByAddress(assetChainId, assetId, address) {
         getNulsBalance(assetChainId, assetId, address).then((response) => {
+          //console.log(response);
           if (response.success) {
             this.balanceInfo = response.data;
           } else {
@@ -287,7 +288,7 @@
        **/
       cancelDeposit(outInfo) {
         this.outInfo = outInfo;
-        getNulsBalance(this.addressInfo.chainId, 1, this.addressInfo.address).then((response) => {
+        getNulsBalance(this.agentAsset.agentAsset.chainId,this.agentAsset.agentAsset.assetId, this.addressInfo.address).then((response) => {
           if (response.success) {
             this.balanceInfo = response.data;
             this.$refs.password.showPassword(true);
@@ -304,7 +305,7 @@
        *  注销节点
        **/
       stopNode() {
-        getNulsBalance(this.addressInfo.chainId, 1, this.addressInfo.address).then((response) => {
+        getNulsBalance(this.agentAsset.agentAsset.chainId,this.agentAsset.agentAsset.assetId, this.addressInfo.address).then((response) => {
           //console.log(response);
           if (response.success) {
             this.balanceInfo = response.data;
@@ -328,8 +329,8 @@
         if (newAddressInfo.address === this.addressInfo.address) {
           let transferInfo = {
             fromAddress: this.addressInfo.address,
-            assetsChainId: this.addressInfo.chainId,
-            assetsId: 1,
+            assetsChainId: this.agentAsset.agentAsset.chainId,
+            assetsId: this.agentAsset.agentAsset.assetId,
             amount: Number(Times(this.jionNodeForm.amount, 100000000)),
             fee: 100000
           };
@@ -374,16 +375,16 @@
                 //console.log(itme.address);
                 newInputs.push({
                   address: itme.address,
-                  assetsChainId: this.addressInfo.chainId,
-                  assetsId: 1,
+                  assetsChainId: this.agentAsset.agentAsset.chainId,
+                  assetsId: this.agentAsset.agentAsset.assetId,
                   amount: itme.amount,
                   locked: -1,
                   nonce: itme.txHash.substring(itme.txHash.length - 16)//这里是hash的最后16个字符
                 });
                 outputs.push({
                   address: itme.address,
-                  assetsChainId: this.addressInfo.chainId,
-                  assetsId: 1,
+                  assetsChainId: this.agentAsset.agentAsset.chainId,
+                  assetsId: this.agentAsset.agentAsset.assetId,
                   amount: itme.amount,
                   lockTime: 0
                 });
@@ -456,7 +457,7 @@
           if (val.address !== old.address && old.address) {
             this.nodeDepositLoading = true;
             this.jionNodeForm.amount = '';
-            this.getBalanceByAddress(this.addressInfo.address);
+            this.getBalanceByAddress(this.agentAsset.agentAsset.chainId, this.agentAsset.agentAsset.assetId,this.addressInfo.address);
             this.getNodeDepositByHash(this.pageIndex, this.pageSize, this.addressInfo.address, this.$route.query.hash)
           }
         }

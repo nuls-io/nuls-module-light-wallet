@@ -22,8 +22,8 @@
           <el-input v-model.trim="createrForm.blockAddress" maxlength="50">
           </el-input>
         </el-form-item>
-        <el-form-item :label="$t('public.deposit') + '('+addressInfo.symbol+')'" prop="amount">
-          <span class="balance font12 fr">{{$t('consensus.consensus2')}}: {{addressInfo.balance}}</span>
+        <el-form-item :label="$t('public.deposit') + '('+agentAsset.agentAsset.symbol+')'" prop="amount">
+          <span class="balance font12 fr">{{$t('consensus.consensus2')}}: {{balanceInfo.balance/100000000}}</span>
           <el-input v-model.trim="createrForm.amount">
           </el-input>
         </el-form-item>
@@ -36,7 +36,7 @@
             <div slot="content">{{$t('transfer.transfer5')}}</div>
             <i class="el-icon-warning"></i>
           </el-tooltip>
-          {{$t('public.fee')}}: 0.001 <span class="fCN">{{addressInfo.symbol}}</span>
+          {{$t('public.fee')}}: 0.001 <span class="fCN">{{agentAsset.agentAsset.symbol}}</span>
         </div>
         <el-form-item class="form-next">
           <el-button type="success" @click="submitForm('createrForm')" :disabled="isRed">{{$t('password.password3')}}
@@ -63,15 +63,15 @@
         </div>
         <div class="div-data">
           <p>{{$t('public.commission')}}:&nbsp;</p>
-          <label class="yellow">{{createrForm.rate}}% <span class="fCN">{{addressInfo.symbol}}</span></label>
-        </div>
-        <div class="div-data">
-          <p>{{$t('public.fee')}}:&nbsp;</p>
-          <label>0.001 <span class="fCN">{{addressInfo.symbol}}</span></label>
+          <label class="yellow">{{createrForm.rate}}% </label>
         </div>
         <div class="div-data">
           <p>{{$t('public.deposit')}}:&nbsp;</p>
-          <label class="yellow">{{createrForm.amount}} <span class="fCN">{{addressInfo.symbol}}</span></label>
+          <label class="yellow">{{createrForm.amount}} <span class="fCN">{{agentAsset.agentAsset.symbol}}</span></label>
+        </div>
+        <div class="div-data">
+          <p>{{$t('public.fee')}}:&nbsp;</p>
+          <label>0.001 <span class="fCN">{{agentAsset.agentAsset.symbol}}</span></label>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -145,6 +145,7 @@
       return {
         addressInfo: {},//账户信息
         balanceInfo: {},//账户余额信息
+        agentAsset:JSON.parse(sessionStorage.getItem('info')),//pocm合约单位等信息
         isRed: false,//创建地址是否有红牌惩罚
         //创建节点表单
         createrForm: {
@@ -178,14 +179,14 @@
     },
     mounted() {
       this.getPunishByAddress(this.addressInfo.address);
-      this.getBalanceByAddress(this.addressInfo.chainId, 1, this.addressInfo.address);
+      this.getBalanceByAddress(this.agentAsset.agentAsset.chainId, this.agentAsset.agentAsset.assetsId, this.addressInfo.address);
     },
     watch: {
       addressInfo(val, old) {
         if (val) {
           if (val.address !== old.address && old.address) {
             this.getPunishByAddress(this.addressInfo.address);
-            this.getBalanceByAddress(this.addressInfo.chainId, 1, this.addressInfo.address);
+            this.getBalanceByAddress(this.agentAsset.agentAsset.chainId, this.agentAsset.agentAsset.assetsId, this.addressInfo.address);
           }
         }
       }

@@ -9,13 +9,19 @@
       <div class="card-info left fl">
         <h5 class="card-title font18">{{$t('consensus.consensus0')}}</h5>
         <ul>
-          <li>{{$t('consensus.consensus3')}} <label>{{addressInfo.totalReward}}<span class="fCN">{{addressInfo.symbol}}</span></label>
+          <li>
+            {{$t('consensus.consensus3')}}
+            <label>{{addressInfo.totalReward}}<span class="fCN">{{addressInfo.symbol}}</span></label>
           </li>
-          <li>{{$t('consensus.consensus2')}} <label>{{addressInfo.balance}}<span class="fCN">{{addressInfo.symbol}}</span></label></li>
-          <li>{{$t('consensus.consensus1')}}
+          <li>
+            {{$t('consensus.consensus2')}}
+            <label>{{addressInfo.balance}}<span class="fCN">{{addressInfo.symbol}}</span></label>
+          </li>
+          <li>
+            {{$t('consensus.consensus1')}}
             <label>
               <u class="click" @click="toUrl('consensusList')">{{addressInfo.consensusLock}}</u>
-              <span class="fCN">{{addressInfo.symbol}}</span>
+              <span class="fCN">{{agentAsset.agentAsset.symbol}}</span>
             </label>
           </li>
         </ul>
@@ -23,11 +29,14 @@
       <div class="card-info right fr">
         <h5 class="card-title font18">
           {{$t('consensus.consensus4')}}
-          <span class="font16 click fr" @click="toUrl('newConsensus')"
-                v-show="!isNew && !isRed">{{$t('consensus.consensus5')}}</span>
+          <span class="font16 click fr" @click="toUrl('newConsensus')" v-show="!isNew && !isRed">
+            {{$t('consensus.consensus5')}}
+          </span>
         </h5>
         <ul>
-          <li>{{$t('consensus.consensus8')}} <label>{{nulsCount.consensusTotal}}<span class="fCN">{{addressInfo.symbol}}</span></label>
+          <li>
+            {{$t('consensus.consensus8')}}
+            <label>{{nulsCount.consensusTotal}}<span class="fCN">{{agentAsset.agentAsset.symbol}}</span></label>
           </li>
           <li>{{$t('consensus.consensus7')}} <label>{{nodeCount.totalCount}}</label></li>
           <li>{{$t('consensus.consensus6')}} <label>{{nodeCount.agentCount}}</label></li>
@@ -131,6 +140,7 @@
         searchValue: '',//搜索框
         allNodeData: [],//所有节点信息
         addressInfo: [], //账户信息
+        agentAsset:JSON.parse(sessionStorage.getItem('info')),//pocm合约单位等信息
         isRed: false,//地址是否有红牌
         isNew: false,//账户是否已经创建了节点
         pageIndex: 1, //页码
