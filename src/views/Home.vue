@@ -60,7 +60,7 @@
           </el-table-column>
           <el-table-column :label="$t('tab.tab3')">
             <template slot-scope="scope">
-              <span class="click" @click="toUrl('frozenList')"
+              <span class="click" @click="toUrl('frozenList',scope.row)"
                     v-show="scope.row.locking !== '--' && scope.row.locking !==0 ">{{scope.row.locking}}</span>
               <span v-show="scope.row.locking === '--' || scope.row.locking ===0">{{scope.row.locking}}</span>
             </template>
@@ -272,7 +272,7 @@
         //this.txListDataLoading = true;
         this.$post('/', 'getAccountCrossLedgerList', [address], 'Home')
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             this.crossLinkDataLoading = false;
             if (response.hasOwnProperty("result")) {
               for (let item of response.result) {

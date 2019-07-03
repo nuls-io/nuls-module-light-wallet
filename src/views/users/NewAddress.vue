@@ -4,7 +4,7 @@
       <div class="w1200">
         <BackBar :backTitle="$t('address.address0')" v-show="ifAddressInfo"></BackBar>
         <h3 class="title">
-          <font v-if="!isBackups">{{$t('newAddress.newAddress0')}} </font>
+          <font v-if="!isBackups">{{$t('newAddress.newAddress1')}} </font>
           <font v-else>{{$t('newAddress.newAddress1')}} </font>
           : {{newAddressInfo.address}}
           <i class="iconfont iconfuzhi clicks" @click="copy(newAddressInfo.address)"></i>
@@ -75,7 +75,7 @@
         <div class="btn mb_20">
           <el-button type="success" @click="backKeystore">{{$t('newAddress.newAddress16')}}</el-button>
           <el-button type="text" @click="backKey">{{$t('newAddress.newAddress17')}}</el-button>
-          <el-button type="info" @click="goWallet" v-show="!isBackups">{{$t('newAddress.newAddress18')}}</el-button>
+          <el-button type="info" @click="goWallet" v-show="false">{{$t('newAddress.newAddress18')}}</el-button>
         </div>
       </div>
 

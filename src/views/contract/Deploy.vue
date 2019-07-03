@@ -21,7 +21,6 @@
                     autocomplete="off">
           </el-input>
         </el-form-item>
-
         <div class="upload_jar" v-show="resource==='1'">
           <input type="file" id="fileId" class="hidden">
           <div class="click upload tc" @click="uploadJar">
@@ -30,7 +29,6 @@
             <p class="font12" v-show="fileName">{{$t('deploy.deploy4')}}:{{fileName}}</p>
           </div>
         </div>
-
         <div class="parameter" v-if="deployForm.parameterList">
           <el-form-item v-for="(domain, index) in deployForm.parameterList" :label="domain.name" :key="domain.name"
                         :prop="'parameterList.' + index + '.value'"
@@ -40,31 +38,30 @@
             </el-input>
           </el-form-item>
         </div>
-
-
-      </div>
-
-      <el-form-item :label="$t('call.call3')" class="senior">
-        <el-switch v-model="deployForm.senior">
-        </el-switch>
-      </el-form-item>
-      <div v-if="deployForm.senior" class="senior-div w1200 bg-white">
         <div class="w630">
-          <el-form-item label="Gas Limit" prop="gas">
-            <el-input v-model="deployForm.gas">
-            </el-input>
+          <el-form-item :label="$t('call.call3')" class="senior">
+            <el-switch v-model="deployForm.senior">
+            </el-switch>
           </el-form-item>
-          <el-form-item label="Price" prop="price">
-            <el-input v-model="deployForm.price">
-            </el-input>
-          </el-form-item>
-          <el-form-item :label="$t('public.contractInfo')" prop="addtion">
-            <el-input type="textarea" :rows="3" maxlength="200" show-word-limit v-model="deployForm.addtion">
-            </el-input>
-          </el-form-item>
+          <div v-if="deployForm.senior" class="senior-div bg-white">
+            <el-form-item label="Gas Limit" prop="gas">
+              <el-input v-model="deployForm.gas">
+              </el-input>
+            </el-form-item>
+            <el-form-item label="Price" prop="price">
+              <el-input v-model="deployForm.price">
+              </el-input>
+            </el-form-item>
+            <el-form-item :label="$t('public.contractInfo')" prop="addtion">
+              <el-input type="textarea" :rows="3" maxlength="200" show-word-limit v-model="deployForm.addtion">
+              </el-input>
+            </el-form-item>
+          </div>
+
         </div>
 
       </div>
+
 
       <el-form-item class="form-next">
         <el-button type="success" @click="testSubmitForm('deployForm')">
@@ -517,7 +514,7 @@
       .el-form-item__label {
         line-height: 40px;
         position: absolute;
-        right: 40px;
+        right: 320px;
       }
       .el-form-item__content {
         text-align: right;
