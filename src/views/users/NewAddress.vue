@@ -4,10 +4,11 @@
       <div class="w1200">
         <BackBar :backTitle="$t('address.address0')" v-show="ifAddressInfo"></BackBar>
         <h3 class="title">
-          <font v-if="!isBackups">{{$t('newAddress.newAddress1')}} </font>
+          <font v-if="!isBackups">{{$t('newAddress.newAddress0')}} </font>
           <font v-else>{{$t('newAddress.newAddress1')}} </font>
-          : {{newAddressInfo.address}}
-          <i class="iconfont iconfuzhi clicks" @click="copy(newAddressInfo.address)"></i>
+          <font v-show="newAddressInfo.address">: {{newAddressInfo.address}}
+            <i class="iconfont iconfuzhi clicks" @click="copy(newAddressInfo.address)"></i>
+          </font>
         </h3>
       </div>
     </div>

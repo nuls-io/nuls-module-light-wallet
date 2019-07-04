@@ -1,5 +1,5 @@
 <template>
-  <div class="transfer bg-gray">
+  <div class="transfer bg-gray" v-loading="transferLoading">
     <h3 class="title">{{changeAssets.account}} {{$t('nav.transfer')}}</h3>
     <div class="w1200 bg-white">
       <el-form :model="transferForm" :rules="transferRules" ref="transferForm">
@@ -199,6 +199,7 @@
         transferVisible: false,//转账确认弹框
         isCross: false,//是否跨链交易
         isNext: false,//是否可用点击下一步
+        transferLoading: false,//转账后的加载效果
       };
     },
     created() {
@@ -208,7 +209,6 @@
       }, 500);
       this.transferForm.fromAddress = this.addressInfo.address;
       this.getCapitalListByAddress(this.transferForm.fromAddress);
-
     },
     mounted() {
     },
@@ -581,6 +581,8 @@
         const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password);
         let crossTxHex = '';
         if (newAddressInfo.address === this.addressInfo.address) {
+          this.transferVisible = false;
+          this.transferLoading = true;
           let transferInfo = {
             fromAddress: this.transferForm.fromAddress,
             assetsChainId: this.changeAssets.chainId,
@@ -647,12 +649,14 @@
           //验证并广播交易
           await validateAndBroadcast(txhex).then((response) => {
             //console.log(response);
+            this.transferLoading = false;
             if (response.success) {
               this.toUrl("txList");
             } else {
               this.$message({message: this.$t('error.' + response.data.code), type: 'error', duration: 3000});
             }
           }).catch((err) => {
+            this.transferLoading = false;
             this.$message({message: this.$t('public.err1') + err, type: 'error', duration: 1000});
           });
         } else {

@@ -36,7 +36,7 @@
             <div slot="content">{{$t('transfer.transfer5')}}</div>
             <i class="el-icon-warning"></i>
           </el-tooltip>
-          {{$t('public.fee')}}: 0.001 <span class="fCN">{{agentAsset.agentAsset.symbol}}</span>
+          {{$t('public.fee')}}: 0.001 <span class="fCN">{{addressInfo.symbol}}</span>
         </div>
         <el-form-item class="form-next">
           <el-button type="success" @click="submitForm('createrForm')" :disabled="isRed">{{$t('password.password3')}}
@@ -67,11 +67,12 @@
         </div>
         <div class="div-data">
           <p>{{$t('public.deposit')}}:&nbsp;</p>
-          <label class="yellow">{{createrForm.amount}} <span class="fCN">{{agentAsset.agentAsset.symbol}}</span></label>
+          <label class="yellow">{{createrForm.amount}} <span
+                  class="fCN">{{agentAsset.agentAsset.symbol}}</span></label>
         </div>
         <div class="div-data">
           <p>{{$t('public.fee')}}:&nbsp;</p>
-          <label>0.001 <span class="fCN">{{agentAsset.agentAsset.symbol}}</span></label>
+          <label>0.001 <span class="fCN">{{addressInfo.symbol}}</span></label>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -110,7 +111,7 @@
           return callback(new Error(this.$t('newConsensus.newConsensus4')));
         } else if (!patrn.exec(value)) {
           return callback(new Error(this.$t('newConsensus.newConsensus31')))
-        }  else {
+        } else {
           callback();
         }
       };
@@ -145,7 +146,7 @@
       return {
         addressInfo: {},//账户信息
         balanceInfo: {},//账户余额信息
-        agentAsset:JSON.parse(sessionStorage.getItem('info')),//pocm合约单位等信息
+        agentAsset: JSON.parse(sessionStorage.getItem('info')),//pocm合约单位等信息
         isRed: false,//创建地址是否有红牌惩罚
         //创建节点表单
         createrForm: {
@@ -234,12 +235,12 @@
        * @param address
        **/
       getPunishByAddress(address) {
-        this.$post('/', 'getPunishList', [1, 1, 2, address])
+        this.$post('/', 'getPunishList', [1, 10, 2, address])
           .then((response) => {
             //console.log(response);
             if (response.result.list.length !== 0) {
               this.isRed = true;
-              this.$message({message: this.$t('newConsensus.newConsensus12') , type: 'error', duration: 3000});
+              this.$message({message: this.$t('newConsensus.newConsensus12'), type: 'error', duration: 3000});
             } else {
               this.isRed = false;
             }
@@ -282,7 +283,7 @@
           const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password);
           if (newAddressInfo.address === this.addressInfo.address) {
             txhex = await nuls.transactionSerialize(pri, this.addressInfo.pub, tAssemble);
-            //console.log(txhex);
+            console.log(txhex);
             //验证并广播交易
             await validateAndBroadcast(txhex).then((response) => {
               //console.log(response);

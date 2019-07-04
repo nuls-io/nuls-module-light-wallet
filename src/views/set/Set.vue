@@ -90,6 +90,7 @@
         const os = require('os');
         const homeDir = os.homedir();
         console.log(os);
+        console.log(os.type());
         console.log(homeDir);
 
         const electronVersion = process.versions;
