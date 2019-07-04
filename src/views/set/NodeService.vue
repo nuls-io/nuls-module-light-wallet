@@ -29,7 +29,7 @@
           <template slot-scope="scope">
             <span @click="editState(scope.$index)">
               <i class="iconfont clicks"
-                 :class="scope.row.state === 0 ? 'iconduankailianjie flan' : 'iconziyuan fCN'"></i>
+                 :class="scope.row.selection ? 'iconziyuan fCN' : 'iconduankailianjie flan'"></i>
             </span>
           </template>
         </el-table-column>
@@ -162,15 +162,15 @@
        * 连接或断开
        **/
       editState(index) {
-        if (this.nodeServiceData[index].delay === "-2" || this.nodeServiceData[index].delay === "-3") {
+        if (this.nodeServiceData[index].delay === "20000" || this.nodeServiceData[index].delay === "30000") {
           this.$message({message: this.$t('nodeService.nodeService16'), type: 'error', duration: 1000});
         } else {
-          if (this.nodeServiceData[index].state === 0) {
+          if (!this.nodeServiceData[index].selection) {
             this.loading = true;
             for (let item of this.nodeServiceData) {
-              item.state = 0;
+              item.selection = false;
             }
-            this.nodeServiceData[index].state = 1;
+            this.nodeServiceData[index].selection = true;
             localStorage.setItem("urls", JSON.stringify(this.nodeServiceData[index]));
             localStorage.setItem("urlsData", JSON.stringify(this.nodeServiceData));
             setTimeout(() => {
@@ -223,7 +223,7 @@
             });
 
           //console.log(item);
-          if (item.state === 1) {
+          if (item.selection) {
             isUrl = false;
             localStorage.setItem("urls", JSON.stringify(item));
           }
@@ -237,7 +237,7 @@
           }));
           for (let item of newData) {
             if (item.delay === minDelay) {
-              item.state = 1;
+              item.selection = true;
               localStorage.setItem("urls", JSON.stringify(item));
             }
           }
@@ -281,14 +281,14 @@
                   that.testInfo.result = response.data.result;
                   that.nodeServiceDialogLoading = false;
                 } else {
-                  that.testInfo.state = 2;
+                  that.testInfo.state = 20000;
                   that.testInfo.result = response.data;
                   that.nodeServiceDialogLoading = false;
                 }
               })
               .catch(function (error) {
                 console.log(that.testInfo.success);
-                that.testInfo.state = 2;
+                that.testInfo.state = 30000;
                 that.testInfo.result = error;
                 console.log("getBestBlockHeader:" + error);
                 that.nodeServiceDialogLoading = false;
@@ -320,7 +320,7 @@
               name: this.nodeServiceForm.name,
               urls: this.nodeServiceForm.urls,
               delay: '',
-              state: 0,
+              selection: false,
               isDelete: true,
               chainId: this.testInfo.result.chainId,
               assetId: this.testInfo.result.assetId,
@@ -330,11 +330,11 @@
             //立即使用
             if (this.nodeServiceForm.resource) {
               for (let itme in this.nodeServiceData) {
-                if (this.nodeServiceData[itme].state === 1) {
-                  this.nodeServiceData[itme].state = 0
+                if (this.nodeServiceData[itme].selection ) {
+                  this.nodeServiceData[itme].selection = false
                 }
               }
-              newNodeInfo.state = 1;
+              newNodeInfo.selection = true;
             }
             if (this.editIndex !== 10000) {
               this.nodeServiceData[this.editIndex] = newNodeInfo;

@@ -17,11 +17,11 @@ setInterval(() => {
 export const API_TIME = IS_DEV ? '9000' : '8000';
 //默认节点服务列表
 export const defaultData = [
-  {name: 'Official',chainId:2,assetId:1,decimals:8,chainName:'tNULS', urls: 'http://192.168.1.142:18003/', delay: '10ms', state: 0, isDelete: false},
-  {name: 'Official',chainId:2,assetId:1,decimals:8,chainName:'tNULS', urls: 'http://192.168.1.40:18003/', delay: '10ms', state: 1, isDelete: false},
+  {name: 'Official',chainId:2,assetId:1,decimals:8,chainName:'tNULS', urls: 'http://192.168.1.144:18003/', delay: '10ms', selection: false, isDelete: false},
+  {name: 'Official',chainId:2,assetId:1,decimals:8,chainName:'tNULS', urls: 'http://192.168.1.142:18003/', delay: '10ms', selection: true, isDelete: false},
 ];
 
 //默认服务节点地址
-export const defaultUrl ={name: 'Official',chainId:2,assetId:1,decimals:8,chainName:'tNULS', urls: 'http://192.168.1.142:18003/', delay: '10ms', state: 1, isDelete: false};
+export const defaultUrl ={name: 'Official',chainId:2,assetId:1,decimals:8,chainName:'tNULS', urls: 'http://192.168.1.142:18003/', delay: '10ms', selection: true, isDelete: false};
 //默认浏览器地址（跳转地址）
 export const explorerUrl = 'http://alpha.nulscan.io/';

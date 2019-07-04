@@ -68,8 +68,8 @@
         </h3>
         <div class="tip bg-gray">
           <p>{{$t('newAddress.newAddress13')}}</p>
-        <!--  <p>{{$t('newAddress.newAddress14')}}</p>
-          <p>{{$t('newAddress.newAddress15')}}</p>-->
+          <!--  <p>{{$t('newAddress.newAddress14')}}</p>
+            <p>{{$t('newAddress.newAddress15')}}</p>-->
         </div>
 
         <div class="btn mb_20">
@@ -102,7 +102,7 @@
   import nuls from 'nuls-sdk-js'
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
-  import {copys, chainID, chainIdNumber,defaultAddressInfo,localStorageByAddressInfo} from '@/api/util'
+  import {copys, chainID, chainIdNumber, defaultAddressInfo, localStorageByAddressInfo} from '@/api/util'
 
   export default {
     data() {
@@ -146,7 +146,7 @@
             {validator: validatePassTwo, trigger: 'blur'}
           ],
           agreement: [
-            {required: true, message:this.$t('newAddress.newAddress29'), trigger: 'change'}
+            {required: true, message: this.$t('newAddress.newAddress29'), trigger: 'change'}
           ]
         },
         newAddressInfo: {}, //新建的地址信息
@@ -177,7 +177,6 @@
       submitPasswordForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            console.log(chainID());
             this.newAddressInfo = nuls.newAddress(chainID(), this.passwordForm.pass);
             let newAddressInfo = defaultAddressInfo;
             newAddressInfo.address = this.newAddressInfo.address;

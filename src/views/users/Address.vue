@@ -133,7 +133,6 @@
                   addressInfo.chainId = nuls.verifyAddress(item.address).chainId;
                 }
               }
-              console.log(this.addressList);
               localStorage.setItem(chainIdNumber(),JSON.stringify(this.addressList))
             }
           })
@@ -212,6 +211,9 @@
           }
         }
         localStorage.setItem(chainIdNumber(), JSON.stringify(this.addressList));
+        this.$router.push({
+          name: 'home',
+        })
       },
 
       /**

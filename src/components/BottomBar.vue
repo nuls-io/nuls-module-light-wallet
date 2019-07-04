@@ -40,7 +40,7 @@
       if (!localStorage.hasOwnProperty('urlsData')) {
         localStorage.setItem("urlsData", JSON.stringify(defaultData));
         for (let item of defaultData) {
-          if (item.state === 1) {
+          if (item.selection) {
             localStorage.setItem("urls", JSON.stringify(item))
           }
         }
