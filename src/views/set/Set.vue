@@ -11,7 +11,7 @@
       <div class="tc mzt_20">
         <h4 class="font24 mb_20">NULS Wallet</h4>
         <p class="font16">{{$t('public.logInfo')}}: <span class="click" @click="seeLog">{{$t('public.see')}}</span></p>
-        <p class="font16">{{$t('public.version')}}: 2.0.1</p>
+        <p class="font16">{{$t('public.version')}}: {{version}}</p>
         <el-button type="success" @click="checkUpdate">{{$t('public.checkUpdates')}}</el-button>
       </div>
     </div>
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+  import packages from './../../../package'
 
   export default {
     data() {
@@ -42,6 +43,7 @@
         updateDialogVisible: false,//更新弹框
         tips: {},//提示信息
         downloadPercent: 0,//下载进度
+        version: packages.version,//版本号
       };
     },
     created() {
@@ -84,17 +86,16 @@
        * 查看日志
        */
       seeLog() {
-        //console.log(__dirname);
-        /*const electron = require("electron");
-        electron.shell.openExternal(__dirname + '../../../wallet_web_log');*/
-        const os = require('os');
+        console.log(__dirname);
+        const electron = require("electron");
+        electron.shell.openExternal(__dirname + '../../../wallet_web_log');
+       /* const os = require('os');
         const homeDir = os.homedir();
         console.log(os);
         console.log(os.type());
         console.log(homeDir);
-
         const electronVersion = process.versions;
-        console.log(electronVersion)
+        console.log(electronVersion)*/
       }
     }
   }
