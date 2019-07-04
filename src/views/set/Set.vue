@@ -85,8 +85,15 @@
        */
       seeLog() {
         //console.log(__dirname);
-        const electron = require("electron");
-        electron.shell.openExternal(__dirname + '../../../wallet_web_log');
+        /*const electron = require("electron");
+        electron.shell.openExternal(__dirname + '../../../wallet_web_log');*/
+        const os = require('os');
+        const homeDir = os.homedir();
+        console.log(os);
+        console.log(homeDir);
+
+        const electronVersion = process.versions;
+        console.log(electronVersion)
       }
     }
   }
