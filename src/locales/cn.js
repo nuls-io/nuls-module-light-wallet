@@ -56,6 +56,11 @@ const cn = {
     "toAddresss":"接受者",
     "balance": "余额",
     "allToke":"所有代币资产",
+    "about":"关 于",
+    "logInfo":"日志信息",
+    "see":"查看",
+    "version":"当前版本",
+    "checkUpdates":"检查更新",
     "":"",
 
     "err": "验证并广播交易失败:",

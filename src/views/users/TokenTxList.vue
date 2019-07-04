@@ -22,7 +22,7 @@
               <span class="click td" @click="toUrl('height',scope.row.height)">{{scope.row.height}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="TxID" align="center" width="200">
+          <el-table-column label="TxID" align="center" width="210">
             <template slot-scope="scope">
               <span class="click " @click="toUrl('transferInfo',scope.row.txHash)">{{scope.row.txid}}</span>
             </template>
@@ -163,7 +163,7 @@
                 item.txid = superLong(item.txHash, 10);
                 item.fromAddresss = superLong(item.fromAddress, 6);
                 item.toAddresss = superLong(item.toAddress, 6);
-                item.balance = timesDecimals(item.fromBalance, item.decimals);
+                item.balance = timesDecimals(item.toBalance, item.decimals);
                 item.amount = timesDecimals(item.value, item.decimals);
               }
               this.txListData = response.result.list;

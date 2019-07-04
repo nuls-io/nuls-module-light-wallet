@@ -56,6 +56,11 @@ const en = {
     "toAddresss":"Recipient",
     "balance": "Balance",
     "allToke":"All Toke",
+    "about":"About",
+    "logInfo":"Log Info",
+    "see":"See",
+    "version":"Version",
+    "checkUpdates":"Check Updates",
     "":"",
 
     "err":"Verify and broadcast transaction failure:",

@@ -27,7 +27,7 @@
             <template slot="title">{{$t('nav.set')}}</template>
             <el-menu-item index="address">{{$t('nav.addressList')}}</el-menu-item>
             <el-menu-item index="nodeService">{{$t('nav.nodeList')}}</el-menu-item>
-            <el-menu-item index="seting">关 于</el-menu-item>
+            <el-menu-item index="seting">{{$t('public.about')}}</el-menu-item>
             <el-menu-item index="address" v-show="false">通讯录</el-menu-item>
           </el-submenu>
           <el-submenu index="lang">

@@ -38,7 +38,7 @@
             </el-input>
           </el-form-item>
         </div>
-        <div class="w630">
+        <div class="w500" v-show="deployForm.hex" style="padding-bottom: 2rem">
           <el-form-item :label="$t('call.call3')" class="senior">
             <el-switch v-model="deployForm.senior">
             </el-switch>
@@ -514,7 +514,7 @@
       .el-form-item__label {
         line-height: 40px;
         position: absolute;
-        right: 320px;
+        right: 390px;
       }
       .el-form-item__content {
         text-align: right;

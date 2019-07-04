@@ -3,16 +3,16 @@
     <div class="bg-white">
       <div class="w1200">
         <h3 class="title">
-          关 于
+          {{$t('public.about')}}
         </h3>
       </div>
     </div>
     <div class="w1200 mt_20 bg-white set_info">
       <div class="tc mzt_20">
         <h4 class="font24 mb_20">NULS Wallet</h4>
-        <p class="font16">日志信息: <span class="click" @click="seeLog">查看</span></p>
-        <p class="font16">当前版本: 2.0.1</p>
-        <el-button type="success" @click="checkUpdate">检查更新</el-button>
+        <p class="font16">{{$t('public.logInfo')}}: <span class="click" @click="seeLog">{{$t('public.see')}}</span></p>
+        <p class="font16">{{$t('public.version')}}: 2.0.2</p>
+        <el-button type="success" @click="checkUpdate">{{$t('public.checkUpdates')}}</el-button>
       </div>
     </div>
     <el-dialog :title="$t('bottom.updateWallet')" width="35rem"

@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="bottom">
-      <div v-show="false">{{dirname}}</div>
       <div class="w1200 font14">
         <div class="left fl">
           <p class="fl">
@@ -11,19 +10,16 @@
         </div>
         <div class="right fr">
           {{$t('bottom.nodeHeight')}}: {{heightInfo.networkHeight}}/{{heightInfo.localHeight}}
-          <!--<label class="click" @click="checkUpdate">Alpha 2.0.1</label>-->
         </div>
       </div>
     </div>
-
   </div>
-
 </template>
 
 <script>
   import nuls from 'nuls-sdk-js'
   import axios from 'axios'
-  import {defaultUrl,defaultData} from '@/config.js'
+  import {defaultUrl, defaultData} from '@/config.js'
   import {chainID, chainIdNumber, addressInfo, timesDecimals} from '@/api/util'
 
   export default {
@@ -31,11 +27,12 @@
     data() {
       return {
         heightInfo: [],//高度信息
-        serviceUrls: localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")) : defaultUrl,
-        dirname:__dirname,
+
       }
     },
     created() {
+      //localStorage.clear();
+      this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")) : defaultUrl;
       this.getHeaderInfo();
       setInterval(() => {
         this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")) : defaultUrl;
@@ -70,7 +67,7 @@
             //console.log(response.data);
             if (response.data.hasOwnProperty("result")) {
               this.heightInfo = response.data.result;
-              sessionStorage.setItem("info",JSON.stringify(response.data.result))
+              sessionStorage.setItem("info", JSON.stringify(response.data.result))
             } else {
               this.heightInfo = {localHeight: 0, networkHeight: 0};
               sessionStorage.removeItem("info")
@@ -90,7 +87,7 @@
         let addressInfos = addressInfo(1);
         let addressList = addressInfo(0);
         if (addressInfos) {
-          await this.$post('/', 'getAccount', [addressInfos.address],'BottomBar')
+          await this.$post('/', 'getAccount', [addressInfos.address], 'BottomBar')
             .then((response) => {
               //console.log(response);
               if (response.hasOwnProperty("result")) {
