@@ -27,7 +27,6 @@
     data() {
       return {
         heightInfo: [],//高度信息
-
       }
     },
     created() {

@@ -11,7 +11,7 @@
       <div class="tc mzt_20">
         <h4 class="font24 mb_20">NULS Wallet</h4>
         <p class="font16">{{$t('public.logInfo')}}: <span class="click" @click="seeLog">{{$t('public.see')}}</span></p>
-        <p class="font16">{{$t('public.version')}}: 2.0.2</p>
+        <p class="font16">{{$t('public.version')}}: 2.0.1</p>
         <el-button type="success" @click="checkUpdate">{{$t('public.checkUpdates')}}</el-button>
       </div>
     </div>
