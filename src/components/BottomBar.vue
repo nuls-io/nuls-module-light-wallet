@@ -20,7 +20,7 @@
   import nuls from 'nuls-sdk-js'
   import axios from 'axios'
   import {defaultUrl, defaultData} from '@/config.js'
-  import {chainID, chainIdNumber, addressInfo, timesDecimals} from '@/api/util'
+  import {chainID, chainIdNumber, addressInfo, timesDecimals, equalsObj} from '@/api/util'
 
   export default {
     name: "bottom-bar",
@@ -30,21 +30,43 @@
       }
     },
     created() {
-      //localStorage.clear();
-      this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")) : defaultUrl;
-      this.getHeaderInfo();
-      setInterval(() => {
-        this.serviceUrls = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")) : defaultUrl;
-      }, 500);
-
-      if (!localStorage.hasOwnProperty('urlsData')) {
+      if (localStorage.hasOwnProperty('urlsData')) {
+        let newUrlsData = [];
+        let selectionUrl = '';
+        for (let item of JSON.parse(localStorage.getItem("urlsData"))) {
+          if (item.name !== 'Official') {
+            newUrlsData.push(item)
+          }
+          if (item.selection) {
+            selectionUrl = item.urls
+          }
+        }
+        for (let item of defaultData) {
+          if (item.urls === selectionUrl) {
+            item.selection = true
+          }
+        }
+        let urlsData = [...defaultData, ...newUrlsData];
+        for (let item of urlsData) {
+          if (item.selection) {
+            this.serviceUrls = item;
+          }
+        }
+        localStorage.removeItem('urlsData');
+        localStorage.setItem("urlsData", JSON.stringify(urlsData));
+      } else {
         localStorage.setItem("urlsData", JSON.stringify(defaultData));
         for (let item of defaultData) {
           if (item.selection) {
-            localStorage.setItem("urls", JSON.stringify(item))
+            localStorage.setItem("urls", JSON.stringify(item));
+            this.serviceUrls = item;
           }
         }
       }
+      this.getHeaderInfo();
+      setInterval(() => {
+        this.serviceUrls = JSON.parse(localStorage.getItem("urls"));
+      }, 500);
     },
     mounted() {
       setInterval(() => {

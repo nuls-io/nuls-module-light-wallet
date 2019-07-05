@@ -61,6 +61,7 @@ const cn = {
     "see":"查看",
     "version":"当前版本",
     "checkUpdates":"检查更新",
+    "operatingSystem":"操作系统",
     "":"",
 
     "err": "验证并广播交易失败:",

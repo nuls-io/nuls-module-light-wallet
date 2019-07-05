@@ -36,7 +36,7 @@
             <div slot="content">{{$t('transfer.transfer5')}}</div>
             <i class="el-icon-warning"></i>
           </el-tooltip>
-          {{$t('public.fee')}}: 0.001 <span class="fCN">{{addressInfo.symbol}}</span>
+          {{$t('public.fee')}}: 0.001 <span class="fCN">{{agentAsset.agentAsset.symbol}}</span>
         </div>
         <el-form-item class="form-next">
           <el-button type="success" @click="submitForm('createrForm')" :disabled="isRed">{{$t('password.password3')}}
@@ -72,7 +72,7 @@
         </div>
         <div class="div-data">
           <p>{{$t('public.fee')}}:&nbsp;</p>
-          <label>0.001 <span class="fCN">{{addressInfo.symbol}}</span></label>
+          <label>0.001 <span class="fCN">{{agentAsset.agentAsset.symbol}}</span></label>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -180,14 +180,14 @@
     },
     mounted() {
       this.getPunishByAddress(this.addressInfo.address);
-      this.getBalanceByAddress(this.agentAsset.agentAsset.chainId, this.agentAsset.agentAsset.assetsId, this.addressInfo.address);
+      this.getBalanceByAddress(this.agentAsset.agentAsset.chainId, this.agentAsset.agentAsset.assetId, this.addressInfo.address);
     },
     watch: {
       addressInfo(val, old) {
         if (val) {
           if (val.address !== old.address && old.address) {
             this.getPunishByAddress(this.addressInfo.address);
-            this.getBalanceByAddress(this.agentAsset.agentAsset.chainId, this.agentAsset.agentAsset.assetsId, this.addressInfo.address);
+            this.getBalanceByAddress(this.agentAsset.agentAsset.chainId, this.agentAsset.agentAsset.assetId, this.addressInfo.address);
           }
         }
       }
@@ -263,12 +263,13 @@
       async passSubmit(password) {
         let transferInfo = {
           fromAddress: this.addressInfo.address,
-          assetsChainId: this.addressInfo.chainId,
-          assetsId: 1,
+          assetsChainId: this.agentAsset.agentAsset.chainId,
+          assetsId: this.agentAsset.agentAsset.assetId,
           amount: Number(Times(this.createrForm.amount, 100000000).toString()),
           fee: 100000
         };
         let inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 4);
+        //console.log(inOrOutputs);
         let txhex = '';
         if (inOrOutputs.success) {
           let agent = {
@@ -283,7 +284,7 @@
           const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password);
           if (newAddressInfo.address === this.addressInfo.address) {
             txhex = await nuls.transactionSerialize(pri, this.addressInfo.pub, tAssemble);
-            console.log(txhex);
+            //console.log(txhex);
             //验证并广播交易
             await validateAndBroadcast(txhex).then((response) => {
               //console.log(response);

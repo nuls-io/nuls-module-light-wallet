@@ -10,8 +10,12 @@
     <div class="w1200 mt_20 bg-white set_info">
       <div class="tc mzt_20">
         <h4 class="font24 mb_20">NULS Wallet</h4>
-        <p class="font16">{{$t('public.logInfo')}}: <span class="click" @click="seeLog">{{$t('public.see')}}</span></p>
-        <p class="font16">{{$t('public.version')}}: {{version}}</p>
+        <!--<p class="font16">{{$t('public.logInfo')}}: <span class="click" @click="seeLog">{{$t('public.see')}}</span></p>-->
+        <ul>
+          <li><span>{{$t('public.operatingSystem')}}:</span>{{system}}</li>
+          <li><span>{{$t('public.logInfo')}}:</span>{{logUrl}}</li>
+          <li><span>{{$t('public.version')}}:</span>{{version}}</li>
+        </ul>
         <el-button type="success" @click="checkUpdate">{{$t('public.checkUpdates')}}</el-button>
       </div>
     </div>
@@ -43,10 +47,13 @@
         updateDialogVisible: false,//更新弹框
         tips: {},//提示信息
         downloadPercent: 0,//下载进度
+        logUrl:'',
+        system:'',
         version: packages.version,//版本号
       };
     },
     created() {
+      this.seeLog();
 
     },
     mounted() {
@@ -86,16 +93,14 @@
        * 查看日志
        */
       seeLog() {
-        console.log(__dirname);
-        const electron = require("electron");
-        electron.shell.openExternal(__dirname + '../../../wallet_web_log');
-       /* const os = require('os');
-        const homeDir = os.homedir();
-        console.log(os);
-        console.log(os.type());
-        console.log(homeDir);
-        const electronVersion = process.versions;
-        console.log(electronVersion)*/
+        let str = __dirname;
+        let ss=str.split("\\");
+        let temp="\\"+ss[ss.length-2];
+        let num=str.lastIndexOf(temp);
+        //console.log(str.slice(0,num));
+        this.logUrl=str.slice(0,num)+ '\\wallet_web_log';
+        const os = require('os');
+        this.system=os.type();
       }
     }
   }
@@ -108,13 +113,28 @@
     .set_info {
       border: @BD1;
       min-height: 500px;
-      p {
-        line-height: 1.6rem;
+      ul {
+        li{
+          line-height: 1.6rem;
+          width: 35rem;
+          margin: 0 auto;
+          text-align: left;
+          font-size: 12px;
+          span{
+            width: 5rem;
+            display: block;
+            float: left;
+            font-size: 14px;
+            text-align: right;
+            padding-right: 0.5rem;
+          }
+        }
+
       }
       .el-button {
         margin: 1rem 0 0 0;
         padding: 0.5rem;
-        width: 7.5rem;
+        width: 15rem;
       }
     }
   }

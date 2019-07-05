@@ -272,7 +272,7 @@
         //this.txListDataLoading = true;
         this.$post('/', 'getAccountCrossLedgerList', [address], 'Home')
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             this.crossLinkDataLoading = false;
             if (response.hasOwnProperty("result")) {
               for (let item of response.result) {

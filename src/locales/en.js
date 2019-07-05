@@ -61,6 +61,7 @@ const en = {
     "see":"See",
     "version":"Version",
     "checkUpdates":"Check Updates",
+    "operatingSystem":"System",
     "":"",
 
     "err":"Verify and broadcast transaction failure:",
