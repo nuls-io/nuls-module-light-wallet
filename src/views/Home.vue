@@ -71,7 +71,7 @@
             <template slot-scope="scope">
               <label class="click tab_bn" @click="toUrl('transfer',scope.row.symbol)">{{$t('nav.transfer')}}</label>
               <span class="tab_line">|</span>
-              <label class="click tab_bn" @click="toUrl('txList')">{{$t('home.home2')}}</label>
+              <label class="click tab_bn" @click="toUrl('txList',scope.row)">{{$t('home.home2')}}</label>
             </template>
           </el-table-column>
         </el-table>

@@ -147,9 +147,9 @@
     created() {
       /* if (localStorage.hasOwnProperty('customUrlsData')) {*/
       if (localStorage.hasOwnProperty('urlsData')) {
-        this.nodeServiceData = Object.assign(defaultData, JSON.parse(localStorage.getItem('urlsData')));
+        this.nodeServiceData =[...JSON.parse(localStorage.getItem('urlsData'))];
       } else {
-        this.nodeServiceData = defaultData
+        this.nodeServiceData = [...defaultData]
       }
     },
     mounted() {
