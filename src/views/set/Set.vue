@@ -14,7 +14,7 @@
         <ul>
           <li><span>{{$t('public.operatingSystem')}}:</span>{{system}}</li>
           <li><span>{{$t('public.logInfo')}}:</span>{{logUrl}}</li>
-          <li><span>{{$t('public.version')}}:</span>{{version}}</li>
+          <li><span>{{$t('public.version')}}:</span>Beta-{{version}}</li>
         </ul>
         <el-button type="success" @click="checkUpdate">{{$t('public.checkUpdates')}}</el-button>
       </div>
