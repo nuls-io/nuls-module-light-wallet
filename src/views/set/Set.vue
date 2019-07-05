@@ -47,8 +47,8 @@
         updateDialogVisible: false,//更新弹框
         tips: {},//提示信息
         downloadPercent: 0,//下载进度
-        logUrl:'',
-        system:'',
+        logUrl: '',
+        system: '',
         version: packages.version,//版本号
       };
     },
@@ -93,14 +93,22 @@
        * 查看日志
        */
       seeLog() {
-        let str = __dirname;
-        let ss=str.split("\\");
-        let temp="\\"+ss[ss.length-2];
-        let num=str.lastIndexOf(temp);
-        //console.log(str.slice(0,num));
-        this.logUrl=str.slice(0,num)+ '\\wallet_web_log';
         const os = require('os');
-        this.system=os.type();
+        this.system = os.type();
+        let str = __dirname;
+        if (this.system === 'Windows_NT') {
+          let ss = str.split("\\");
+          let temp = "\\" + ss[ss.length - 2];
+          let num = str.lastIndexOf(temp);
+          this.logUrl = str.slice(0, num) + '\\wallet_web_log';
+        } else if (this.system === 'Darwin') {
+          let ss = str.split("/");
+          let temp = "/" + ss[ss.length - 2];
+          let num = str.lastIndexOf(temp);
+          this.logUrl = str.slice(0, num) + '/wallet_web_log';
+        } else {
+
+        }
       }
     }
   }
@@ -114,13 +122,13 @@
       border: @BD1;
       min-height: 500px;
       ul {
-        li{
+        li {
           line-height: 1.6rem;
           width: 35rem;
           margin: 0 auto;
           text-align: left;
           font-size: 12px;
-          span{
+          span {
             width: 5rem;
             display: block;
             float: left;
