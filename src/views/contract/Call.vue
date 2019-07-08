@@ -26,6 +26,9 @@
           <el-form-item label="Price" prop="price">
             <el-input v-model="callForm.price"></el-input>
           </el-form-item>
+          <el-form-item label="Value" prop="values">
+            <el-input v-model="callForm.values"></el-input>
+          </el-form-item>
         </div>
       </div>
 
@@ -52,6 +55,37 @@
 
   export default {
     data() {
+
+      let validateGas = (rule, value, callback) => {
+        if (!value) {
+          callback(new Error(this.$t('deploy.deploy8')));
+        } else if (value < 1) {
+          this.callForm.gas = 1;
+          callback();
+        } else if (value > 10000000) {
+          this.callForm.gas = 10000000;
+          callback();
+        } else {
+          callback();
+        }
+      };
+      let validatePrice = (rule, value, callback) => {
+        if (!value) {
+          callback(new Error(this.$t('deploy.deploy9')));
+        } else if (value < 1) {
+          this.callForm.price = 1;
+        } else {
+          callback();
+        }
+      };
+      let validateValues = (rule, value, callback) => {
+        if (value < 0) {
+          this.callForm.values = 0;
+        } else {
+          callback();
+        }
+      };
+
       return {
         addressInfo: {},//地址信息
         balanceInfo: {},//账户余额信息
@@ -67,10 +101,13 @@
         },
         callRules: {
           gas: [
-            {type: 'number', required: true, message: this.$t('deploy.deploy8'), trigger: 'blur'},
+            {validator: validateGas, trigger: ['blur', 'change']}
           ],
           price: [
-            {type: 'number', required: true, message: this.$t('deploy.deploy9'), trigger: 'blur'},
+            {validator: validatePrice, trigger: 'blur'}
+          ],
+          values: [
+            {validator: validateValues, trigger: 'blur'}
           ]
         },
         //选中的方法
@@ -193,11 +230,12 @@
         this.callForm.price = sdk.CONTRACT_MINIMUM_PRICE;
         if (this.selectionData.params.length > 0) { //有参数
           newArgs = getArgs(this.callForm.parameterList);
+          console.log(newArgs);
           if (newArgs.allParameter) {
-            this.validateContractCall(this.addressInfo.address, 0, sdk.CONTRACT_MAX_GASLIMIT, sdk.CONTRACT_MINIMUM_PRICE, this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs.args);
+            this.validateContractCall(this.addressInfo.address, this.callForm.values, sdk.CONTRACT_MAX_GASLIMIT, sdk.CONTRACT_MINIMUM_PRICE, this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs.args);
           }
         } else { //没参数
-          this.validateContractCall(this.addressInfo.address, 0, sdk.CONTRACT_MAX_GASLIMIT, sdk.CONTRACT_MINIMUM_PRICE, this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs);
+          this.validateContractCall(this.addressInfo.address, this.callForm.values, sdk.CONTRACT_MAX_GASLIMIT, sdk.CONTRACT_MINIMUM_PRICE, this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs);
         }
       },
 
