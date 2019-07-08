@@ -12,11 +12,11 @@
         <h4 class="font24 mb_20">NULS Wallet</h4>
         <!--<p class="font16">{{$t('public.logInfo')}}: <span class="click" @click="seeLog">{{$t('public.see')}}</span></p>-->
         <ul>
-          <li><span>{{$t('public.operatingSystem')}}:</span>{{system}}</li>
-          <li><span>{{$t('public.logInfo')}}:</span>{{logUrl}}</li>
+          <li v-show="RUN_PATTERN"><span>{{$t('public.operatingSystem')}}:</span>{{system}}</li>
+          <li v-show="RUN_PATTERN"><span>{{$t('public.logInfo')}}:</span>{{logUrl}}</li>
           <li><span>{{$t('public.version')}}:</span>Beta-{{version}}</li>
         </ul>
-        <el-button type="success" @click="checkUpdate">{{$t('public.checkUpdates')}}</el-button>
+        <el-button type="success" @click="checkUpdate" v-show="RUN_PATTERN">{{$t('public.checkUpdates')}}</el-button>
       </div>
     </div>
     <el-dialog :title="$t('bottom.updateWallet')" width="35rem"
@@ -40,6 +40,7 @@
 
 <script>
   import packages from './../../../package'
+  import {RUN_PATTERN} from '@/config.js'
 
   export default {
     data() {
@@ -50,6 +51,7 @@
         logUrl: '',
         system: '',
         version: packages.version,//版本号
+        RUN_PATTERN:RUN_PATTERN,//运行模式
       };
     },
     created() {
