@@ -19,9 +19,9 @@
         </el-table-column>
         <el-table-column :label="$t('nodeService.nodeService4')" align="center">
           <template slot-scope="scope">
-            <span v-if="scope.row.delay === '100000'">{{ $t('nodeService.nodeService17') }}</span>
-            <span v-else-if="scope.row.delay === '200000'">{{ $t('nodeService.nodeService18') }}</span>
-            <span v-else-if="scope.row.delay === '300000'"><i class="el-icon-loading"></i></span>
+            <span v-if="scope.row.delay === 100000">{{ $t('nodeService.nodeService17') }}</span>
+            <span v-else-if="scope.row.delay === 200000">{{ $t('nodeService.nodeService18') }}</span>
+            <span v-else-if="scope.row.delay === 300000"><i class="el-icon-loading"></i></span>
             <span v-else>{{ scope.row.delay }} ms</span>
           </template>
         </el-table-column>
@@ -147,7 +147,7 @@
     created() {
       /* if (localStorage.hasOwnProperty('customUrlsData')) {*/
       if (localStorage.hasOwnProperty('urlsData')) {
-        this.nodeServiceData =[...JSON.parse(localStorage.getItem('urlsData'))];
+        this.nodeServiceData = [...JSON.parse(localStorage.getItem('urlsData'))];
       } else {
         this.nodeServiceData = [...defaultData]
       }
@@ -162,7 +162,7 @@
        * 连接或断开
        **/
       editState(index) {
-        if (this.nodeServiceData[index].delay === "200000" || this.nodeServiceData[index].delay === "300000") {
+        if (this.nodeServiceData[index].delay === 200000 || this.nodeServiceData[index].delay === 300000) {
           this.$message({message: this.$t('nodeService.nodeService16'), type: 'error', duration: 1000});
         } else {
           if (!this.nodeServiceData[index].selection) {
@@ -186,7 +186,7 @@
       async getDelay() {
         let newData = [];
         for (let item of this.nodeServiceData) {
-          item.delay = '300000';
+          item.delay = 300000;
           newData.push(item);
         }
         this.nodeServiceData = newData;
@@ -211,18 +211,17 @@
                 item.chainId = response.data.result.chainId;
                 item.chainName = response.data.result.chainName;
               } else {
-                item.delay = "100000";
-                item.selection= false;
+                item.delay = 100000;
+                item.selection = false;
                 item.state = 0;
               }
             })
             .catch(function (error) {
-              item.delay = "200000";
-              item.selection= false;
+              item.delay = 200000;
+              item.selection = false;
               item.state = 0;
               console.log(error);
             });
-
           //console.log(item);
           if (item.selection) {
             isUrl = false;
@@ -230,20 +229,17 @@
           }
           newData.push(item);
         }
-
         //没有选中的连接默认选中一个
         if (isUrl) {
-          let minDelay = Math.min.apply(Math, newData.map(function (o) {
-            return o.delay
-          }));
-          for (let item of newData) {
-            if (item.delay === minDelay) {
-              item.selection = true;
-              localStorage.setItem("urls", JSON.stringify(item));
+          let minNumber = Math.min.apply(Math, newData.map((o) => o.delay));
+          let minIndex = newData.map((o) => o.delay).findIndex((n) => n === minNumber);
+          for (let item in newData) {
+            if (Number(item) === minIndex) {
+              newData[minIndex].selection = true;
+              localStorage.setItem("urls", JSON.stringify(newData[minIndex]));
             }
           }
         }
-
         this.nodeServiceData = newData;
         this.nodeServiceLoading = false;
         localStorage.setItem("urlsData", JSON.stringify(this.nodeServiceData));
@@ -306,8 +302,8 @@
        **/
       addNodeService() {
         this.nodeServiceDialog = true;
-        this.nodeServiceForm.name='';
-        this.nodeServiceForm.urls='';
+        this.nodeServiceForm.name = '';
+        this.nodeServiceForm.urls = '';
       },
 
       /**
@@ -331,7 +327,7 @@
             //立即使用
             if (this.nodeServiceForm.resource) {
               for (let itme in this.nodeServiceData) {
-                if (this.nodeServiceData[itme].selection ) {
+                if (this.nodeServiceData[itme].selection) {
                   this.nodeServiceData[itme].selection = false
                 }
               }

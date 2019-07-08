@@ -48,7 +48,7 @@
 </template>
 
 <script>
-  import testnetLogo from './../assets/img/logo-test-black.svg'
+  import testnetLogo from './../assets/img/logo-beta.svg'
   import {superLong, chainIdNumber, addressInfo} from '@/api/util'
 
   export default {

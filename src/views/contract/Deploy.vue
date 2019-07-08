@@ -1,5 +1,5 @@
 <template>
-  <div class="deploy">
+  <div class="deploy" v-loading="deployLoading">
     <div class="select_resource">
       <el-radio-group v-model="resource" @change="changeRadio">
         <el-radio label="1">{{$t('deploy.deploy2')}}</el-radio>
@@ -132,6 +132,7 @@
         balanceInfo: {},//账户余额信息
         isTestSubmit: false,//测试合约
         fileName: '',//jar文件名
+        deployLoading: false,//获取参数加载动画
       };
     },
     props: {
@@ -154,6 +155,13 @@
           this.getBalanceByAddress(this.addressInfo.chainId, 1, this.createAddress);
         }
       },
+      fileName(val, old) {
+        if (val !== old && old) {
+          this.deployForm.parameterList = [];
+          this.deployForm.gas = '';
+          this.deployForm.price = '';
+        }
+      }
     },
     methods: {
 
@@ -163,7 +171,7 @@
        */
       changeRadio(e) {
         this.resource = e;
-        this.fileName='';
+        this.fileName = '';
         this.deployForm = {
           alias: '',
           hex: '',
@@ -189,8 +197,10 @@
        */
       async getParameter() {
         if (this.deployForm.hex.length > 500) {
+          this.deployLoading = true;
           let parameter = await getContractConstructor(this.deployForm.hex);
           if (parameter.success) {
+            this.deployLoading = false;
             if (parameter.data.args.length !== 0) {
               this.deployForm.parameterList = parameter.data.args
             } else {
