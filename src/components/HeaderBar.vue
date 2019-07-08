@@ -20,7 +20,8 @@
             <template slot="title"><i class="iconfont iconzhanghu"></i></template>
             <el-menu-item v-for="item of addressList" :key="item.address" :index="item.address">
               <i class="iconfont iconwo" :class="item.selection ? '' : 'transparent' "></i>
-              <font v-show="!item.alias"> {{item.addresss}} | </font><span v-show="item.alias">{{item.alias}} | </span><span>{{item.balance}}</span>
+              <font v-show="!item.alias"> {{item.addresss}} | </font><span
+                    v-show="item.alias">{{item.alias}} | </span><span>{{item.balance}}</span>
             </el-menu-item>
           </el-submenu>
           <el-submenu index="set">
@@ -35,8 +36,8 @@
             <el-menu-item index="cn">中文</el-menu-item>
             <el-menu-item index="en">English</el-menu-item>
           </el-submenu>
-         <!-- <li class="el-menu-item">|</li>
-          <el-menu-item index="24" disabled>{{$t('nav.help')}}</el-menu-item>-->
+          <!-- <li class="el-menu-item">|</li>
+           <el-menu-item index="24" disabled>{{$t('nav.help')}}</el-menu-item>-->
         </el-menu>
 
       </div>
@@ -47,16 +48,13 @@
 </template>
 
 <script>
-  import * as config from '../config.js'
-  import logo from './../assets/img/logo.svg'
-  //import testnetLogo from './../assets/img/logo-test-black.svg'
-  import testnetLogo from './../assets/img/alpha-black.svg'
+  import testnetLogo from './../assets/img/logo-test-black.svg'
   import {superLong, chainIdNumber, addressInfo} from '@/api/util'
 
   export default {
     data() {
       return {
-        logoSvg: config.RUN_DEV ? logo : testnetLogo, //logo
+        logoSvg: testnetLogo, //logo
         navActive: '/',//菜单选中
         addressList: [], //地址列表
         lang: 'cn', //语言选择
@@ -115,9 +113,9 @@
           return 'transfer'
         } else if (val.indexOf('/consensus') === 0) {
           return 'consensus'
-        } else if(val.indexOf('/contract') === 0){
+        } else if (val.indexOf('/contract') === 0) {
           return 'contract'
-        }else {
+        } else {
           return 'home'
         }
       },
