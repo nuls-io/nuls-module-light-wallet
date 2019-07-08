@@ -210,7 +210,6 @@ export function getArgs(parameterList) {
  * 连接跳转
  * @param name
  * @param parameter
- * @param type 0:路由跳转 1：跳转到浏览器
  */
 export function connectToExplorer(name, parameter) {
   let newUrl = '';
