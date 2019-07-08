@@ -20,7 +20,7 @@
   import nuls from 'nuls-sdk-js'
   import axios from 'axios'
   import {defaultUrl, defaultData} from '@/config.js'
-  import {chainID, chainIdNumber, addressInfo, timesDecimals, equalsObj} from '@/api/util'
+  import {chainID, chainIdNumber, addressInfo, timesDecimals} from '@/api/util'
 
   export default {
     name: "bottom-bar",

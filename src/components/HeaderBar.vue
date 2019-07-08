@@ -48,13 +48,13 @@
 </template>
 
 <script>
-  import testnetLogo from './../assets/img/logo-test-black.svg'
+  import logoSvg from './../assets/img/logo-beta.svg'
   import {superLong, chainIdNumber, addressInfo} from '@/api/util'
 
   export default {
     data() {
       return {
-        logoSvg: testnetLogo, //logo
+        logoSvg: logoSvg, //logo
         navActive: '/',//菜单选中
         addressList: [], //地址列表
         lang: 'cn', //语言选择
