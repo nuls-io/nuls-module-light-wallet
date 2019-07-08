@@ -1,5 +1,5 @@
 import {BigNumber} from 'bignumber.js'
-import {shell} from 'electron';
+//import {shell} from 'electron';
 import copy from 'copy-to-clipboard'
 import {RUN_PATTERN, explorerUrl} from '@/config.js'
 
@@ -234,7 +234,7 @@ export function connectToExplorer(name, parameter) {
   }
   //console.log(newUrl);
   if (RUN_PATTERN) {
-    //const shell = require('electron');
+    const shell = require('electron');
     shell.openExternal(newUrl);
   } else {
     window.open(newUrl, '_blank');

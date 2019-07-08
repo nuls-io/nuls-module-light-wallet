@@ -124,7 +124,7 @@
             let index2 = files[0].length;
             let suffixName = files[0].substring(index1 + 1, index2);//后缀名
             if (suffixName === 'keystore') {
-              let fs = require("fs");
+              /*let fs = require("fs");
               // 异步读取
               fs.readFile(files[0], function (err, data) {
                 if (err) {
@@ -139,7 +139,7 @@
                   console.log(that.keystoreInfo);
                   that.$refs.password.showPassword(true)
                 }
-              });
+              });*/
             } else {
               that.$message({message: that.$t('importAddress.importAddress16'), type: 'error', duration: 1000});
             }

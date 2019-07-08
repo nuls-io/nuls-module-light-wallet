@@ -234,14 +234,14 @@
                   priKey: null
                 };
                 //console.log(JSON.stringify(fileInfo));
-                let fs = require("fs");
+                /*let fs = require("fs");
                 fs.writeFile(fileName, JSON.stringify(fileInfo), 'utf8', function (error) {
                   if (error) {
                     that.$message({message: that.$t('newAddress.newAddress26') + error, type: 'error', duration: 1000});
                     return false;
                   }
                   that.$message({message: that.$t('newAddress.newAddress27') + files, type: 'success', duration: 3000});
-                })
+                })*/
               }
             });
           } else {
