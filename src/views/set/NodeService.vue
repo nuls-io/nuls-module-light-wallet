@@ -162,7 +162,7 @@
        * 连接或断开
        **/
       editState(index) {
-        if (this.nodeServiceData[index].delay === "20000" || this.nodeServiceData[index].delay === "30000") {
+        if (this.nodeServiceData[index].delay === "200000" || this.nodeServiceData[index].delay === "300000") {
           this.$message({message: this.$t('nodeService.nodeService16'), type: 'error', duration: 1000});
         } else {
           if (!this.nodeServiceData[index].selection) {
@@ -199,7 +199,6 @@
         let newData = [];
         let isUrl = true;//是否有可用连接
         for (let item of this.nodeServiceData) {
-
           let startTime = (new Date()).valueOf();
           let endTime = 0;
           const params = {jsonrpc: "2.0", method: "getChainInfo", "params": [], "id": 5898};
@@ -214,11 +213,13 @@
               } else {
                 item.delay = "100000";
                 item.state = 0;
+                item.selection= false;
               }
             })
             .catch(function (error) {
               item.delay = "200000";
               item.state = 0;
+              item.selection= false;
               console.log(error);
             });
 
@@ -236,6 +237,7 @@
             return o.delay
           }));
           for (let item of newData) {
+            item.selection = false;
             if (item.delay === minDelay) {
               item.selection = true;
               localStorage.setItem("urls", JSON.stringify(item));

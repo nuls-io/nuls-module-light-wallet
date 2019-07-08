@@ -1,6 +1,6 @@
 const IS_DEV = process.env.NODE_ENV !== 'production';//开发模式
 const log4js = require('log4js');
-//console.log(IS_DEV);
+
 let fileUrl = IS_DEV ? 'wallet_web_log/data.log' : __dirname + '../../../wallet_web_log/data.log';
 log4js.configure({
   appenders: {

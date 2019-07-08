@@ -1,5 +1,5 @@
 'use strict';
-import {app, protocol, BrowserWindow, ipcMain,Menu,MenuItem} from 'electron'
+import {app, protocol, BrowserWindow, ipcMain, Menu, MenuItem} from 'electron'
 import {createProtocol, installVueDevtools} from 'vue-cli-plugin-electron-builder/lib'
 import {autoUpdater} from 'electron-updater'
 
@@ -14,14 +14,18 @@ function createWindow() {
       {
         label: "Application",
         submenu: [
-          { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
+          {
+            label: "Quit", accelerator: "Command+Q", click: function () {
+              app.quit();
+            }
+          }
         ]
       },
       {
         label: "Edit",
         submenu: [
-          { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-          { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+          {label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"},
+          {label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:"},
         ]
       }
     ];
@@ -35,7 +39,8 @@ function createWindow() {
     height: 900,
     minWidth: 1300,
     minHeight: 800,
-    });
+    webPreferences: {webSecurity: false}
+  });
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
     if (!process.env.IS_TEST) win.webContents.openDevTools();
