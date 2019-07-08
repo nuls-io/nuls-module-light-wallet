@@ -269,6 +269,9 @@ export function localStorageByAddressInfo(newAddressInfo) {
         item.pub = newAddressInfo.pub;
         ifAddress = true
       }
+      if(item.selection){
+        newAddressList[0].selection = false;
+      }
     }
     if (ifAddress) {
       addressList = [...newArr]
