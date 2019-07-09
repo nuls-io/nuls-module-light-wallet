@@ -10,8 +10,12 @@
     </div>
     <div class="w1200 mt_20 bg-white">
       <div class="radio" v-show="!this.$route.query.address">
-        <el-radio v-model="importRadio" label="importKeystore">{{$t('importAddress.importAddress2')}}</el-radio>
-        <el-radio v-model="importRadio" label="importKey">{{$t('importAddress.importAddress3')}}</el-radio>
+        <el-radio v-model="importRadio" label="importKeystore" v-show="RUN_PATTERN">
+          {{$t('importAddress.importAddress2')}}
+        </el-radio>
+        <el-radio v-model="importRadio" label="importKey" v-show="RUN_PATTERN">
+          {{$t('importAddress.importAddress3')}}
+        </el-radio>
       </div>
 
       <div class="btn mb_100" v-show="importRadio==='importKeystore'">
@@ -46,7 +50,8 @@
   import nuls from 'nuls-sdk-js'
   import BackBar from '@/components/BackBar'
   import Password from '@/components/PasswordBar'
-  import {chainID, chainIdNumber, addressInfo, defaultAddressInfo,localStorageByAddressInfo} from '@/api/util'
+  import {chainID, defaultAddressInfo, localStorageByAddressInfo} from '@/api/util'
+  import {RUN_PATTERN} from '@/config.js'
 
   export default {
     data() {
@@ -97,10 +102,14 @@
           key: [
             {validator: checkKey, trigger: ['blur', 'change']}
           ]
-        }
+        },
+        RUN_PATTERN: RUN_PATTERN,//运行模式
       };
     },
     created() {
+      if (!RUN_PATTERN) {
+        this.importRadio = 'importKey';
+      }
     },
     components: {
       BackBar,
@@ -123,7 +132,7 @@
             let index1 = files[0].lastIndexOf(".");
             let index2 = files[0].length;
             let suffixName = files[0].substring(index1 + 1, index2);//后缀名
-            if (suffixName === 'keystore') {
+            if (suffixName === 'keystore' && RUN_PATTERN) {
               let fs = require("fs");
               // 异步读取
               fs.readFile(files[0], function (err, data) {

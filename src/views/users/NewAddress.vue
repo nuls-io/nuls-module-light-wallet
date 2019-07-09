@@ -74,7 +74,8 @@
         </div>
 
         <div class="btn mb_20">
-          <el-button type="success" @click="backKeystore">{{$t('newAddress.newAddress16')}}</el-button>
+          <el-button type="success" @click="backKeystore" v-show="RUN_PATTERN">{{$t('newAddress.newAddress16')}}
+          </el-button>
           <el-button type="text" @click="backKey">{{$t('newAddress.newAddress17')}}</el-button>
           <el-button type="info" @click="goWallet" v-show="false">{{$t('newAddress.newAddress18')}}</el-button>
         </div>
@@ -104,6 +105,7 @@
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
   import {copys, chainID, chainIdNumber, defaultAddressInfo, localStorageByAddressInfo} from '@/api/util'
+  import {RUN_PATTERN} from '@/config.js'
 
   export default {
     data() {
@@ -152,6 +154,7 @@
         },
         newAddressInfo: {}, //新建的地址信息
         backType: 0,//备份类型 0：keystore备份 1：明文私钥备份
+        RUN_PATTERN: RUN_PATTERN,//运行模式
       };
     },
     created() {
@@ -233,15 +236,25 @@
                   pubKey: newAddressInfo.pubKey,
                   priKey: null
                 };
-                //console.log(JSON.stringify(fileInfo));
-                let fs = require("fs");
-                fs.writeFile(fileName, JSON.stringify(fileInfo), 'utf8', function (error) {
-                  if (error) {
-                    that.$message({message: that.$t('newAddress.newAddress26') + error, type: 'error', duration: 1000});
-                    return false;
-                  }
-                  that.$message({message: that.$t('newAddress.newAddress27') + files, type: 'success', duration: 3000});
-                })
+                if (RUN_PATTERN) {
+                  //console.log(JSON.stringify(fileInfo));
+                  let fs = require("fs");
+                  fs.writeFile(fileName, JSON.stringify(fileInfo), 'utf8', function (error) {
+                    if (error) {
+                      that.$message({
+                        message: that.$t('newAddress.newAddress26') + error,
+                        type: 'error',
+                        duration: 1000
+                      });
+                      return false;
+                    }
+                    that.$message({
+                      message: that.$t('newAddress.newAddress27') + files,
+                      type: 'success',
+                      duration: 3000
+                    });
+                  })
+                }
               }
             });
           } else {

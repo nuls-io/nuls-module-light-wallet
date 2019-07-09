@@ -144,7 +144,7 @@
         isRed: false,//地址是否有红牌
         isNew: false,//账户是否已经创建了节点
         pageIndex: 1, //页码
-        pageSize: 20, //每页条数
+        pageSize: 500, //每页条数
         pageTotal: 0,//总页数
         myNodeData: [],//我的节点信息
         setInterval: null,//定时器变量
