@@ -26,6 +26,9 @@
           <el-form-item label="Price" prop="price">
             <el-input v-model="callForm.price"></el-input>
           </el-form-item>
+          <el-form-item label="Value" prop="values" v-show="selectionData.payable">
+            <el-input v-model="callForm.values"></el-input>
+          </el-form-item>
         </div>
       </div>
 
@@ -52,6 +55,37 @@
 
   export default {
     data() {
+
+      let validateGas = (rule, value, callback) => {
+        if (!value) {
+          callback(new Error(this.$t('deploy.deploy8')));
+        } else if (value < 1) {
+          this.callForm.gas = 1;
+          callback();
+        } else if (value > 10000000) {
+          this.callForm.gas = 10000000;
+          callback();
+        } else {
+          callback();
+        }
+      };
+      let validatePrice = (rule, value, callback) => {
+        if (!value) {
+          callback(new Error(this.$t('deploy.deploy9')));
+        } else if (value < 1) {
+          this.callForm.price = 1;
+        } else {
+          callback();
+        }
+      };
+      let validateValues = (rule, value, callback) => {
+        if (value < 0) {
+          this.callForm.values = 0;
+        } else {
+          callback();
+        }
+      };
+
       return {
         addressInfo: {},//地址信息
         balanceInfo: {},//账户余额信息
@@ -67,15 +101,19 @@
         },
         callRules: {
           gas: [
-            {type: 'number', required: true, message: this.$t('deploy.deploy8'), trigger: 'blur'},
+            {validator: validateGas, trigger: ['blur', 'change']}
           ],
           price: [
-            {type: 'number', required: true, message: this.$t('deploy.deploy9'), trigger: 'blur'},
+            {validator: validatePrice, trigger: 'blur'}
+          ],
+          values: [
+            {validator: validateValues, trigger: 'blur'}
           ]
         },
         //选中的方法
         selectionData: {
           view: true,
+          payable:false,
         },
         contractCallData: {},//调用合约data
         callResult: '',//调用合约结果
@@ -84,6 +122,7 @@
     props: {
       modelList: Array,
       contractAddress: String,
+      decimals: Number,
     },
     components: {
       Password,
@@ -116,13 +155,17 @@
        **/
       changeModel(val) {
         this.callResult = '';
+        this.callForm.parameterList=[];
         for (let itme of this.callForm.modelData) {
           if (itme.name === val) {
             this.selectionData = itme;
             this.callForm.parameterList = itme.params;
+            if(itme.params.length === 0){
+              this.chainMethodCall();
+            }
             if (!itme.view) {
               this.callForm.gas = 0;
-              this.callForm.price = 0;
+              //this.callForm.price = 0;
             }
           }
         }
@@ -145,7 +188,7 @@
             if (this.selectionData.view) {  //不上链方法
               let newArgs = [];
               if (this.selectionData.params.length > 0) { //有参数
-                newArgs = getArgs(this.callForm.parameterList);
+                newArgs = getArgs(this.callForm.parameterList, this.decimals);
                 if (newArgs.allParameter) {
                   this.methodCall(this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs.args)
                 }
@@ -155,7 +198,6 @@
             } else { //上链方法
               this.chainMethodCall();
               this.$refs.password.showPassword(true);
-
             }
           } else {
             return false;
@@ -192,12 +234,12 @@
         let newArgs = [];
         this.callForm.price = sdk.CONTRACT_MINIMUM_PRICE;
         if (this.selectionData.params.length > 0) { //有参数
-          newArgs = getArgs(this.callForm.parameterList);
+          newArgs = getArgs(this.callForm.parameterList, this.decimals);
           if (newArgs.allParameter) {
-            this.validateContractCall(this.addressInfo.address, 0, sdk.CONTRACT_MAX_GASLIMIT, sdk.CONTRACT_MINIMUM_PRICE, this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs.args);
+            this.validateContractCall(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), sdk.CONTRACT_MAX_GASLIMIT, sdk.CONTRACT_MINIMUM_PRICE, this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs.args);
           }
         } else { //没参数
-          this.validateContractCall(this.addressInfo.address, 0, sdk.CONTRACT_MAX_GASLIMIT, sdk.CONTRACT_MINIMUM_PRICE, this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs);
+          this.validateContractCall(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), sdk.CONTRACT_MAX_GASLIMIT, sdk.CONTRACT_MINIMUM_PRICE, this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs);
         }
       },
 
@@ -242,10 +284,9 @@
           .then((response) => {
             if (response.hasOwnProperty("result")) {
               this.callForm.gas = response.result.gasLimit;
-
               let contractConstructorArgsTypes = this.getContractMethodArgsTypes(contractAddress, methodName);
               let newArgs = utils.twoDimensionalArray(args, contractConstructorArgsTypes);
-
+              console.log(value);
               this.contractCallData = {
                 chainId: chainID(),
                 sender: sender,
@@ -326,7 +367,8 @@
           };
           if (this.callForm.values > 0) {
             transferInfo.toAddress = this.contractAddress;
-            transferInfo.value = this.callForm.values;
+            transferInfo.value = Number(Times(this.callForm.values, 100000000));
+            transferInfo.amount = Number(Plus(transferInfo.value,amount))
           }
           let remark = '';
           let inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 16);
@@ -351,12 +393,11 @@
             if (response.success) {
               this.callResult = response
             } else {
-              if(response.data.code ==='err_0014'){
+              if (response.data.code === 'err_0014') {
                 this.$message({message: response.data.message, type: 'error', duration: 3000});
-              }else {
+              } else {
                 this.$message({message: this.$t('error.' + response.data.code), type: 'error', duration: 3000});
               }
-
             }
           }).catch((err) => {
             this.$message({message: this.$t('public.err1') + err, type: 'error', duration: 1000});

@@ -183,15 +183,19 @@ export function getLocalTime(time) {
  * @param parameterList
  * @returns {{allParameter: boolean, args: Array}}
  */
-export function getArgs(parameterList) {
+export function getArgs(parameterList, decimals = 0) {
   let newArgs = [];
   let allParameter = false;
   if (parameterList.length !== 0) {
     //循环获取必填参数
     for (let itme of parameterList) {
       if (itme.required && itme.value) {
+        let newValue = itme.value;
+        if (itme.type === 'BigInteger' && decimals !== 0) {
+         newValue = Number(Times(itme.value, Power(decimals)));
+        }
         allParameter = true;
-        newArgs.push(itme.value)
+        newArgs.push(newValue);
       } else {
         allParameter = false
       }
@@ -269,7 +273,7 @@ export function localStorageByAddressInfo(newAddressInfo) {
         item.pub = newAddressInfo.pub;
         ifAddress = true
       }
-      if(item.selection){
+      if (item.selection) {
         newAddressList[0].selection = false;
       }
     }

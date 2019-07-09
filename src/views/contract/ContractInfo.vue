@@ -100,7 +100,7 @@
         </el-tab-pane>
         <el-tab-pane :label="$t('type.16')" name="fourth" class="bg-white">
           <div class="w630" style="padding-bottom: 50px">
-            <Call :modelList="modelData" :contractAddress="contractAddress"></Call>
+            <Call :modelList="modelData" :contractAddress="contractAddress" :decimals="decimals"></Call>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -144,6 +144,7 @@
         pageTotal: 0,//总页数
         modeList: [],//合约方法列表
         modelData: [],//合约方法列表
+        decimals:0,//合约精度系数
 
       };
     },
@@ -202,6 +203,7 @@
               response.result.balance = timesDecimals(response.result.balance);
               this.contractInfo = response.result;
               this.modelData = response.result.methods;
+              this.decimals = response.result.decimals;
               this.modeList = response.result.methods;
               this.isCancel = this.addressInfo.address === this.contractInfo.creater
             } else {

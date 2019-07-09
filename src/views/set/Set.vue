@@ -108,8 +108,6 @@
           let temp = "/" + ss[ss.length - 2];
           let num = str.lastIndexOf(temp);
           this.logUrl = str.slice(0, num) + '/wallet_web_log';
-        } else {
-
         }
       }
     }
