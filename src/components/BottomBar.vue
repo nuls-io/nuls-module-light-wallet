@@ -19,7 +19,7 @@
 <script>
   import nuls from 'nuls-sdk-js'
   import axios from 'axios'
-  import {defaultUrl, defaultData} from '@/config.js'
+  import {defaultData} from '@/config.js'
   import {chainID, chainIdNumber, addressInfo, timesDecimals} from '@/api/util'
 
   export default {

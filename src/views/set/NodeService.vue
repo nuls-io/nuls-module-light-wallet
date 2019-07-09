@@ -278,14 +278,14 @@
                   that.testInfo.result = response.data.result;
                   that.nodeServiceDialogLoading = false;
                 } else {
-                  that.testInfo.state = 20000;
+                  that.testInfo.state = 200000;
                   that.testInfo.result = response.data;
                   that.nodeServiceDialogLoading = false;
                 }
               })
               .catch(function (error) {
                 console.log(that.testInfo.success);
-                that.testInfo.state = 30000;
+                that.testInfo.state = 300000;
                 that.testInfo.result = error;
                 console.log("getBestBlockHeader:" + error);
                 that.nodeServiceDialogLoading = false;

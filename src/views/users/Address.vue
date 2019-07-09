@@ -78,7 +78,7 @@
 <script>
   import nuls from 'nuls-sdk-js'
   import Password from '@/components/PasswordBar'
-  import {timesDecimals,chainIdNumber, addressInfo} from '@/api/util'
+  import {timesDecimals, chainIdNumber, addressInfo} from '@/api/util'
 
   export default {
     data() {
@@ -123,8 +123,8 @@
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
-              for(let item of this.addressList){
-                if(item.address === addressInfo.address){
+              for (let item of this.addressList) {
+                if (item.address === addressInfo.address) {
                   addressInfo.alias = response.result.alias;
                   addressInfo.balance = timesDecimals(response.result.balance);
                   addressInfo.consensusLock = timesDecimals(response.result.consensusLock);
@@ -133,7 +133,7 @@
                   addressInfo.chainId = nuls.verifyAddress(item.address).chainId;
                 }
               }
-              localStorage.setItem(chainIdNumber(),JSON.stringify(this.addressList))
+              localStorage.setItem(chainIdNumber(), JSON.stringify(this.addressList))
             }
           })
           .catch((error) => {
@@ -181,7 +181,7 @@
         this.selectAddressInfo = rowInfo;
         this.$router.push({
           name: "newAddress",
-          query: {'backAddressInfo':rowInfo}
+          query: {'backAddressInfo': rowInfo}
         })
       },
 
@@ -198,7 +198,7 @@
        * 进入账户（使用账户）
        * @param rowInfo
        **/
-      selectionAddress(rowInfo){
+      selectionAddress(rowInfo) {
         //console.log(rowInfo);
         for (let item  of this.addressList) {
           //清除选中
@@ -226,7 +226,10 @@
         const deleteAddressInfo = nuls.importByKey(this.selectAddressInfo.chainId, pri, password);
         if (deleteAddressInfo.address === this.selectAddressInfo.address) {
           newAddressInfo.splice(newAddressInfo.findIndex(item => item.address === this.selectAddressInfo.address), 1);
-          localStorage.setItem(chainIdNumber(),JSON.stringify(newAddressInfo));
+          if (this.selectAddressInfo.selection && newAddressInfo.length !== 0) {
+            newAddressInfo[0].selection = true;
+          }
+          localStorage.setItem(chainIdNumber(), JSON.stringify(newAddressInfo));
           this.getAddressList();
         } else {
           this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
@@ -248,13 +251,13 @@
        */
       addRemark() {
         let newAddressInfo = addressInfo(0);
-        for(let item of newAddressInfo){
-          if(item.address === this.selectAddressInfo.address){
+        for (let item of newAddressInfo) {
+          if (item.address === this.selectAddressInfo.address) {
             this.selectAddressInfo.remark = this.remarkInfo;
             item.remark = this.remarkInfo;
           }
         }
-        localStorage.setItem(chainIdNumber(),JSON.stringify(newAddressInfo));
+        localStorage.setItem(chainIdNumber(), JSON.stringify(newAddressInfo));
         this.remarkDialog = false;
         this.selectAddressInfo = '';
       },
