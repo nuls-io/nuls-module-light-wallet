@@ -597,6 +597,7 @@ const en = {
     "nodeService13": "Name cannot be empty",
     "nodeService14": "Address cannot be empty",
     "nodeService15": "Please enter the correct connection address",
+    "nodeService151": "Service address already exists, please change service address!",
     "nodeService16": "Nodes cannot be connected",
     "nodeService17": "Connection failed",
     "nodeService18": "Request timeout",

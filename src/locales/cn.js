@@ -572,6 +572,7 @@ const cn = {
     "nodeService13": "名称不能为空",
     "nodeService14": "地址不能为空",
     "nodeService15": "请输入正确的连接地址",
+    "nodeService151": "服务地址已经存在，请更换服务地址！",
     "nodeService16": "节点不可以连接",
     "nodeService17": "连接失败",
     "nodeService18": "请求超时",

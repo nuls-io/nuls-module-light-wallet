@@ -233,7 +233,7 @@ export function connectToExplorer(name, parameter) {
   }
   //console.log(newUrl);
   if (RUN_PATTERN) {
-    shell.openExternal(newUrl);
+    //shell.openExternal(newUrl);
   } else {
     window.open(newUrl, '_blank');
   }

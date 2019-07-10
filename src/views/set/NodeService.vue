@@ -67,7 +67,7 @@
                       @change="changeUrls">
             </el-input>
           </el-form-item>
-          <el-form-item class="btns tl">
+          <el-form-item class="btns tl" style="margin-top: 2.5rem">
             <el-button type="success" class="fl" @click="testSubmitForm('nodeServiceForm')">
               {{$t('nodeService.nodeService11')}}
             </el-button>
@@ -110,8 +110,10 @@
         if (value === '') {
           callback(new Error(this.$t('nodeService.nodeService14')));
         } else if (!patrn.exec(value)) {
-          callback(new Error(this.$t('nodeService.nodeService15')))
-        } else {
+          callback(new Error(this.$t('nodeService.nodeService15')));
+        }else if(this.nodeServiceData.find((v) => {return v.urls === value;})) {
+          callback(new Error(this.$t('nodeService.nodeService151')));
+        }else {
           callback();
         }
       };
