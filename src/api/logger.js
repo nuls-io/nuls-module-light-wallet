@@ -1,7 +1,8 @@
-const IS_DEV = process.env.NODE_ENV !== 'production';//开发模式
-const log4js = require('log4js');
+//const IS_DEV = process.env.NODE_ENV !== 'production';//开发模式
+//const log4js = require('log4js');
+const log4js = {};
 
-let fileUrl = IS_DEV ? 'wallet_web_log/data.log' : __dirname + '../../../wallet_web_log/data.log';
+/*let fileUrl = IS_DEV ? 'wallet_web_log/data.log' : __dirname + '../../../wallet_web_log/data.log';
 log4js.configure({
   appenders: {
     everything: {
@@ -18,6 +19,7 @@ log4js.configure({
     }
   }
 });
+*/
 
 //获取logger对象
 let logger = log4js.getLogger();
