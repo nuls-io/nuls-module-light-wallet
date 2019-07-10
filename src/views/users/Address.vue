@@ -28,7 +28,7 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('address.address5')" align="center" width="300">
+        <el-table-column :label="$t('address.address5')" align="center" width="350">
           <template slot-scope="scope">
             <label class="click tab_bn" @click="editPassword(scope.row)">{{$t('address.address6')}}</label>
             <span class="tab_line">|</span>
@@ -36,8 +36,8 @@
             <span class="tab_line">|</span>
             <label class="click tab_bn" @click="deleteAddress(scope.row)">{{$t('address.address8')}}</label>
             <span class="tab_line">|</span>
-            <el-link disabled v-if="scope.row.selection">进入</el-link>
-            <label class="click tab_bn" @click="selectionAddress(scope.row)" v-else>进入</label>
+            <el-link disabled v-if="scope.row.selection">{{$t('public.into')}}</el-link>
+            <label class="click tab_bn" @click="selectionAddress(scope.row)" v-else>{{$t('public.into')}}</label>
           </template>
         </el-table-column>
       </el-table>

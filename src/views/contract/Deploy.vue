@@ -530,7 +530,7 @@
     }
     .senior-div {
       .el-form-item {
-        margin: 0 0 5px 0;
+        margin: 0 0 15px 0;
         .el-form-item__label {
           line-height: 24px;
         }

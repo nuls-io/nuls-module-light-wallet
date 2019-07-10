@@ -9,8 +9,19 @@
 </head>
 <body>
 <div id="app">
+  <div style="margin: 10rem auto 0;width: 15rem;">
+    <img src="https://beta.wallet.nuls.io/img/alpha-black.4d43afc3.svg" width="300" id="loading" class="loading">
+  </div>
 </div>
 <!-- built files will be auto injected -->
 </body>
 </html>
+
+<script>
+  function load() {
+    setTimeout(() => {
+      document.getElementById("loading").style.visibility = 'hidden'
+    }, 50000);
+  }
+</script>
 

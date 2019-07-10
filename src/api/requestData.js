@@ -212,8 +212,7 @@ export async function validateAndBroadcast(txHex) {
  * @returns {Promise<any>}
  **/
 export async function agentDeposistList(agentHash) {
-  //todo 这个接口是临时处理，后面要换一个接口，否则超过100个委托会出问题
-  return await post('/', 'getConsensusDeposit', [1, 100, agentHash])
+  return await post('/', 'getConsensusDeposit', [1, 300, agentHash])
     .then((response) => {
       return response.result;
     })

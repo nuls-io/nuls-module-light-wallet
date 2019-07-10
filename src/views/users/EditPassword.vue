@@ -22,7 +22,7 @@
           <el-form-item class="form-next">
             <el-button type="success" @click="submitPasswordForm('passwordForm')">{{$t('editPassword.editPassword4')}}
             </el-button>
-            <div>{{$t('editPassword.editPassword5')}}<span class="click" @click="toUrl('importAddress')">重新导入</span>
+            <div>{{$t('editPassword.editPassword5')}}<span class="click" @click="toUrl('importAddress')"> {{$t('public.re-import')}}</span>
             </div>
           </el-form-item>
         </el-form>
