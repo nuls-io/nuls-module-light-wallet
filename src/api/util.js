@@ -184,16 +184,21 @@ export function getLocalTime(time) {
  * @returns {{allParameter: boolean, args: Array}}
  */
 export function getArgs(parameterList) {
+  //console.log(parameterList);
   let newArgs = [];
   let allParameter = false;
   if (parameterList.length !== 0) {
     //循环获取必填参数
     for (let itme of parameterList) {
-      if (itme.required && itme.value) {
-        allParameter = true;
+      if (itme.required) {
+        if(itme.value){
+          allParameter = true;
+          newArgs.push(itme.value)
+        }else{
+          allParameter = false;
+        }
+      }else{
         newArgs.push(itme.value)
-      } else {
-        allParameter = false
       }
     }
     if (allParameter) {
@@ -268,7 +273,7 @@ export function localStorageByAddressInfo(newAddressInfo) {
         item.pub = newAddressInfo.pub;
         ifAddress = true
       }
-      if(item.selection){
+      if (item.selection) {
         newAddressList[0].selection = false;
       }
     }
