@@ -35,7 +35,7 @@
         <el-input v-model.trim="remarkInfo" :placeholder="$t('address.address9')"></el-input>
         <div class="btn-next">
           <el-button @click="remarkDialog=false">{{$t('address.address10')}}</el-button>
-          <el-button type="success" @click='addRemark'>{{$t('address.address11')}}</el-button>
+          <el-button type="success" @click='addOrEditRemark'>{{$t('address.address11')}}</el-button>
         </div>
       </div>
     </el-dialog>
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-  import {chainID, addressInfo} from '@/api/util'
+  import {chainID} from '@/api/util'
 
   export default {
     data() {
@@ -87,9 +87,10 @@
        */
       addOrEditRemark(rowInfo) {
         this.contactDialog = true;
-        if (rowInfo) {
+        console.log(rowInfo)
+        /*if (rowInfo) {
 
-        }
+        }*/
       },
 
       /**

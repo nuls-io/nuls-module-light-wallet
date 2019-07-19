@@ -554,25 +554,6 @@
       },
 
       /**
-       * 获取合约指定函数的参数类型
-       * @param contractAddress
-       * @param  methodName
-       */
-      async getContractMethodArgsTypes(contractAddress, methodName) {
-        return await this.$post('/', 'getContractMethodArgsTypes', [contractAddress, methodName])
-          .then((response) => {
-            if (response.hasOwnProperty("result")) {
-              return {success: true, data: response.result};
-            } else {
-              return {success: false, data: response.error};
-            }
-          })
-          .catch((error) => {
-            return {success: false, data: error};
-          });
-      },
-
-      /**
        *  获取密码框的密码
        * @param password
        **/
