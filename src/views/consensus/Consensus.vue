@@ -20,7 +20,7 @@
           <li>
             {{$t('consensus.consensus1')}}
             <label>
-              <u class="click" @click="toUrl('consensusList')">{{addressInfo.consensusLock}}</u>
+              <u class="click" @click="toUrl('consensusList',addressInfo.consensusLock)">{{addressInfo.consensusLock}}</u>
               <span class="fCN">{{agentAsset.agentAsset.symbol}}</span>
             </label>
           </li>
@@ -463,7 +463,7 @@
         if (name === 'consensusInfo') {
           newQuery = {hash: params}
         } else {
-          newQuery = {}
+          newQuery = {consensusLock:params}
         }
         this.$router.push({
           name: name,

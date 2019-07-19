@@ -1,8 +1,9 @@
 import {BigNumber} from 'bignumber.js'
-//import {shell} from 'electron';
+// import {shell} from 'electron';
 import copy from 'copy-to-clipboard'
-import {RUN_PATTERN, explorerUrl} from '@/config.js'
-
+import {explorerUrl} from '@/config.js'
+import openner from "./opener-web";
+// import openner from "./opener-desktop";
 /**
  * 10的N 次方
  * @param arg
@@ -198,14 +199,15 @@ export function getArgs(parameterList) {
           allParameter = false;
         }
       }else{
-        newArgs.push(itme.value)
+        allParameter = true;
+        if(!itme.value){
+          newArgs.push('')
+        }else {
+          newArgs.push(itme.value)
+        }
       }
     }
-    if (allParameter) {
-      return {allParameter: allParameter, args: newArgs};
-    } else {
-      return {allParameter: allParameter, args: newArgs};
-    }
+    return {allParameter: allParameter, args: newArgs};
   } else {
     return {allParameter: true, args: newArgs};
   }
@@ -236,12 +238,7 @@ export function connectToExplorer(name, parameter) {
   else if (name === 'transactionInfo') {
     newUrl = explorerUrl + 'transaction/info?hash=' + parameter
   }
-  //console.log(newUrl);
-  if (RUN_PATTERN) {
-    //shell.openExternal(newUrl);
-  } else {
-    window.open(newUrl, '_blank');
-  }
+  openner(newUrl);
 }
 
 //地址必须参数列表

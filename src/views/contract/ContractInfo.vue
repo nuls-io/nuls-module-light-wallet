@@ -186,8 +186,8 @@
     },
     methods: {
 
-      handleClick(tab, event) {
-        console.log(tab, event);
+      handleClick() {
+        //console.log(tab, event);
       },
 
       /**

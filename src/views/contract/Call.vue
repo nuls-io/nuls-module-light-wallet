@@ -3,12 +3,12 @@
     <el-form :model="callForm" :rules="callRules" ref="callForm" class="call-form">
       <el-form-item label="" prop="region" class="search-model">
         <el-select v-model="callForm.modelValue" :placeholder="$t('call.call1')" @change="changeModel">
-          <el-option v-for="item in callForm.modelData" :key="item.name" :label="item.name"
-                     :value="item.name">
+          <el-option v-for="item in callForm.modelData" :key="item.keys" :label="item.name"
+                     :value="item.keys">
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item v-for="(domain, index) in callForm.parameterList" :label="domain.name" :key="domain.name"
+      <el-form-item v-for="(domain, index) in callForm.parameterList" :label="domain.name" :key="domain.keys"
                     :prop="'parameterList.' + index + '.value'"
                     :rules="{required: domain.required,message:domain.name+$t('call.call2'), trigger: 'blur'}"
       >
@@ -113,7 +113,7 @@
         //选中的方法
         selectionData: {
           view: true,
-          payable:false,
+          payable: false,
         },
         contractCallData: {},//调用合约data
         callResult: '',//调用合约结果
@@ -128,7 +128,15 @@
       Password,
     },
     created() {
-      this.callForm.modelData = this.modelList;
+      setTimeout(() => {
+        if (this.modelList) {
+          for (let item in this.modelList) {
+            this.modelList[item].keys = item;
+          }
+        }
+        //console.log(this.modelList);
+        this.callForm.modelData = this.modelList;
+      },300);
       this.addressInfo = addressInfo(1);
       setInterval(() => {
         this.addressInfo = addressInfo(1);
@@ -136,7 +144,6 @@
       this.getBalanceByAddress(chainID(), 1, this.addressInfo.address);
     },
     mounted() {
-
     },
     watch: {
       modelList(val) {
@@ -154,19 +161,25 @@
        *  方法选择
        **/
       changeModel(val) {
+        console.log(val);
         this.callResult = '';
-        this.callForm.parameterList=[];
+        this.callForm.parameterList = [];
         for (let itme of this.callForm.modelData) {
-          if (itme.name === val) {
+          if (itme.keys === val) {
             this.selectionData = itme;
             this.callForm.parameterList = itme.params;
-            if(itme.params.length === 0){
-              this.chainMethodCall();
-            }
-            if (!itme.view) {
+            if (!itme.view) {//上链方法
               this.callForm.gas = 0;
-              //this.callForm.price = 0;
               this.callForm.values = 0;
+              if (itme.params.length === 0) {
+                this.chainMethodCall();
+              } else {
+                let newParams = itme.params;
+                let isRequired = newParams.map((o) => o.required).find((n) => n === true);
+                if (!isRequired) {
+                  this.chainMethodCall();
+                }
+              }
             }
           }
         }
@@ -188,7 +201,7 @@
           if (valid) {
             if (this.selectionData.view) {  //不上链方法
               let newArgs = [];
-              if (this.selectionData.params.length > 0) { //有参数
+              if (this.selectionData.params.length !== 0) { //有参数
                 newArgs = getArgs(this.callForm.parameterList, this.decimals);
                 if (newArgs.allParameter) {
                   this.methodCall(this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs.args)
@@ -234,7 +247,7 @@
       chainMethodCall() {
         let newArgs = [];
         this.callForm.price = sdk.CONTRACT_MINIMUM_PRICE;
-        if (this.selectionData.params.length > 0) { //有参数
+        if (this.selectionData.params.length !== 0) { //有参数
           newArgs = getArgs(this.callForm.parameterList, this.decimals);
           if (newArgs.allParameter) {
             this.validateContractCall(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), sdk.CONTRACT_MAX_GASLIMIT, sdk.CONTRACT_MINIMUM_PRICE, this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs.args);
@@ -259,15 +272,15 @@
         return await this.$post('/', 'validateContractCall', [sender, value, gasLimit, price, contractAddress, methodName, methodDesc, args])
           .then((response) => {
             //console.log(response);
-            if (response.hasOwnProperty("result")) {
+            if (response.result.success) {
               //return {success: true, data: response.result};
               this.imputedContractCallGas(sender, value, contractAddress, methodName, methodDesc, args)
             } else {
-              this.$message({message: this.$t('call.call6') + response, type: 'error', duration: 1000});
+              this.$message({message: this.$t('call.call6') + response.result.msg, type: 'error', duration: 2000});
             }
           })
           .catch((error) => {
-            this.$message({message: this.$t('call.call7') + error, type: 'error', duration: 1000});
+            this.$message({message: this.$t('call.call7') + error, type: 'error', duration: 2000});
           });
       },
 
@@ -368,7 +381,7 @@
           if (this.callForm.values > 0) {
             transferInfo.toAddress = this.contractAddress;
             transferInfo.value = Number(Times(this.callForm.values, 100000000));
-            transferInfo.amount = Number(Plus(transferInfo.value,amount))
+            transferInfo.amount = Number(Plus(transferInfo.value, amount))
           }
           let remark = '';
           let inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 16);
@@ -476,6 +489,23 @@
       margin: 0 auto;
       border-top: 0 solid #ffffff;
       padding: 20px;
+      overflow: auto;
+      &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+        border-radius: 2px;
+      }
+
+      &::-webkit-scrollbar {
+        width: 2px;
+        background-color: #dfe4ed;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        width: 2px;
+        background-image: -webkit-gradient(linear, 20% 0%, 20% 0%, from(#d1dbe5), to(#d1dbe5), color-stop(.2, #ffffff))
+      }
     }
   }
 
