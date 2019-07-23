@@ -64,6 +64,7 @@ const cn = {
     "operatingSystem":"操作系统",
     "into":"进入",
     "re-import":"重新导入",
+    "item":"条",
     "":"",
 
     "err": "验证并广播交易失败:",
@@ -622,7 +623,7 @@ const cn = {
     "newAddress15": "请制作备份！ 以防您的电脑故障",
     "newAddress16": "Keystore备份",
     "newAddress17": "明文私钥备份",
-    "newAddress18": "进入钱包",
+    "newAddress18": "完 成",
     "newAddress19": "安全警告:私钥未经加密，备份存在风险，请保存到安全的地方，建议使用Keystore进行备份",
     "newAddress20": "",
     "newAddress21": "复制",

@@ -18,16 +18,18 @@
         </el-table-column>
         <el-table-column label="节点ID" align="center" min-width="200">
           <template slot-scope="scope">
-            <span class="click uppercase" @click="toUrl('consensusInfo',scope.row.agentHash)">{{scope.row.agendID}}</span>
+            <span class="click uppercase"
+                  @click="toUrl('consensusInfo',scope.row.agentHash)">{{scope.row.agendID}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="amount" :label="$t('public.amount') + '('+agentAsset.agentAsset.symbol+')'" align="center">
+        <el-table-column prop="amount" :label="$t('public.amount') + '('+agentAsset.agentAsset.symbol+')'"
+                         align="center">
         </el-table-column>
       </el-table>
       <div class="pages">
         <div class="page-total">
-          {{$t('public.display')}} {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
-          {{$t('public.total')}} {{pageTotal}}
+          {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
+          of {{pageTotal}}
         </div>
 
         <el-pagination v-show="pageTotal > pageSize" @current-change="consensusPages" class="fr" background
@@ -43,7 +45,7 @@
 
 <script>
   import moment from 'moment'
-  import {timesDecimals, getLocalTime,addressInfo} from '@/api/util'
+  import {timesDecimals, getLocalTime, addressInfo} from '@/api/util'
   import BackBar from '@/components/BackBar'
 
   export default {
@@ -51,7 +53,7 @@
       return {
         consensusData: [],//委托列表
         addressInfo: {},//账户信息
-        agentAsset:JSON.parse(sessionStorage.getItem('info')),//pocm合约单位等信息
+        agentAsset: JSON.parse(sessionStorage.getItem('info')),//pocm合约单位等信息
         consensusDataLoading: true,//委托类别加载动画
         pageIndex: 1, //页码
         pageSize: 10, //每页条数
@@ -59,7 +61,7 @@
       };
     },
     created() {
-      this.totalAmount= Number(this.$route.query.consensusLock);
+      this.totalAmount = Number(this.$route.query.consensusLock);
       console.log(this.$route.query.consensusLock);
       this.addressInfo = addressInfo(1);
       setInterval(() => {
@@ -88,7 +90,7 @@
                 itme.amount = timesDecimals(itme.amount);
                 //itme.txHashs = superLong(itme.txHash, 20);
                 itme.agendID = itme.agentHash.substr(-8);
-                itme.createTime = moment(getLocalTime(itme.createTime*1000)).format('YYYY-MM-DD HH:mm:ss');
+                itme.createTime = moment(getLocalTime(itme.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
                 //this.totalAmount = this.totalAmount + Number(itme.amount);
               }
               this.consensusData = response.result.list;

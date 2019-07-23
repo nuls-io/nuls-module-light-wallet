@@ -16,8 +16,8 @@ const en = {
   "public": {
     "copySuccess": "Copied to clipboard",
     "operation": "Operation",
-    "display": "display",
-    "total": "total",
+    "display": "Display",
+    "total": "Total",
     "hideReward": "Hidden Consensus Award",
     "usableBalance": "Usable balance",
     "fee": "Fee",
@@ -50,7 +50,7 @@ const en = {
     "contractName": "Contract Name",
     "cancelCollection": "Cancel Collection",
     "contractInfo": "Contract Info",
-    "input ": "Input",
+    "input": "Input",
     "output": "Output",
     "fromAddresss": "Sender",
     "toAddresss": "Recipient",
@@ -64,6 +64,7 @@ const en = {
     "operatingSystem": "System",
     "into":"Into",
     "re-import":"Re-import",
+    "item":"Item",
     "": "",
 
     "err": "Verify and broadcast transaction failure:",

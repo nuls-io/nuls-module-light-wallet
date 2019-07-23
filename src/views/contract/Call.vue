@@ -8,7 +8,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item v-for="(domain, index) in callForm.parameterList" :label="domain.name" :key="domain.keys"
+      <el-form-item v-for="(domain, index) in callForm.parameterList" :label="domain.name" :key="domain.name"
                     :prop="'parameterList.' + index + '.value'"
                     :rules="{required: domain.required,message:domain.name+$t('call.call2'), trigger: 'blur'}"
       >
@@ -128,15 +128,7 @@
       Password,
     },
     created() {
-      setTimeout(() => {
-        if (this.modelList) {
-          for (let item in this.modelList) {
-            this.modelList[item].keys = item;
-          }
-        }
-        //console.log(this.modelList);
-        this.callForm.modelData = this.modelList;
-      },300);
+      this.callForm.modelData = this.modelList;
       this.addressInfo = addressInfo(1);
       setInterval(() => {
         this.addressInfo = addressInfo(1);
@@ -161,7 +153,6 @@
        *  方法选择
        **/
       changeModel(val) {
-        console.log(val);
         this.callResult = '';
         this.callForm.parameterList = [];
         for (let itme of this.callForm.modelData) {
@@ -189,7 +180,9 @@
        * 判断所有必填参数是否有值
        **/
       changeParameter() {
-        this.chainMethodCall();
+        if (!this.selectionData.view) {
+          this.chainMethodCall();
+        }
       },
 
       /**
@@ -203,6 +196,7 @@
               let newArgs = [];
               if (this.selectionData.params.length !== 0) { //有参数
                 newArgs = getArgs(this.callForm.parameterList, this.decimals);
+                console.log(newArgs);
                 if (newArgs.allParameter) {
                   this.methodCall(this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs.args)
                 }
@@ -233,7 +227,12 @@
             if (response.hasOwnProperty("result")) {
               this.callResult = response.result.result;
             } else {
-              this.$message({message: this.$t('call.call8') + response.error, type: 'error', duration: 1000});
+              if(response.error.code ==='err_0014'){
+                this.$message({message: this.$t('call.call8') + response.error.data, type: 'error', duration: 1000});
+              }else{
+                this.$message({message: this.$t('call.call8') + response.error.message, type: 'error', duration: 1000});
+              }
+
             }
           })
           .catch((error) => {
