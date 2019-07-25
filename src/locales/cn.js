@@ -2,7 +2,7 @@ import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 
 const cn = {
   "nav": {
-    "wallet": "钱包",
+    "wallet": "资产",
     "transfer": "转账",
     "consensus": "共识",
     "contracts": "合约",

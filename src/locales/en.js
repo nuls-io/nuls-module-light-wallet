@@ -2,7 +2,7 @@ import enLocale from 'element-ui/lib/locale/lang/en'
 
 const en = {
   "nav": {
-    "wallet": "Wallet",
+    "wallet": "Assets",
     "transfer": "Transfer",
     "consensus": "Consensus",
     "contracts": "Contracts",

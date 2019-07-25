@@ -21,7 +21,8 @@
         </el-form-item>
         <div class="senior-div" v-if="callForm.senior">
           <el-form-item label="Gas Limit" prop="gas">
-            <el-input v-model="callForm.gas"></el-input>
+            <el-input v-model="callForm.gas" @change="changeGas"></el-input>
+            <div class="font12 yellow" v-show="gasTips">{{$t('call.call10')}}</div>
           </el-form-item>
           <el-form-item label="Price" prop="price">
             <el-input v-model="callForm.price"></el-input>
@@ -96,7 +97,7 @@
           parameterList: [],
           senior: false,
           gas: 0,
-          price: 0,
+          price: 25,
           values: 0,
         },
         callRules: {
@@ -110,6 +111,9 @@
             {validator: validateValues, trigger: 'blur'}
           ]
         },
+        gasNumber: 0,//消耗的gas
+        oldGasNumber: 0,//默认的gas
+        gasTips: false,//gas 太小提示信息
         //选中的方法
         selectionData: {
           view: true,
@@ -145,6 +149,13 @@
         if (val.address !== old.address && old.address) {
           this.getBalanceByAddress(chainID(), 1, this.addressInfo.address);
         }
+      },
+      gasNumber(val, old) {
+        if (old && this.oldGasNumber > val) {
+          this.gasTips = true
+        } else {
+          this.gasTips = false
+        }
       }
     },
     methods: {
@@ -157,20 +168,31 @@
         this.callForm.parameterList = [];
         for (let itme of this.callForm.modelData) {
           if (itme.keys === val) {
+            //console.log(itme);
             this.selectionData = itme;
-            this.callForm.parameterList = itme.params;
-            if (!itme.view) {//上链方法
+            this.callForm.parameterList = [...itme.params];
+            if (!itme.view) { //上链方法
               this.callForm.gas = 0;
               this.callForm.values = 0;
-              if (itme.params.length === 0) {
-                this.chainMethodCall();
-              } else {
-                let newParams = itme.params;
-                let isRequired = newParams.map((o) => o.required).find((n) => n === true);
-                if (!isRequired) {
-                  this.chainMethodCall();
-                }
-              }
+            }
+          }
+        }
+        //清除已有的参数
+        for (let itme of this.callForm.parameterList) {
+          if (itme.value) {
+            itme.value = ''
+          }
+        }
+
+        let newArgs = [];
+        this.callForm.price = sdk.CONTRACT_MINIMUM_PRICE;
+        if (!this.selectionData.view) { //上链方法
+          if (this.selectionData.params.length === 0) { //没有参数
+            this.imputedContractCallGas(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs)
+          } else { //有参数
+            newArgs = getArgs(this.callForm.parameterList);
+            if (newArgs.allParameter) {
+              this.imputedContractCallGas(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs.args)
             }
           }
         }
@@ -186,31 +208,43 @@
       },
 
       /**
+       * gas改变提示
+       * */
+      changeGas() {
+        this.gasNumber = Number(this.callForm.gas)
+      },
+
+      /**
        * 调用方法
        * @param formName
        **/
       submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            if (this.selectionData.view) {  //不上链方法
+        if (!this.selectionData.view) { //上链方法调用
+          this.getBalanceByAddress(chainID(), 1, this.addressInfo.address);
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
+              this.$refs.password.showPassword(true);
+            } else {
+              return false;
+            }
+          });
+        } else { //不上链方法，直接调用
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
               let newArgs = [];
               if (this.selectionData.params.length !== 0) { //有参数
                 newArgs = getArgs(this.callForm.parameterList, this.decimals);
-                console.log(newArgs);
                 if (newArgs.allParameter) {
                   this.methodCall(this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs.args)
                 }
               } else { //没参数
                 this.methodCall(this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs)
               }
-            } else { //上链方法
-              this.chainMethodCall();
-              this.$refs.password.showPassword(true);
+            } else {
+              return false;
             }
-          } else {
-            return false;
-          }
-        });
+          })
+        }
       },
 
       /**
@@ -227,12 +261,11 @@
             if (response.hasOwnProperty("result")) {
               this.callResult = response.result.result;
             } else {
-              if(response.error.code ==='err_0014'){
+              if (response.error.code === 'err_0014') {
                 this.$message({message: this.$t('call.call8') + response.error.data, type: 'error', duration: 1000});
-              }else{
+              } else {
                 this.$message({message: this.$t('call.call8') + response.error.message, type: 'error', duration: 1000});
               }
-
             }
           })
           .catch((error) => {
@@ -248,6 +281,7 @@
         this.callForm.price = sdk.CONTRACT_MINIMUM_PRICE;
         if (this.selectionData.params.length !== 0) { //有参数
           newArgs = getArgs(this.callForm.parameterList, this.decimals);
+          //console.log(newArgs);
           if (newArgs.allParameter) {
             this.validateContractCall(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), sdk.CONTRACT_MAX_GASLIMIT, sdk.CONTRACT_MINIMUM_PRICE, this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs.args);
           }
@@ -295,7 +329,10 @@
       async imputedContractCallGas(sender, value, contractAddress, methodName, methodDesc, args) {
         return await this.$post('/', 'imputedContractCallGas', [sender, value, contractAddress, methodName, methodDesc, args])
           .then((response) => {
+            //console.log(response.result);
             if (response.hasOwnProperty("result")) {
+              this.gasNumber = response.result.gasLimit;
+              this.oldGasNumber = response.result.gasLimit;
               this.callForm.gas = response.result.gasLimit;
               let contractConstructorArgsTypes = this.getContractMethodArgsTypes(contractAddress, methodName);
               let newArgs = utils.twoDimensionalArray(args, contractConstructorArgsTypes);

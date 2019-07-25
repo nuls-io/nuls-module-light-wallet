@@ -196,7 +196,7 @@ export function getArgs(parameterList) {
           allParameter = true;
           newArgs.push(itme.value)
         }else{
-          allParameter = false;
+          return {allParameter: false, args: newArgs};
         }
       }else{
         allParameter = true;
