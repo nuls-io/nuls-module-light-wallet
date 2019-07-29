@@ -2,14 +2,14 @@
   <div class="transfer bg-gray" v-loading="transferLoading">
     <h3 class="title">{{changeAssets.account}} {{$t('nav.transfer')}}</h3>
     <div class="w1200 bg-white">
-      <el-form :model="transferForm" :rules="transferRules" ref="transferForm">
+      <el-form :model="transferForm" :rules="transferRules" ref="transferForm" status-icon>
         <el-form-item :label="$t('transfer.transfer0')">
           <el-input v-model.trim="transferForm.fromAddress" disabled>
           </el-input>
         </el-form-item>
         <el-form-item :label="$t('transfer.transfer1')" prop="toAddress">
           <el-input v-model.trim="transferForm.toAddress" @change="changeParameter">
-            <i class="iconfont iconlianxiren click" slot="suffix" @click="showBook" v-show="false"></i>
+            <i class="iconfont iconlianxiren click font18" slot="suffix" @click="showBook"></i>
           </el-input>
         </el-form-item>
         <el-form-item :label="$t('transfer.transfer2')">
@@ -23,9 +23,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <div class="cross yellow font12" v-show="isCross">
-          {{$t('transfer.transfer15')}}
-        </div>
+        <div class="cross yellow font12" v-show="isCross">{{$t('transfer.transfer15')}}</div>
         <el-form-item :label="$t('transfer.transfer3')" prop="amount">
           <span class="balance font12 fr">{{$t('public.usableBalance')}}: {{changeAssets.balance}}</span>
           <el-input v-model="transferForm.amount" @change="changeParameter">
@@ -70,7 +68,7 @@
 
     <Password ref="password" @passwordSubmit="passSubmit">
     </Password>
-    <el-dialog :title="$t('transfer.transfer6')" :visible.sync="transferVisible" width="40rem" class="confirm-dialog">
+    <el-dialog :title="$t('transfer.transfer6')" :visible.sync="transferVisible" width="46rem" class="confirm-dialog">
       <div class="bg-white">
         <div class="div-data">
           <p>{{$t('transfer.transfer0')}}&nbsp;</p>
@@ -78,7 +76,8 @@
         </div>
         <div class="div-data">
           <p>{{$t('transfer.transfer1')}}&nbsp;</p>
-          <label>{{transferForm.toAddress}}</label>
+          <label v-if="aliasToAddress">{{aliasToAddress}}({{transferForm.toAddress}})</label>
+          <label v-else>{{transferForm.toAddress}}</label>
         </div>
         <div class="div-data">
           <p>{{$t('public.fee')}}: &nbsp;</p>
@@ -98,6 +97,23 @@
         <el-button type="success" @click="confirmTraanser">{{$t('transfer.transfer8')}}</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog :title="$t('public.bookList')" :visible.sync="bookDialog" width="50rem" class="book-dialog">
+      <el-table :data="bookData">
+        <el-table-column property="name" :label="$t('nodeService.nodeService2')" width="100" align="center">
+        </el-table-column>
+        <el-table-column property="address" :label="$t('tab.tab11')" min-width="300" align="center">
+        </el-table-column>
+        <el-table-column property="alias" :label="$t('address.address3')" width="100" align="center">
+        </el-table-column>
+        <el-table-column label="" width="100" align="center">
+          <template slot-scope="scope">
+            <el-link :underline="false" @click="handleClick(scope.row)" class="click td">{{$t('public.choice')}}
+            </el-link>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -115,7 +131,7 @@
     validateAndBroadcast
   } from '@/api/requestData'
   import * as config from '@/config.js'
-  import {Times, Power, Plus, timesDecimals, chainID, addressInfo} from '@/api/util'
+  import {Times, Power, Plus, Minus, timesDecimals, chainID, addressInfo} from '@/api/util'
   import Password from '@/components/PasswordBar'
 
   export default {
@@ -126,8 +142,17 @@
         if (value === '') {
           callback(new Error(this.$t('transfer.transfer9')))
         } else if (!patrn.exec(value)) {
-          callback(new Error(this.$t('transfer.transfer10')))
+          this.getAccountByAlias(value);
+          setTimeout(() => {
+            if (value.length < 20 && this.aliasToAddress) {
+              callback()
+            } else {
+              this.aliasToAddress = '';
+              callback(new Error(this.$t('transfer.transfer10')))
+            }
+          }, 500);
         } else {
+          this.aliasToAddress = '';
           callback()
         }
       };
@@ -143,6 +168,8 @@
           setTimeout(() => {
             if (Number(value) > Number(this.changeAssets.balance)) {
               callback(new Error(this.$t('transfer.transfer14')))
+            } else if (Number(value) === Number(this.changeAssets.balance)) {
+              this.transferForm.amount = Number(Minus(value, this.fee));
             } else {
               callback()
             }
@@ -188,7 +215,7 @@
           remarks: '',
         },//转账数据
         transferRules: {
-          toAddress: [{validator: validateToAddress, trigger: ['blur', 'change']}],
+          toAddress: [{validator: validateToAddress, trigger: 'change'}],
           amount: [{validator: validateAmount, trigger: ['blur', 'change']}],
           gas: [{validator: validateGas, trigger: ['blur', 'change']}],
           price: [{validator: validatePrice, trigger: 'blur'}],
@@ -200,6 +227,9 @@
         isCross: false,//是否跨链交易
         isNext: false,//是否可用点击下一步
         transferLoading: false,//转账后的加载效果
+        bookDialog: false,//通讯录弹框
+        bookData: [],//通讯录列表
+        aliasToAddress: '',//别名对应的地址
       };
     },
     created() {
@@ -232,6 +262,25 @@
       Password,
     },
     methods: {
+
+      /**
+       * 查询账户详情根据别名
+       * @param alias
+       **/
+      async getAccountByAlias(alias) {
+        await this.$post('/', 'getAccountByAlias', [alias])
+          .then((response) => {
+            //console.log(response);
+            if (response.hasOwnProperty("result")) {
+              this.aliasToAddress = response.result.address;
+            } else {
+              this.aliasToAddress = ''
+            }
+          }).catch((err) => {
+            console.log(err);
+            this.aliasToAddress = ''
+          })
+      },
 
       /**
        * 获取收付费单位
@@ -345,6 +394,18 @@
       },
 
       /**
+       * 延迟执行方法
+       * @param millisecond
+       **/
+      sleep(millisecond) {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            resolve()
+          }, millisecond)
+        })
+      },
+
+      /**
        * 验证参数
        **/
       async changeParameter() {
@@ -352,7 +413,14 @@
         if (this.transferForm.toAddress) {
           this.contractInfo = {};
           let fromAddress = nuls.verifyAddress(this.transferForm.fromAddress);
-          let toAddress = nuls.verifyAddress(this.transferForm.toAddress);
+          let toAddress = {};
+          await this.sleep(500);
+          if (this.aliasToAddress) {
+            toAddress = nuls.verifyAddress(this.aliasToAddress);
+          } else {
+            toAddress = nuls.verifyAddress(this.transferForm.toAddress);
+          }
+          //console.log(toAddress);
           //判断toAddress 是什么地址 type 1:普通地址 2：合约地址
           if (toAddress.type === 2) {
             //向合约地址转账
@@ -367,7 +435,7 @@
               }
               //判断是否有_payable 方法
               if (!ifPayable) {
-                this.$message({message: '此合约没有_payable方法不能向此合约地址转账', type: 'error', duration: 2000});
+                this.$message({message: this.$t('transfer.transfer18'), type: 'error', duration: 2000});
               } else {
                 if (this.transferForm.amount) {
                   this.transferForm.gas = sdk.CONTRACT_MAX_GASLIMIT;
@@ -388,7 +456,7 @@
               }
               //console.log(this.contractInfo)
             } else {
-              this.$message({message: '此合约没有方法不能向此合约地址转账', type: 'error', duration: 2000});
+              this.$message({message: this.$t('transfer.transfer19'), type: 'error', duration: 2000});
             }
           } else {
             if (fromAddress.chainId === toAddress.chainId) {
@@ -573,7 +641,7 @@
           let inOrOutputs = {};
           let tAssemble = [];
 
-          if (this.contractInfo.success) {
+          if (this.contractInfo.success) { //合约转账
             this.contractCallData.chainId = 2;
             transferInfo['amount'] = Number(Plus(Number(Times(this.transferForm.amount, 100000000)), Number(Times(this.transferForm.gas, this.transferForm.price))));
             transferInfo.toAddress = this.contractInfo.contractAddress;
@@ -581,13 +649,14 @@
             inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 16);
             tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 16, this.contractCallData);
           } else {
-            if (this.changeAssets.type === 1 && !this.isCross) {
-              transferInfo['toAddress'] = this.transferForm.toAddress;
+            if (this.changeAssets.type === 1 && !this.isCross) { //NULS普通转账交易
+              transferInfo['toAddress'] = this.aliasToAddress ? this.aliasToAddress : this.transferForm.toAddress;
               transferInfo['amount'] = Number(Times(this.transferForm.amount, 100000000).toString());
+              //console.log(transferInfo);
               inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 2);
               //交易组装
               tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 2);
-            } else if (this.changeAssets.type === 1 && this.isCross) {
+            } else if (this.changeAssets.type === 1 && this.isCross) { //NULS跨链转账交易
               transferInfo['toAddress'] = this.transferForm.toAddress;
               transferInfo['amount'] = Number(Times(this.transferForm.amount, 100000000).toString());
               transferInfo['remark'] = this.transferForm.remarks;
@@ -668,7 +737,7 @@
         //如果不是主网需要收取NULS手续费
         if (!isMainNet(chainId)) {
           if (mainNetBalanceInfo.data.balance < transferInfo.fee) {
-            console.log("余额不足");
+            this.$message({message: this.$t('newConsensus.newConsensus7'), type: 'error', duration: 1000});
             return;
           }
         }
@@ -676,7 +745,7 @@
         if (chainId === transferInfo.assetsChainId && transferInfo.assetsId === 1) {
           let newAmount = transferInfo.amount + transferInfo.fee;
           if (balanceInfo.data.balance < transferInfo.amount + transferInfo.fee) {
-            console.log("余额不足");
+            this.$message({message: this.$t('newConsensus.newConsensus7'), type: 'error', duration: 1000});
             return;
           }
           //转出的本链资产 = 转出资产amount + 本链手续费
@@ -702,14 +771,14 @@
         } else {
           localBalanceInfo = await getNulsBalance(chainId, 1, transferInfo.fromAddress);
           if (localBalanceInfo.data.balance < transferInfo.fee) {
-            console.log("该账户本链主资产不足够支付手续费！");
+            this.$message({message: this.$t('transfer.transfer20'), type: 'error', duration: 1000});
             return;
           }
           //如果转出的是NULS，则需要把NULS手续费添加到转出金额上
           if (transferInfo.assetsChainId === 2 && transferInfo.assetsId === 1) {
             let newAmount = transferInfo.amount + transferInfo.fee;
             if (mainNetBalanceInfo.data.balance < newAmount) {
-              console.log("余额不足");
+              this.$message({message: this.$t('newConsensus.newConsensus7'), type: 'error', duration: 1000});
               return;
             }
             inputs.push({
@@ -798,7 +867,7 @@
         if (transferInfo.fee !== newFee) {
           if (chainId === transferInfo.assetsChainId && transferInfo.assetsId === 1) {
             if (balanceInfo.data.balance < transferInfo.amount + newFee) {
-              console.log("余额不足");
+              this.$message({message: this.$t('newConsensus.newConsensus7'), type: 'error', duration: 1000});
               return;
             }
             inputs[0].amount = transferInfo.amount + newFee;
@@ -807,12 +876,12 @@
             }
           } else {
             if (localBalanceInfo.data.balance < transferInfo.fee) {
-              console.log("该账户本链主资产不足够支付手续费！");
+              this.$message({message: this.$t('transfer.transfer20'), type: 'error', duration: 1000});
               return;
             }
             if (transferInfo.assetsChainId === 2 && transferInfo.assetsId === 1) {
               if (mainNetBalanceInfo.data.balance < transferInfo.amount + newFee) {
-                console.log("余额不足");
+                this.$message({message: this.$t('newConsensus.newConsensus7'), type: 'error', duration: 1000});
                 return;
               }
               inputs[0].amount = transferInfo.amount + newFee;
@@ -858,11 +927,11 @@
               //return {success: true, data: response.result};
               this.imputedContractCallGas(sender, value, contractAddress, methodName, methodDesc, args)
             } else {
-              console.log("验证调用合约交易错误");
+              this.$message({message: this.$t('call.call6'), type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
-            console.log("验证调用合约交易异常" + error);
+            this.$message({message: this.$t('call.call7') + error, type: 'error', duration: 1000});
           });
       },
 
@@ -896,11 +965,11 @@
                 args: newArgs
               };
             } else {
-              console.log("预估调用合约交易的gas错误");
+              this.$message({message: this.$t('call.call4'), type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
-            console.log("预估调用合约交易的gas异常" + error);
+            this.$message({message: this.$t('call.call5') + error, type: 'error', duration: 1000});
           });
       },
 
@@ -933,10 +1002,21 @@
 
       /**
        * 通讯录功能
-       * TODO 待开发...
        **/
       showBook() {
-        this.$message({message: "开发中......", duration: 1000});
+        let defaultAddressInfo = addressInfo(1);
+        this.bookData = defaultAddressInfo.hasOwnProperty('contactList') ? defaultAddressInfo.contactList : [];
+        this.bookDialog = true;
+      },
+
+      /**
+       * 通讯录选中
+       * @param row
+       **/
+      handleClick(row) {
+        this.transferForm.toAddress = row.address;
+        this.bookDialog = false;
+        this.changeParameter();
       },
 
       /**
@@ -966,6 +1046,11 @@
         margin: 50px auto 100px;
         .el-form-item {
           .el-form-item__content {
+            .iconlianxiren {
+              position: absolute;
+              right: -28px;
+              top: 10px;
+            }
             .el-select {
               width: 100%;
               .el-input__inner {
@@ -1013,6 +1098,15 @@
         }
         .cross {
           margin: -14px 0 8px 0;
+        }
+      }
+    }
+    .book-dialog {
+      .el-dialog__body {
+        padding: 10px 5px 20px 5px;
+        background-color: white;
+        span {
+          color: #608FFF;
         }
       }
     }

@@ -65,6 +65,9 @@ const cn = {
     "into":"进入",
     "re-import":"重新导入",
     "item":"条",
+    "bookList":"通讯录",
+    "choice":"选择",
+    "downloadUrl":"下载地址",
     "":"",
 
     "err": "验证并广播交易失败:",
@@ -360,6 +363,7 @@ const cn = {
     "tab8": "冻结原因",
     "tab9": "余额",
     "tab10": "状态",
+    "tab11": "地址",
   },
 
   "type": {
@@ -499,6 +503,9 @@ const cn = {
     "transfer15": "提示：您填写的地址是跨链地址这笔交易将是跨链交易，您只能选择基本资产...",
     "transfer16": "付款地址的NULS不足，请切换账户",
     "transfer17": "跨链交易本链资产不足，请切换账户",
+    "transfer18": "此合约没有_payable方法不能向此合约地址转账",
+    "transfer19": "此合约没有方法不能向此合约地址转账",
+    "transfer20": "该账户本链主资产不足够支付手续费",
     "transfer": "transfer",
   },
 
