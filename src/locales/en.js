@@ -57,7 +57,7 @@ const en = {
     "balance": "Balance",
     "allToke": "All Toke",
     "about": "About",
-    "logInfo": "Log Info",
+    "logInfo": "Log",
     "see": "See",
     "version": "Version",
     "checkUpdates": "Check Updates",
@@ -67,7 +67,7 @@ const en = {
     "item":"Item",
     "bookList":"Book list",
     "choice":"Choice",
-    "downloadUrl":"Download url",
+    "downloadUrl":"Url",
     "": "",
 
     "err": "Verify and broadcast transaction failure:",
