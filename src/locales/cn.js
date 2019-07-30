@@ -506,6 +506,7 @@ const cn = {
     "transfer18": "此合约没有_payable方法不能向此合约地址转账",
     "transfer19": "此合约没有方法不能向此合约地址转账",
     "transfer20": "该账户本链主资产不足够支付手续费",
+    "transfer21": "资产的NRC-20合约已经被注销，请选择其他资产!",
     "transfer": "transfer",
   },
 

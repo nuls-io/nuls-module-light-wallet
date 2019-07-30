@@ -409,6 +409,7 @@
        * 验证参数
        **/
       async changeParameter() {
+        //console.log(this.changeAssets);
         //判断转出地址是否为其他链地址 如果有就为跨链交易
         if (this.transferForm.toAddress) {
           this.contractInfo = {};
@@ -422,8 +423,7 @@
           }
           //console.log(toAddress);
           //判断toAddress 是什么地址 type 1:普通地址 2：合约地址
-          if (toAddress.type === 2) {
-            //向合约地址转账
+          if (toAddress.type === 2) { //向合约地址转账nuls
             this.changeNuls();
             let methodsList = await this.contractInfoByContractAddress(this.transferForm.toAddress);
             if (methodsList.length !== 0) {
@@ -433,11 +433,10 @@
                   ifPayable = true
                 }
               }
-              //判断是否有_payable 方法
-              if (!ifPayable) {
+              if (!ifPayable) { //判断是否有_payable 方法
                 this.$message({message: this.$t('transfer.transfer18'), type: 'error', duration: 2000});
               } else {
-                if (this.transferForm.amount) {
+                if (this.transferForm.amount) { //判断是否填入金额
                   this.transferForm.gas = sdk.CONTRACT_MAX_GASLIMIT;
                   this.$refs['transferForm'].validate((valid) => {
                     if (valid) {
@@ -458,8 +457,8 @@
             } else {
               this.$message({message: this.$t('transfer.transfer19'), type: 'error', duration: 2000});
             }
-          } else {
-            if (fromAddress.chainId === toAddress.chainId) {
+          } else { //普通地址转账nuls
+            if (fromAddress.chainId === toAddress.chainId) { //不跨链交易
               this.isCross = false;
               this.fee = 0.001;
               this.getSymbol();
@@ -474,7 +473,7 @@
                   }
                 }
               }
-            } else {
+            } else { //跨链交易
               this.isCross = true;
               this.fee = 0.01;
               this.feeSymbol = "NULS";
@@ -506,6 +505,7 @@
           this.transferForm.gas = sdk.CONTRACT_MAX_GASLIMIT;
           this.$refs['transferForm'].validate((valid) => {
             if (valid) {
+              this.contractInfoByContractAddress(this.changeAssets.contractAddress, 1);
               let gasLimit = sdk.CONTRACT_MAX_GASLIMIT;
               let price = this.transferForm.price;
               let contractAddress = this.changeAssets.contractAddress;
@@ -525,14 +525,24 @@
       /**
        * 合约信息根据合约地址
        * @param contractAddress
+       * @param type 0: 验证合约是否有_payable方法 1:验证合约是否已经注销
        **/
-      async contractInfoByContractAddress(contractAddress) {
+      async contractInfoByContractAddress(contractAddress, type = 0) {
         return await this.$post('/', 'getContract', [contractAddress])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
-              this.contractInfo = response.result;
-              return response.result.methods;
+              if (type === 1) {
+                if (response.result.status === 3) { //判断合约资产是否被注销
+                  this.isNext = true;
+                  this.$message({message: response.result.tokenName + this.$t('transfer.transfer21'), type: 'error', duration: 1000});
+                }
+              } else {
+                if (response.result.status !== 3) {
+                  this.contractInfo = response.result;
+                  return response.result.methods;
+                }
+              }
             } else {
               return []
             }
