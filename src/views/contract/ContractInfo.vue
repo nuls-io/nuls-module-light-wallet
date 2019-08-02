@@ -191,7 +191,7 @@
       },
 
       /**
-       * 合约详情根据合约地址
+       * 获取合约详情根据合约地址
        * @param address
        **/
       async contractInfoByAddress(address) {

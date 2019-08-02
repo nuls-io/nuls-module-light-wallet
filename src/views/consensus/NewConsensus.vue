@@ -93,10 +93,13 @@
   export default {
     data() {
       let checkRewardAddress = (rule, value, callback) => {
-        let patrn = /^(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{20,50}$/;
+        let patrn = {};
+        if (value && value.length > 5) {
+          patrn = nuls.verifyAddress(value);
+        }
         if (!value) {
           return callback(new Error(this.$t('newConsensus.newConsensus2')));
-        } else if (!patrn.exec(value)) {
+        } else if (!patrn.right) {
           return callback(new Error(this.$t('newConsensus.newConsensus21')))
         } else {
           this.$refs.createrForm.validateField('blockAddress');
@@ -104,12 +107,15 @@
         }
       };
       let checkBlockAddress = (rule, value, callback) => {
-        let patrn = /^(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{20,50}$/;
+        let patrn = {};
+        if (value && value.length > 5) {
+          patrn = nuls.verifyAddress(value);
+        }
         if (!value) {
           return callback(new Error(this.$t('newConsensus.newConsensus3')));
         } else if (value === this.addressInfo.address) {
           return callback(new Error(this.$t('newConsensus.newConsensus4')));
-        } else if (!patrn.exec(value)) {
+        } else if (!patrn.right) {
           return callback(new Error(this.$t('newConsensus.newConsensus31')))
         } else {
           callback();

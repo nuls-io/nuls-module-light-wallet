@@ -217,7 +217,7 @@
        **/
       changeParameter() {
         let newArgs = getArgs(this.deployForm.parameterList);
-        console.log(newArgs);
+        //console.log(newArgs);
         if (newArgs.allParameter) {
           this.validateContractCreate(this.createAddress, sdk.CONTRACT_MAX_GASLIMIT, sdk.CONTRACT_MINIMUM_PRICE, this.deployForm.hex, newArgs.args);
           this.deployForm.price = sdk.CONTRACT_MINIMUM_PRICE;
@@ -404,6 +404,9 @@
           let pub = this.addressInfo.pub;
           let remark = this.deployForm.addtion;
           let inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 15);
+          if(!inOrOutputs.success){
+            this.$message({message: inOrOutputs.data, type: 'error', duration: 1000});
+          }
           let tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, remark, 15, this.contractCreateTxData);
           let txhex = '';
           //获取手续费
@@ -460,6 +463,7 @@
             //获取文件流
             let reader = new FileReader();
             reader.readAsDataURL(file);
+            _this.deployLoading=true;
             reader.onload = (() => {
               _this.$post('/', 'uploadContractJar', [reader.result])
                 .then((response) => {
@@ -468,10 +472,10 @@
                     _this.deployForm.hex = response.result.code;
                     _this.getParameter();
                   } else {
-                    this.$message({message: this.$t('deploy.deploy17'), type: 'error', duration: 1000});
+                    _this.$message({message: _this.$t('deploy.deploy17'), type: 'error', duration: 1000});
                   }
                 }).catch((err) => {
-                this.$message({message: this.$t('deploy.deploy18') + err, type: 'error', duration: 1000});
+                _this.$message({message: _this.$t('deploy.deploy18') + err, type: 'error', duration: 1000});
               })
             });
           }

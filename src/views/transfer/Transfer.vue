@@ -147,8 +147,12 @@
             if (value.length < 20 && this.aliasToAddress) {
               callback()
             } else {
+              if(value.length > 20){
+                callback()
+              }else{
+                callback(new Error(this.$t('transfer.transfer10')))
+              }
               this.aliasToAddress = '';
-              callback(new Error(this.$t('transfer.transfer10')))
             }
           }, 500);
         } else {
@@ -270,7 +274,7 @@
       async getAccountByAlias(alias) {
         await this.$post('/', 'getAccountByAlias', [alias])
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             if (response.hasOwnProperty("result")) {
               this.aliasToAddress = response.result.address;
             } else {
