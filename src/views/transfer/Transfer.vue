@@ -274,7 +274,7 @@
       async getAccountByAlias(alias) {
         await this.$post('/', 'getAccountByAlias', [alias])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               this.aliasToAddress = response.result.address;
             } else {
