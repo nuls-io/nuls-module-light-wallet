@@ -235,3 +235,47 @@ export async function getContractConstructor(contractCodeHex) {
       return {success: false, data: error};
     });
 }
+
+/**
+ * 获取链ID对应的前缀
+ * @returns {Promise<any>}
+ */
+export async function getAllAddressPrefix() {
+  let newData = [
+    {chainId: 1, addressPrefix: 'NULS'},
+    {chainId: 2, addressPrefix: 'tNULS'},
+  ];
+  await post('/', 'getAllAddressPrefix', [])
+    .then((response) => {
+      //console.log(response);
+      if (response.hasOwnProperty("result")) {
+        if (sessionStorage.hasOwnProperty('prefixData')) {
+          sessionStorage.removeItem('prefixData')
+        }
+        sessionStorage.setItem('prefixData', JSON.stringify(response.result));
+      } else {
+        sessionStorage.setItem('prefixData', JSON.stringify(newData));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      sessionStorage.setItem('prefixData', JSON.stringify(newData));
+    });
+}
+
+//根据链ID获取前缀
+export async function getPrefixByChainId(chainId) {
+  let prefixData = sessionStorage.hasOwnProperty('prefixData') ? JSON.parse(sessionStorage.getItem('prefixData')) : [];
+  if (prefixData.length === 0) {
+    await getAllAddressPrefix();
+    prefixData = JSON.parse(sessionStorage.getItem('prefixData'));
+  }
+  if (prefixData) {
+    let newInfo = prefixData.find((v) => {
+      return v.chainId === chainId;
+    });
+    return newInfo.addressPrefix;
+  } else {
+    return '';
+  }
+}

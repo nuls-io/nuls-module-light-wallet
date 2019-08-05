@@ -82,7 +82,7 @@
        */
       getHeaderInfo() {
         const url = localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')).urls : 'http://192.168.1.40:18003/';
-        const params = {"jsonrpc": "2.0", "method": "getInfo", "params": [chainID()], "id": 5898};
+        const params = {"jsonrpc": "2.0", "method": "getInfo", "params": [chainID()], "id": Math.floor(Math.random()*1000)};
         axios.post(url, params)
           .then((response) => {
             //console.log(response.data);
