@@ -7,7 +7,7 @@ export const API_BURNING_ADDRESS_PUB = '0298f88c3cae67385ce3cbee00f78816db3e56e5
 //运行环境（true:正式环境，false:测试环境）
 export const RUN_DEV = false;
 //运行模式（true:electron窗体模式，false:浏览器模式）
-export const RUN_PATTERN = true;
+export const RUN_PATTERN = false;
 //正式、测试网络的api
 export let API_URL = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/';
 setInterval(() => {

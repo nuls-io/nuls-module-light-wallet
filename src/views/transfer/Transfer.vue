@@ -166,8 +166,10 @@
           callback(new Error(this.$t('transfer.transfer11')))
         } else if (!patrn.exec(value)) {
           callback(new Error(this.$t('transfer.transfer12')))
-        } else if (parseFloat(value) < 0.001) {
+        } else if (Number(value) < 0.001) {
           callback(new Error(this.$t('transfer.transfer13')))
+        }else if (Number(value) > Number(Minus(this.changeAssets.balance,0.001))) {
+          callback(new Error(this.$t('transfer.transfer131')+ Number(Minus(this.changeAssets.balance,0.001))))
         } else {
           setTimeout(() => {
             if (Number(value) > Number(this.changeAssets.balance)) {

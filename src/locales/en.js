@@ -527,6 +527,7 @@ const en = {
     "transfer11": "Please enter the amount",
     "transfer12": "The amount must be a number.",
     "transfer13": "The amount must be greater than 0.001",
+    "transfer131": "The maximum transfer amount is: ",
     "transfer14": "The amount should not be greater than the available balance.",
     "transfer15": "Tip: The address you fill in is a cross-chain address. This transaction will be a cross-chain transaction. You can only choose basic assets.",
     "transfer16": "The NULS of payment address is insufficient. Please switch accounts.",

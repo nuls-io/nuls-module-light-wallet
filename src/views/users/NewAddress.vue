@@ -303,6 +303,7 @@
   .new_address {
     .new {
       border: @BD1;
+      margin-bottom: 100px;
       .step {
         height: 50px;
         margin: 100px 140px 0 140px;
