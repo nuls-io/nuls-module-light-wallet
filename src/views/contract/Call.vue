@@ -132,7 +132,7 @@
       Password,
     },
     created() {
-      this.callForm.modelData = this.modelList;
+      this.callForm.modelData = this.modelList.filter(obj=> !obj.event);
       this.addressInfo = addressInfo(1);
       setInterval(() => {
         this.addressInfo = addressInfo(1);

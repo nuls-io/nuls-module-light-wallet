@@ -779,6 +779,7 @@ const cn = {
     "contractInfo3":"创建者",
     "contractInfo4":"代币",
     "contractInfo5":"交易类型",
+    "contractInfo51":"调用方法",
     "contractInfo6":"合约方法",
     "contractInfo7":"参数",
     "contractInfo8":"返回类型",
@@ -798,6 +799,9 @@ const cn = {
     "updateWallet": "更新钱包",
     "Tips": "提示信息",
     "Backstage": "后台运行",
+    "err0": "钱包无法连接当前的节点服务，与交易相关功能将无法正常使用，请前往节点服务列表切换至可用节点', '节点服务连接失败",
+    "err1": "前往节点服务列表",
+    "": ""
   },
 
   "TipsType": {

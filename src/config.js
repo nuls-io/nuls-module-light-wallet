@@ -6,6 +6,8 @@ export const API_CHAIN_ID = sessionStorage.hasOwnProperty('chainID') ?  Number(s
 export const API_BURNING_ADDRESS_PUB = '0298f88c3cae67385ce3cbee00f78816db3e56e566b62bd0f4c5b45f205d3021c3';
 //运行环境（true:正式环境，false:测试环境）
 export const RUN_DEV = false;
+//正式环境ChainId和资产ID
+export const MAIN_INFO = RUN_DEV ? {chainId: 1, assetsId: 1}:{chainId: 2, assetsId: 1};
 //运行模式（true:electron窗体模式，false:浏览器模式）
 export const RUN_PATTERN = true;
 //正式、测试网络的api

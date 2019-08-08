@@ -125,7 +125,7 @@
        */
       frozenListPages(val) {
         this.pageIndex = val;
-        this.getTxListByAddress(this.pageIndex, this.pageSize, this.addressInfo.address);
+        this.getTxListByAddress(this.$route.query.accountInfo.chainId, this.$route.query.accountInfo.assetId, this.addressInfo.address, this.pageIndex, this.pageSize);
       },
 
       /**

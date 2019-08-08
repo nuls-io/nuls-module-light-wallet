@@ -802,7 +802,8 @@ const en = {
     "contractInfo2": "Number Trades",
     "contractInfo3": "Creator",
     "contractInfo4": "Token",
-    "contractInfo5": "Transaction Type",
+    "contractInfo5": "Transaction type",
+    "contractInfo51":"Call method",
     "contractInfo6": "Contract method",
     "contractInfo7": "Parameter",
     "contractInfo8": "Return type",
@@ -822,6 +823,9 @@ const en = {
     "updateWallet": "Update wallet",
     "Tips": "Tips",
     "Backstage": "Background operation",
+    "err0": "The wallet is unable to connect to the current node service, and the transaction-related functions will not work properly. Please go to the node service list and switch to the available node','Node service connection failed'.",
+    "err1": "To Node Service List",
+    "": ""
   },
 
   "TipsType": {
