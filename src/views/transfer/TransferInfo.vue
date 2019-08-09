@@ -331,6 +331,7 @@
       .inorou-info {
         border: 1px solid #dfe4ef;
         min-height: 100px;
+        overflow-x: auto;
         .card-info {
           width: 50%;
           ul {

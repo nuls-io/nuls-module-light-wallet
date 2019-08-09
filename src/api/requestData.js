@@ -265,11 +265,8 @@ export async function getAllAddressPrefix() {
 
 //根据链ID获取前缀
 export async function getPrefixByChainId(chainId) {
-  let prefixData = sessionStorage.hasOwnProperty('prefixData') ? JSON.parse(sessionStorage.getItem('prefixData')) : [];
-  if (prefixData.length === 0) {
-    await getAllAddressPrefix();
-    prefixData = JSON.parse(sessionStorage.getItem('prefixData'));
-  }
+  await getAllAddressPrefix();
+  let prefixData = JSON.parse(sessionStorage.getItem('prefixData'));
   if (prefixData) {
     let newInfo = prefixData.find((v) => {
       return v.chainId === chainId;

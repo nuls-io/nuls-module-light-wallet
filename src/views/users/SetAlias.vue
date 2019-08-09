@@ -145,7 +145,7 @@
       async passSubmit(password) {
 
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(chainID(), pri, password);
+        const newAddressInfo = nuls.importByKey(chainID(), pri, password,this.prefix);
         if (newAddressInfo.address === this.addressInfo.address) {
           //根据公钥获取地址
           let burningAddress = nuls.getAddressByPub(chainID(), 1, config.API_BURNING_ADDRESS_PUB,this.prefix);

@@ -75,6 +75,7 @@ const en = {
     "err1": "Input and outputs assembly errors:",
     "err2": "Failed to obtain account balance:",
     "err3": "Obtain account balance exceptions:",
+    "err4": "Cross-Chain Trading Failure: ",
 
   },
 

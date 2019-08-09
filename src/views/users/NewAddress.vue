@@ -229,7 +229,7 @@
         let that = this;
         const pri = nuls.decrypteOfAES(this.newAddressInfo.aesPri, password);
         let chainid = this.$route.query.backAddressInfo ? this.$route.query.backAddressInfo.chainId : chainID();
-        const newAddressInfo = nuls.importByKey(chainid, pri, password);
+        const newAddressInfo = nuls.importByKey(chainid, pri, password, this.prefix);
         if (newAddressInfo.address === this.newAddressInfo.address) {
           if (this.backType === 0) {
             const {dialog} = require('electron').remote;

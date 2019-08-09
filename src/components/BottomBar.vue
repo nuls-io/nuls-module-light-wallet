@@ -71,6 +71,7 @@
       this.getHeaderInfo();
       setInterval(() => {
         this.serviceUrls = JSON.parse(localStorage.getItem("urls"));
+        //console.log(this.serviceUrls.urls)
       }, 500);
     },
     mounted() {

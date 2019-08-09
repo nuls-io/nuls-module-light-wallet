@@ -83,6 +83,7 @@
     getContractConstructor,
     validateTx,
     broadcastTx,
+    getPrefixByChainId
   } from '@/api/requestData'
   import Password from '@/components/PasswordBar'
   import {getArgs, chainID} from '@/api/util'
@@ -133,6 +134,7 @@
         isTestSubmit: false,//测试合约
         fileName: '',//jar文件名
         deployLoading: false,//获取参数加载动画
+        prefix: '',//地址前缀
       };
     },
     props: {
@@ -142,6 +144,13 @@
       Password,
     },
     created() {
+      getPrefixByChainId(chainID()).then((response) => {
+        //console.log(response);
+        this.prefix = response
+      }).catch((err) => {
+        console.log(err);
+        this.prefix = '';
+      });
       this.createAddress = this.addressInfo.address;
       this.getBalanceByAddress(this.addressInfo.chainId, 1, this.createAddress);
     },
@@ -391,7 +400,7 @@
        **/
       async passSubmit(password) {
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password);
+        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password,this.prefix);
         let amount = this.contractCreateTxData.gasLimit * this.contractCreateTxData.price;
         if (newAddressInfo.address === this.addressInfo.address) {
           let transferInfo = {

@@ -85,8 +85,8 @@
 
 <script>
   import nuls from 'nuls-sdk-js'
-  import {getNulsBalance, inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
-  import {Times, addressInfo} from '@/api/util'
+  import {getNulsBalance, inputsOrOutputs, validateAndBroadcast,getPrefixByChainId} from '@/api/requestData'
+  import {Times, addressInfo,chainID} from '@/api/util'
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
 
@@ -176,9 +176,17 @@
           ],
         },
         newConsensusVisible: false,//创建节点确认弹框
+        prefix: '',//地址前缀
       };
     },
     created() {
+      getPrefixByChainId(chainID()).then((response) => {
+        //console.log(response);
+        this.prefix = response
+      }).catch((err) => {
+        console.log(err);
+        this.prefix = '';
+      });
       this.addressInfo = addressInfo(1);
       setInterval(() => {
         this.addressInfo = addressInfo(1);
@@ -287,7 +295,7 @@
           };
           let tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, '', 4, agent);
           const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-          const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password);
+          const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password,this.prefix);
           if (newAddressInfo.address === this.addressInfo.address) {
             txhex = await nuls.transactionSerialize(pri, this.addressInfo.pub, tAssemble);
             //console.log(txhex);

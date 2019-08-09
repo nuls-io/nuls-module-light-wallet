@@ -115,8 +115,8 @@
 <script>
   import moment from 'moment'
   import nuls from 'nuls-sdk-js'
-  import {getNulsBalance, countFee, inputsOrOutputs, validateAndBroadcast, agentDeposistList} from '@/api/requestData'
-  import {timesDecimals, getLocalTime, Minus, Times, addressInfo, connectToExplorer} from '@/api/util'
+  import {getNulsBalance, countFee, inputsOrOutputs, validateAndBroadcast, agentDeposistList, getPrefixByChainId} from '@/api/requestData'
+  import {timesDecimals, getLocalTime, Minus, Times, addressInfo, connectToExplorer,chainID} from '@/api/util'
   import Password from '@/components/PasswordBar'
   import BackBar from '@/components/BackBar'
 
@@ -162,9 +162,18 @@
             {validator: checkAmount, trigger: ['blur', 'change']}
           ]
         },
+        prefix: '',//地址前缀
       };
     },
     created() {
+      getPrefixByChainId(chainID()).then((response) => {
+        //console.log(response);
+        this.prefix = response
+      }).catch((err) => {
+        console.log(err);
+        this.prefix = '';
+      });
+
       this.addressInfo = addressInfo(1);
       setInterval(() => {
         this.addressInfo = addressInfo(1);
@@ -295,7 +304,7 @@
       cancelDeposit(outInfo) {
         this.outInfo = outInfo;
         getNulsBalance(this.agentAsset.agentAsset.chainId, this.agentAsset.agentAsset.assetId, this.addressInfo.address).then((response) => {
-          console.log(response);
+          //console.log(response);
           if (response.success) {
             this.balanceInfo = response.data;
             this.$refs.password.showPassword(true);
@@ -332,7 +341,7 @@
        **/
       async passSubmit(password) {
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password);
+        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password,this.prefix);
         if (newAddressInfo.address === this.addressInfo.address) {
           let transferInfo = {
             fromAddress: this.addressInfo.address,
