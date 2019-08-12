@@ -154,7 +154,7 @@
 
     <div class="cb"></div>
 
-    <div class="card_long mzt_20 w1200 inorouput">
+    <div class="card_long mzt_20 w1200 inorouput mb_100">
       <h5 class="card-title font18">{{$t('public.input')}} & {{$t('public.output')}}</h5>
       <div class="inorou-info bg-white">
         <div class="card-info left fl">
@@ -334,6 +334,8 @@
         overflow-x: auto;
         .card-info {
           width: 50%;
+          height: 150px;
+          overflow-y: auto;
           ul {
             li {
               width: 100%;

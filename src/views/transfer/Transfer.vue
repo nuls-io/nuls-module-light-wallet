@@ -563,7 +563,7 @@
                     type: 'error',
                     duration: 1000
                   });
-                }else {
+                } else {
                   this.contractInfo = response.result;
                   return response.result.methods;
                 }
@@ -668,7 +668,7 @@
        **/
       async passSubmit(password) {
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password,this.prefix);
+        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password, this.prefix);
         let crossTxHex = '';
         if (newAddressInfo.address === this.addressInfo.address) {
           this.transferVisible = false;
@@ -703,7 +703,7 @@
               transferInfo['amount'] = Number(Times(this.transferForm.amount, 100000000).toString());
               transferInfo['remark'] = this.transferForm.remarks;
               transferInfo.fee = 1000000;
-              console.log(transferInfo);
+              //console.log(transferInfo);
               crossTxHex = await this.crossTxhexs(pri, this.addressInfo.pub, this.addressInfo.chainId, transferInfo);
               //console.log(crossTxHex);
             } else {
@@ -740,15 +740,19 @@
             }
           }
           //console.log(txhex);
-          if(this.isCross){ //跨链交易
+          if (this.isCross) { //跨链交易
             await this.$post('/', 'sendCrossTx', [txhex])
               .then((response) => {
-                console.log(response);
+                //console.log(response);
                 this.transferLoading = false;
-                if (response.hasOwnProperty("result")){
+                if (response.hasOwnProperty("result")) {
                   this.toUrl("txList");
                 } else {
-                  this.$message({message: this.$t('public.err4') +'code:' +error.message +' '+ error.message, type: 'error', duration: 3000});
+                  this.$message({
+                    message: this.$t('public.err4') + 'code:' + error.message + ' ' + error.message,
+                    type: 'error',
+                    duration: 3000
+                  });
                 }
               })
               .catch((error) => {
@@ -756,7 +760,7 @@
                 this.transferLoading = false;
                 this.$message({message: this.$t('public.err4') + error, type: 'error', duration: 5000});
               });
-          }else{ //其他交易验证并广播交易
+          } else { //其他交易验证并广播交易
             await validateAndBroadcast(txhex).then((response) => {
               //console.log(response);
               this.transferLoading = false;
@@ -897,9 +901,6 @@
           newFee = countCtxFee(tAssemble, 2);
           mainCtx.time = tAssemble.time;
           mainCtx.remark = tAssemble.remark;
-          console.log(mainCtx.time);
-          console.log(mainCtx.remark);
-          console.log("++++++++++++++++++++");
           let mainNetInputs = [];
           //console.log(transferInfo);
           if (transferInfo.assetsChainId === 2 && transferInfo.assetsId === 1) {
@@ -928,12 +929,9 @@
               nonce: mainNetBalanceInfo.data.nonce
             }];
           }
-          console.log(mainNetInputs);
-          console.log(outputs);
           mainCtx.setCoinData(mainNetInputs, outputs);
         }
         //如果手续费发生改变，重新组装CoinData
-        console.log(transferInfo.fee !== newFee);
         if (transferInfo.fee !== newFee) {
           if (chainId === transferInfo.assetsChainId && transferInfo.assetsId === 1) {
             if (balanceInfo.data.balance < transferInfo.amount + newFee) {
@@ -961,9 +959,6 @@
               inputs[2].amount = newFee;
             }
           }
-          console.log("*****************************");
-          console.log(inputs);
-          console.log(outputs);
           tAssemble = await nuls.transactionAssemble(inputs, outputs, transferInfo.remark, 10);
           ctxSign = nuls.transactionSignature(pri, tAssemble);
         } else {
@@ -972,9 +967,8 @@
         bw.writeBytesWithLength(pubHex);
         bw.writeBytesWithLength(ctxSign);
         if (!isMainNet(chainId)) {
-          mainCtx.txData = tAssemble.getHash();
-          console.log(mainCtx);
-          console.log(mainCtx.getHash().toString('hex'));
+          // mainCtx.txData = tAssemble.getHash();
+          //console.log(mainCtx);
           mainCtxSign = nuls.transactionSignature(pri, mainCtx);
           bw.writeBytesWithLength(pubHex);
           bw.writeBytesWithLength(mainCtxSign);
