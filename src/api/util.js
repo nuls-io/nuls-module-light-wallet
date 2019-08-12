@@ -1,8 +1,8 @@
 import {BigNumber} from 'bignumber.js'
 import copy from 'copy-to-clipboard'
 import {explorerUrl} from '@/config.js'
-import openner from "./opener-web";
-//import openner from "./opener-desktop";
+//import openner from "./opener-web";
+import openner from "./opener-desktop";
 
 /**
  * 10的N 次方
