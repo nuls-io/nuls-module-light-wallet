@@ -414,6 +414,12 @@ const en = {
     "17": "Delete contract",
     "18": "Contract transfer",
     "19": "Contract return",
+    "20": "Contract creation node",
+    "21": "Contract Stake",
+    "22": "Consensus contract consensus",
+    "23": "Contract cancellation node",
+    "24": "Verifier Change",
+    "25": "Verifier initialization",
   },
 
   "budgetType": {
