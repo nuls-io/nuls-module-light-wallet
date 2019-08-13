@@ -741,6 +741,7 @@
           }
           //console.log(txhex);
           if (this.isCross) { //跨链交易
+            //console.log("跨链交易");
             await this.$post('/', 'sendCrossTx', [txhex])
               .then((response) => {
                 //console.log(response);
@@ -761,6 +762,7 @@
                 this.$message({message: this.$t('public.err4') + error, type: 'error', duration: 5000});
               });
           } else { //其他交易验证并广播交易
+            //console.log("其他交易");
             await validateAndBroadcast(txhex).then((response) => {
               //console.log(response);
               this.transferLoading = false;
@@ -896,9 +898,21 @@
         let newFee = 0;
         //console.log(isMainNet(chainId));
         if (isMainNet(chainId)) {
-          newFee = countCtxFee(tAssemble, 1)
+          await countCtxFee(tAssemble, 1).then((result) => {
+            newFee = result;
+          }).catch((err) => {
+            this.$message({message: this.$t('newConsensus.newConsensus7'), type: 'error', duration: 1000});
+            return;
+            console.log(err)
+          });
         } else {
-          newFee = countCtxFee(tAssemble, 2);
+          await countCtxFee(tAssemble, 2).then((result) => {
+            newFee = result;
+          }).catch((err) => {
+            this.$message({message: this.$t('newConsensus.newConsensus7'), type: 'error', duration: 1000});
+            return;
+            console.log(err)
+          });
           mainCtx.time = tAssemble.time;
           mainCtx.remark = tAssemble.remark;
           let mainNetInputs = [];
@@ -931,6 +945,7 @@
           }
           mainCtx.setCoinData(mainNetInputs, outputs);
         }
+        //console.log(transferInfo.fee !== newFee);
         //如果手续费发生改变，重新组装CoinData
         if (transferInfo.fee !== newFee) {
           if (chainId === transferInfo.assetsChainId && transferInfo.assetsId === 1) {
