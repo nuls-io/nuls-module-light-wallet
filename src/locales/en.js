@@ -393,6 +393,13 @@ const en = {
     "tab9": "Balance",
     "tab10": "State",
     "tab11": "Address",
+    "tab12": "Contacts",
+    "tab13": "Edit",
+    "tab14": "Delete",
+    "tab15": "Add contact",
+    "tab16": "Notes cannot be empty",
+    "tab17": "Address cannot be empty",
+    "tab18": "The address already exists",
   },
 
   "type": {
@@ -587,6 +594,8 @@ const en = {
     "consensusInfo2": "The amount entrusted cannot be empty",
     "consensusInfo3": "Please enter a valid amount of commission",
     "consensusInfo4": "The amount of commission is not less than 2000 and the total amount of commission is less than 500000.",
+    "consensusInfo41": "Currently up to ",
+    "consensusInfo42": " NULS can be staked to this node",
     "consensusInfo5": "Logoff node",
     "consensusInfo6": "Node information",
     "consensusInfo7": "Total reward",
