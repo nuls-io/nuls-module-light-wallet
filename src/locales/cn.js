@@ -769,6 +769,7 @@ const cn = {
     "deploy19":"请输入合约名称",
     "deploy20":"合约名称(只允许使用小写字母、数字、下划线（下划线不能在两端）)",
     "deploy21":"合约名称",
+    "deploy22":"请输入value",
     "deploy":"deploy",
   },
 

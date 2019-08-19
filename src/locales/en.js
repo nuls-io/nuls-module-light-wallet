@@ -793,6 +793,7 @@ const en = {
     "deploy19": "Please enter the contract name.",
     "deploy20": "Contract name (only lowercase letters, numbers, underscores are allowed (underscores cannot be at both ends)",
     "deploy21": "Contract Name",
+    "deploy22":"Please enter values",
     "deploy": "deploy",
   },
 

@@ -246,7 +246,7 @@
           .then((response) => {
             //console.log(response.result);
             if (response.result.success) {
-              this.imputedContractCreateGas(createAddress, contractCode, args, this.deployForm.alias);
+              this.imputedContractCreateGas(createAddress, contractCode, args);
             } else {
               this.$message({message: this.$t('deploy.deploy11') + response.error, type: 'error', duration: 1000});
             }
@@ -261,7 +261,6 @@
        * @param createAddress
        * @param contractCode
        * @param args
-       * @param alias
        */
       async imputedContractCreateGas(createAddress, contractCode, args) {
         return await this.$post('/', 'imputedContractCreateGas', [createAddress, contractCode, args])

@@ -21,11 +21,11 @@
         </el-form-item>
         <div class="senior-div" v-if="callForm.senior">
           <el-form-item label="Gas Limit" prop="gas">
-            <el-input v-model="callForm.gas" @change="changeGas"></el-input>
+            <el-input v-model="callForm.gas" @change="changeGas" disabled></el-input>
             <div class="font12 yellow" v-show="gasTips">{{$t('call.call10')}}</div>
           </el-form-item>
           <el-form-item label="Price" prop="price">
-            <el-input v-model="callForm.price"></el-input>
+            <el-input v-model="callForm.price" disabled></el-input>
           </el-form-item>
           <el-form-item label="Value" prop="values" v-show="selectionData.payable">
             <el-input v-model="callForm.values"></el-input>
@@ -80,8 +80,11 @@
         }
       };
       let validateValues = (rule, value, callback) => {
-        if (value < 0) {
+          if (!value) {
+            callback(new Error(this.$t('deploy.deploy22')));
+          }else if (value < 0 || value === 0) {
           this.callForm.values = 0;
+          callback(new Error(this.$t('deploy.deploy22')));
         } else {
           callback();
         }
@@ -122,7 +125,7 @@
         contractCallData: {},//调用合约data
         callResult: '',//调用合约结果
         prefix: '',//地址前缀
-        newArgs:[],//合约参数
+        newArgs: [],//合约参数
       };
     },
     props: {
@@ -174,34 +177,36 @@
        * @param val
        **/
       changeModel(val) {
-        console.log(val);
+        //console.log(val);
+        this.oldGasNumber = 0;
         this.callResult = '';
         this.callForm.parameterList = [];
-
         let newData = this.callForm.modelData[val];
+        //console.log(newData);
         this.selectionData = newData;
-        console.log(this.selectionData);
         this.callForm.parameterList = [...newData.params];
+        if(newData.payable){
+          this.callForm.senior = true;
+        }
         if (!newData.view) { //上链方法
-          this.callForm.gas = 0;
+          this.callForm.gas = 1;
           this.callForm.values = 0;
         }
-
         //清除已有的参数
         for (let itme of this.callForm.parameterList) {
           if (itme.value) {
             itme.value = ''
           }
         }
-
         this.newArgs = [];
         this.callForm.price = sdk.CONTRACT_MINIMUM_PRICE;
+        //console.log(this.selectionData);
         if (!this.selectionData.view) { //上链方法
           if (this.selectionData.params.length === 0) { //没有参数
-            console.log(Number(Times(this.callForm.values, 100000000)));
             this.imputedContractCallGas(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), this.contractAddress, this.selectionData.name, this.selectionData.desc, this.newArgs)
           } else { //有参数
             this.newArgs = getArgs(this.callForm.parameterList);
+            //console.log(this.newArgs);
             if (this.newArgs.allParameter) {
               this.imputedContractCallGas(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), this.contractAddress, this.selectionData.name, this.selectionData.desc, this.newArgs.args)
             }
@@ -213,7 +218,8 @@
        * 判断所有必填参数是否有值
        **/
       changeParameter() {
-        if (!this.selectionData.view) {
+        //console.log(this.selectionData);
+        if (!this.selectionData.view && !this.selectionData.payable) {
           this.chainMethodCall();
         }
       },
@@ -230,19 +236,26 @@
        * @param formName
        **/
       submitForm(formName) {
-        if (!this.selectionData.view) { //上链方法调用
-          this.imputedContractCallGas(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), this.contractAddress, this.selectionData.name, this.selectionData.desc, this.newArgs);
-          this.getBalanceByAddress(chainID(), 1, this.addressInfo.address);
-          this.$refs[formName].validate((valid) => {
-            if (valid) {
-              this.$refs.password.showPassword(true);
-            } else {
-              return false;
-            }
-          });
-        } else { //不上链方法，直接调用
-          this.$refs[formName].validate((valid) => {
-            if (valid) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            if (!this.selectionData.view) { //上链方法调用
+              if (this.selectionData.params.length !== 0) {
+                this.newArgs = getArgs(this.callForm.parameterList);
+                if (this.newArgs.allParameter) {
+                  this.imputedContractCallGas(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), this.contractAddress, this.selectionData.name, this.selectionData.desc, this.newArgs.args)
+                }
+              }else {
+                this.imputedContractCallGas(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), this.contractAddress, this.selectionData.name, this.selectionData.desc, this.newArgs);
+              }
+              this.getBalanceByAddress(chainID(), 1, this.addressInfo.address);
+              this.$refs[formName].validate((valid) => {
+                if (valid) {
+                  this.$refs.password.showPassword(true);
+                } else {
+                  return false;
+                }
+              });
+            } else { //不上链方法，直接调用
               let newArgs = [];
               if (this.selectionData.params.length !== 0) { //有参数
                 newArgs = getArgs(this.callForm.parameterList, this.decimals);
@@ -252,11 +265,12 @@
               } else { //没参数
                 this.methodCall(this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs)
               }
-            } else {
-              return false;
             }
-          })
-        }
+          } else {
+            return false;
+          }
+        });
+
       },
 
       /**
@@ -293,7 +307,6 @@
         this.callForm.price = sdk.CONTRACT_MINIMUM_PRICE;
         if (this.selectionData.params.length !== 0) { //有参数
           newArgs = getArgs(this.callForm.parameterList, this.decimals);
-          //console.log(newArgs);
           if (newArgs.allParameter) {
             this.validateContractCall(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), sdk.CONTRACT_MAX_GASLIMIT, sdk.CONTRACT_MINIMUM_PRICE, this.contractAddress, this.selectionData.name, this.selectionData.desc, newArgs.args);
           }
@@ -341,7 +354,8 @@
       async imputedContractCallGas(sender, value, contractAddress, methodName, methodDesc, args) {
         return await this.$post('/', 'imputedContractCallGas', [sender, value, contractAddress, methodName, methodDesc, args])
           .then((response) => {
-            //console.log(response.result);
+            console.log(args);
+            console.log(response.result);
             if (response.hasOwnProperty("result")) {
               this.gasNumber = response.result.gasLimit;
               this.oldGasNumber = response.result.gasLimit;
