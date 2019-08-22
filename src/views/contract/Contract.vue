@@ -56,7 +56,7 @@
       <el-tab-pane :label="$t('contract.contract5')" name="contractSecond">
         <div class="bg-white w1200 search">
           <div class="search-div">
-            <el-input :placeholder="$t('contract.contract6')" v-model="searchContract" class="search-input">
+            <el-input :placeholder="$t('contract.contract6')" v-model.trim="searchContract" class="search-input">
             </el-input>
             <el-button type="success" class="search-button" @click="searchContractByAddress">
               {{$t('contract.contract7')}}
@@ -184,7 +184,7 @@
                 this.getContractListById(this.pageIndex, this.pageSize, this.addressInfo.contractList.length, this.addressInfo.contractList);
               }
             } else {
-              this.$message({message: this.$t('contract.contract11') + response.error, type: 'error', duration: 1000});
+              this.$message({message: this.$t('contract.contract11') + JSON.stringify(response.error), type: 'error', duration: 1000});
             }
           })
           .catch((error) => {

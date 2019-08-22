@@ -56,7 +56,6 @@
 
   export default {
     data() {
-
       let validateGas = (rule, value, callback) => {
         if (!value) {
           callback(new Error(this.$t('deploy.deploy8')));
@@ -80,9 +79,9 @@
         }
       };
       let validateValues = (rule, value, callback) => {
-          if (!value) {
-            callback(new Error(this.$t('deploy.deploy22')));
-          }else if (value < 0 || value === 0) {
+        if (!value) {
+          callback(new Error(this.$t('deploy.deploy22')));
+        } else if (value < 0 || value === 0) {
           this.callForm.values = 0;
           callback(new Error(this.$t('deploy.deploy22')));
         } else {
@@ -144,7 +143,8 @@
         console.log(err);
         this.prefix = '';
       });
-      this.callForm.modelData = this.modelList.filter(obj => !obj.event);
+      let newData = this.modelList.filter(obj => !obj.event);
+      this.callForm.modelData = newData.filter(obj => obj.name !== '<init>');
       this.addressInfo = addressInfo(1);
       setInterval(() => {
         this.addressInfo = addressInfo(1);
@@ -155,7 +155,9 @@
     },
     watch: {
       modelList(val) {
-        this.callForm.modelData = val;
+        //this.callForm.modelData = val;
+        let newData = val.filter(obj => !obj.event);
+        this.callForm.modelData = newData.filter(obj => obj.name !== '<init>');
       },
       addressInfo(val, old) {
         if (val.address !== old.address && old.address) {
@@ -185,7 +187,7 @@
         //console.log(newData);
         this.selectionData = newData;
         this.callForm.parameterList = [...newData.params];
-        if(newData.payable){
+        if (newData.payable) {
           this.callForm.senior = true;
         }
         if (!newData.view) { //上链方法
@@ -244,7 +246,7 @@
                 if (this.newArgs.allParameter) {
                   this.imputedContractCallGas(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), this.contractAddress, this.selectionData.name, this.selectionData.desc, this.newArgs.args)
                 }
-              }else {
+              } else {
                 this.imputedContractCallGas(this.addressInfo.address, Number(Times(this.callForm.values, 100000000)), this.contractAddress, this.selectionData.name, this.selectionData.desc, this.newArgs);
               }
               this.getBalanceByAddress(chainID(), 1, this.addressInfo.address);
@@ -354,8 +356,7 @@
       async imputedContractCallGas(sender, value, contractAddress, methodName, methodDesc, args) {
         return await this.$post('/', 'imputedContractCallGas', [sender, value, contractAddress, methodName, methodDesc, args])
           .then((response) => {
-            console.log(args);
-            console.log(response.result);
+            //console.log(response.result);
             if (response.hasOwnProperty("result")) {
               this.gasNumber = response.result.gasLimit;
               this.oldGasNumber = response.result.gasLimit;

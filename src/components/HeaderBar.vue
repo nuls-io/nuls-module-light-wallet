@@ -206,7 +206,7 @@
     .w100 {
       display: block;
       float: left;
-      width: 175px;
+      width: 180px;
     }
   }
 </style>

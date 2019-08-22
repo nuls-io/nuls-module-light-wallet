@@ -44,11 +44,11 @@
           </el-form-item>
           <div v-if="deployForm.senior" class="senior-div bg-white">
             <el-form-item label="Gas Limit" prop="gas">
-              <el-input v-model="deployForm.gas">
+              <el-input v-model="deployForm.gas" disabled>
               </el-input>
             </el-form-item>
             <el-form-item label="Price" prop="price">
-              <el-input v-model="deployForm.price">
+              <el-input v-model="deployForm.price" disabled>
               </el-input>
             </el-form-item>
             <el-form-item :label="$t('public.contractInfo')" prop="addtion">
@@ -186,8 +186,8 @@
           hex: '',
           parameterList: [],
           senior: false,
-          gas: '',
-          price: '',
+          gas: 1,
+          price: 25,
           addtion: '',
         };
       },
@@ -270,10 +270,12 @@
               this.deployForm.gas = response.result.gasLimit;
               this.makeCreateData(response.result.gasLimit, createAddress, contractCode, args, this.deployForm.alias);
             } else {
+              this.deployForm.gas = 1;
               this.$message({message: this.$t('deploy.deploy13') + response.error, type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
+            this.deployForm.gas = 1;
             this.$message({message: this.$t('deploy.deploy14') + error, type: 'error', duration: 1000});
           });
       },
@@ -322,6 +324,7 @@
           this.$message({message: this.$t('deploy.deploy15'), type: 'error', duration: 1000});
         } else {
           this.contractCreateTxData = contractCreate;
+          //console.log(this.contractCreateTxData);
         }
       },
 
@@ -399,7 +402,7 @@
        **/
       async passSubmit(password) {
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password,this.prefix);
+        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password, this.prefix);
         let amount = this.contractCreateTxData.gasLimit * this.contractCreateTxData.price;
         if (newAddressInfo.address === this.addressInfo.address) {
           let transferInfo = {
@@ -412,9 +415,10 @@
           let pub = this.addressInfo.pub;
           let remark = this.deployForm.addtion;
           let inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 15);
-          if(!inOrOutputs.success){
+          if (!inOrOutputs.success) {
             this.$message({message: inOrOutputs.data, type: 'error', duration: 1000});
           }
+          //console.log(this.contractCreateTxData);
           let tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, remark, 15, this.contractCreateTxData);
           let txhex = '';
           //获取手续费
@@ -471,7 +475,7 @@
             //获取文件流
             let reader = new FileReader();
             reader.readAsDataURL(file);
-            _this.deployLoading=true;
+            _this.deployLoading = true;
             reader.onload = (() => {
               _this.$post('/', 'uploadContractJar', [reader.result])
                 .then((response) => {

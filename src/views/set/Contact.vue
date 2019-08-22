@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <el-dialog :title="$t('public.tab15')" width="35rem" :visible.sync="contactDialog" class="contact-dialog"
+    <el-dialog :title="$t('tab.tab15')" width="35rem" :visible.sync="contactDialog" class="contact-dialog"
                :close-on-click-modal="false"
                :close-on-press-escape="false">
       <el-form :model="contacForm" status-icon :rules="contacRules" ref="contacForm" class="contac-form bg-white">
