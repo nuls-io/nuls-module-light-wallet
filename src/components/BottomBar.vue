@@ -153,6 +153,11 @@
                     item.balance = timesDecimals(response.result.balance);
                     item.consensusLock = timesDecimals(response.result.consensusLock);
                     item.totalReward = timesDecimals(response.result.totalReward);
+                    if(response.result.lastReward){
+                      item.lastReward = timesDecimals(response.result.lastReward);
+                    }else {
+                      item.lastReward = 0;
+                    }
                     item.tokens = [];
                     item.chainId = nuls.verifyAddress(item.address).chainId;
                   }

@@ -50,8 +50,8 @@ const en = {
     "contractName": "Contract Name",
     "cancelCollection": "Cancel Collection",
     "contractInfo": "Contract Info",
-    "input": "Input",
-    "output": "Output",
+    "input": "Sender",
+    "output": "Recipient",
     "fromAddresss": "Sender",
     "toAddresss": "Recipient",
     "balance": "Balance",
@@ -554,10 +554,10 @@ const en = {
   },
 
   "consensus": {
-    "consensus0": "My consensus",
+    "consensus0": "My consensus award",
     "consensus1": "Total entrust",
     "consensus2": "Available balance",
-    "consensus3": "Total Consensus Award",
+    "consensus3": "A recent consensus award",
     "consensus4": "All consensus",
     "consensus5": "New node",
     "consensus6": "Consensus node",

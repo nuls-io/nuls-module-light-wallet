@@ -50,8 +50,8 @@ const cn = {
     "contractName":"合约名称",
     "cancelCollection":"取消收藏",
     "contractInfo":"合约描述",
-    "input":"输入",
-    "output":"输出",
+    "input":"发送者",
+    "output":"接受者",
     "fromAddresss":"发送者",
     "toAddresss":"接受者",
     "balance": "余额",
@@ -526,10 +526,10 @@ const cn = {
   },
 
   "consensus": {
-    "consensus0": "我的共识",
+    "consensus0": "我的共识奖励",
     "consensus1": "共识锁定",
     "consensus2": "可用余额",
-    "consensus3": "总共识奖励",
+    "consensus3": "最近一笔共识奖励",
     "consensus4": "所有共识",
     "consensus5": "创建",
     "consensus6": "共识节点",

@@ -169,7 +169,7 @@
        **/
       async getMyContractByAddress(address) {
         //await this.$post('/', 'getContractList', [this.pageIndex, this.pageSize, false, false])
-        await this.$post('/', 'getAccountContractList', [this.pageIndex, this.pageSize, address, false, false])
+        await this.$post('/', 'getAccountContractList', [this.pageIndex, this.pageSize, address, -1, false])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
