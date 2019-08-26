@@ -591,7 +591,7 @@
        * @param type
        **/
       changeType(type) {
-        console.log(type);
+        //console.log(type);
         this.changeParameter();
         if (type.type === 1) {
           this.transferForm.gas = 5000;
