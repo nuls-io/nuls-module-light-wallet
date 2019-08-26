@@ -384,7 +384,8 @@
                   symbol: item.symbol,
                   chainId: item.chainId,
                   assetId: item.assetId,
-                  balance: timesDecimals(item.balance)
+                  balance: timesDecimals(item.balance, item.decimals),
+                  decimals: item.decimals
                 })
               }
             }
@@ -590,7 +591,7 @@
        * @param type
        **/
       changeType(type) {
-        //console.log(type);
+        console.log(type);
         this.changeParameter();
         if (type.type === 1) {
           this.transferForm.gas = 5000;
