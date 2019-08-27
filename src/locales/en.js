@@ -596,6 +596,7 @@ const en = {
     "consensusInfo4": "The amount of commission is not less than 2000 and the total amount of commission is less than 500000.",
     "consensusInfo41": "Currently up to ",
     "consensusInfo42": " NULS can be staked to this node",
+    "consensusInfo43": "The node has a minimum staking of 2000 NULS",
     "consensusInfo5": "Logoff node",
     "consensusInfo6": "Node information",
     "consensusInfo7": "Total reward",

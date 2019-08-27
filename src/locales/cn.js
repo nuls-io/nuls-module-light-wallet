@@ -571,6 +571,7 @@ const cn = {
     "consensusInfo4": "委托金额不小于2000并且总委托额小于500000",
     "consensusInfo41": "当前最多可委托 ",
     "consensusInfo42": " NULS 到该节点",
+    "consensusInfo43": "节点的最低委托量为2000 NULS",
     "consensusInfo5": "注销节点",
     "consensusInfo6": "节点信息",
     "consensusInfo7": "总奖励",
