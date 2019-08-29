@@ -51,7 +51,7 @@ const cn = {
     "cancelCollection":"取消收藏",
     "contractInfo":"合约描述",
     "input":"发送者",
-    "output":"接受者",
+    "output":"接收者",
     "fromAddresss":"发送者",
     "toAddresss":"接受者",
     "balance": "余额",
@@ -371,7 +371,7 @@ const cn = {
     "tab15": "添加联系人",
     "tab16": "备注不能为空",
     "tab17": "地址不能为空",
-    "tab18": "地址已经存在了",
+    "tab18": "请输入正确的地址",
     "tab19": "地址二维码",
   },
 

@@ -105,7 +105,7 @@
     <div class="cb"></div>
 
     <div class="card_long mzt_20 w1200 inorouput" v-if="tokenTransfersData.length !==0">
-      <h5 class="card-title font18">{{$t('public.tokenTransfer')}}</h5>
+      <h5 class="card-title font18" style="padding-left: 40px">{{$t('public.tokenTransfer')}}</h5>
       <div class="inorou-info bg-white">
         <div class="card-info left fl">
           <ul>
@@ -129,7 +129,7 @@
     <div class="cb"></div>
 
     <div class="card_long mzt_20 w1200 inorouput" v-if="nulsTransfersData.length !==0">
-      <h5 class="card-title font18">NULS {{$t('nav.transfer')}}</h5>
+      <h5 class="card-title font18" style="padding-left: 40px">NULS {{$t('nav.transfer')}}</h5>
       <div class="inorou-info bg-white">
         <div class="card-info left fl">
           <ul>
@@ -235,7 +235,7 @@
         this.txInfoLoading = true;
         this.$post('/', 'getTx', [hash])
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             if (response.hasOwnProperty("result")) {
               response.result.createTime = moment(getLocalTime(response.result.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
               response.result.fees = timesDecimals(response.result.fee.value);
@@ -259,16 +259,23 @@
                 this.tokenTransfersData = response.result.txData.resultInfo.tokenTransfers
               }
 
-              if (response.result.type === 16 && response.result.txData.resultInfo.nulsTransfers.length !== 0) {
-                for (let item of response.result.txData.resultInfo.nulsTransfers) {
-                  console.log(item);
-                  item.value = timesDecimals(item.value);
-                  for (let k of item.outputs) {
-                    k.value = timesDecimals(k.value);
+
+              if (response.result.type === 16) {
+                response.result.txData.resultInfo.price = timesDecimals(response.result.txData.resultInfo.price);
+                if (response.result.txData.resultInfo.nulsTransfers.length !== 0) {
+                  for (let item of response.result.txData.resultInfo.nulsTransfers) {
+                    item.value = timesDecimals(item.value);
+                    for (let k of item.outputs) {
+                      k.value = timesDecimals(k.value);
+                    }
                   }
-                  //TODO 循环待完成
+                  this.nulsTransfersData = response.result.txData.resultInfo.nulsTransfers;
                 }
-                this.nulsTransfersData = response.result.txData.resultInfo.nulsTransfers;
+                if (response.result.txData.resultInfo.tokenTransfers.length !== 0) {
+                  for (let item of response.result.txData.resultInfo.tokenTransfers) {
+                    item.value = timesDecimals(item.value, item.decimals);
+                  }
+                }
               }
 
               this.txInfo = response.result;

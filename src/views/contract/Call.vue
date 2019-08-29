@@ -20,14 +20,14 @@
           <el-switch v-model="callForm.senior"></el-switch>
         </el-form-item>
         <div class="senior-div" v-if="callForm.senior">
-          <el-form-item label="Gas Limit" prop="gas">
+          <el-form-item label="Gas Limit">
             <el-input v-model="callForm.gas" @change="changeGas" disabled></el-input>
             <div class="font12 yellow" v-show="gasTips">{{$t('call.call10')}}</div>
           </el-form-item>
-          <el-form-item label="Price" prop="price">
+          <el-form-item label="Price">
             <el-input v-model="callForm.price" disabled></el-input>
           </el-form-item>
-          <el-form-item label="Value" prop="values" v-show="selectionData.payable">
+          <el-form-item label="Value" prop="values" v-if="selectionData.payable">
             <el-input v-model="callForm.values"></el-input>
           </el-form-item>
         </div>
@@ -238,8 +238,11 @@
        * @param formName
        **/
       submitForm(formName) {
+        console.log("3333");
+        console.log(this.selectionData);
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            console.log(this.selectionData);
             if (!this.selectionData.view) { //上链方法调用
               if (this.selectionData.params.length !== 0) {
                 this.newArgs = getArgs(this.callForm.parameterList);

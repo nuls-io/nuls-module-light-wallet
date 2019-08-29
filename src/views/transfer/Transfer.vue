@@ -68,7 +68,11 @@
 
     <Password ref="password" @passwordSubmit="passSubmit">
     </Password>
-    <el-dialog :title="$t('transfer.transfer6')" :visible.sync="transferVisible" width="46rem" class="confirm-dialog">
+    <el-dialog :title="$t('transfer.transfer6')" width="46rem" class="confirm-dialog"
+               :visible.sync="transferVisible"
+               :show-close="false"
+               :close-on-click-modal="false"
+               :close-on-press-escape="false">
       <div class="bg-white">
         <div class="div-data">
           <p>{{$t('transfer.transfer0')}}&nbsp;</p>
@@ -98,7 +102,10 @@
       </div>
     </el-dialog>
 
-    <el-dialog :title="$t('public.bookList')" :visible.sync="bookDialog" width="50rem" class="book-dialog">
+    <el-dialog :title="$t('public.bookList')" width="50rem" class="book-dialog"
+               :visible.sync="bookDialog"
+               :close-on-click-modal="false"
+               :close-on-press-escape="false">
       <el-table :data="bookData">
         <el-table-column property="name" :label="$t('transfer.transfer4')" width="100" align="center">
         </el-table-column>
@@ -161,11 +168,11 @@
         }
       };
       let validateAmount = (rule, value, callback) => {
-        let patrn = new RegExp ("^([1-9][\\d]{0,"+this.changeAssets.decimals+"}|0)(\\.[\\d]{1,"+this.changeAssets.decimals+"})?$");
+        let patrn = new RegExp("^([1-9][\\d]{0," + this.changeAssets.decimals + "}|0)(\\.[\\d]{1," + this.changeAssets.decimals + "})?$");
         if (value === '') {
           callback(new Error(this.$t('transfer.transfer11')))
         } else if (!patrn.exec(value)) {
-          callback(new Error(this.$t('transfer.transfer12') +": "+ this.changeAssets.decimals))
+          callback(new Error(this.$t('transfer.transfer12') + ": " + this.changeAssets.decimals))
         } else if (Number(value) < 0.001) {
           callback(new Error(this.$t('transfer.transfer13')))
         } else if (Number(value) > Number(Minus(this.changeAssets.balance, 0.001))) {
@@ -335,7 +342,7 @@
                   chainId: item.chainId,
                   assetId: item.assetId,
                   balance: timesDecimals(item.balance),
-                  decimals:8,
+                  decimals: 8,
                 });
                 chainId = item.chainId;
               }
@@ -689,6 +696,8 @@
             transferInfo['amount'] = Number(Plus(Number(Times(this.transferForm.amount, 100000000)), Number(Times(this.transferForm.gas, this.transferForm.price))));
             transferInfo.toAddress = this.contractInfo.contractAddress;
             transferInfo.value = Number(Times(this.transferForm.amount, 100000000));
+            console.log(this.changeAssets);
+            console.log(transferInfo);
             inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 16);
             tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 16, this.contractCallData);
           } else {

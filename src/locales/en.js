@@ -399,7 +399,7 @@ const en = {
     "tab15": "Add contact",
     "tab16": "Notes cannot be empty",
     "tab17": "Address cannot be empty",
-    "tab18": "The address already exists",
+    "tab18": "Please enter the correct address.",
     "tab19": "Address code",
   },
 
