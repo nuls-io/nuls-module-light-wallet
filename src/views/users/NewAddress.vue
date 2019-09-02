@@ -56,7 +56,7 @@
             <el-button type="success" @click="submitPasswordForm('passwordForm')" :disabled="!passwordForm.agreement">
               {{$t('newAddress.newAddress10')}}
             </el-button>
-            <el-button type="text" @click="toUrl('importAddress')">{{$t('newAddress.newAddress11')}}</el-button>
+            <!--<el-button type="text" @click="toUrl('importAddress')">{{$t('newAddress.newAddress11')}}</el-button>-->
           </el-form-item>
         </el-form>
       </div>

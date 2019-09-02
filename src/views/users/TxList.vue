@@ -20,7 +20,8 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <el-select :value="$t('budgetType.'+inAndOutValue)" @change="channgeInAndOut" :disabled="types !==2" v-if="false">
+          <el-select :value="$t('budgetType.'+inAndOutValue)" @change="channgeInAndOut" :disabled="types !==2"
+                     v-if="false">
             <el-option v-for="item in inAndOutOptions" :key="item.value" :label="$t('budgetType.'+item.value)"
                        :value="item.value">
             </el-option>
@@ -90,7 +91,7 @@
         assetsValue: "0",
         typeOptions: [
           {value: '0', label: '0'},
-         /* {value: '1', label: '1'},*/
+          /* {value: '1', label: '1'},*/
           {value: '2', label: '2'},
           {value: '3', label: '3'},
           {value: '4', label: '4'},
@@ -133,15 +134,15 @@
     watch: {
       addressInfo(val, old) {
         if (val.address !== old.address && old.address) {
-          this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide);
+          this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types);
         }
       }
     },
     mounted() {
-      this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide);
+      this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types);
       //10秒循环一次数据
       this.txListSetInterval = setInterval(() => {
-        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide);
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types);
       }, 10000);
 
     },
@@ -162,10 +163,10 @@
        * @param type
        * @param isHide
        **/
-      getTxlistByAddress(pageSize, pageRows, address, type, isHide) {
-        this.$post('/', 'getAccountTxs', [pageSize, pageRows, address, type, isHide])
+      getTxlistByAddress(pageSize, pageRows, address, type) {
+        this.$post('/', 'getAccountTxs', [pageSize, pageRows, address, type, -1, -1])
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             if (response.hasOwnProperty("result")) {
               for (let item of response.result.list) {
                 item.createTime = moment(getLocalTime(item.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
@@ -198,7 +199,7 @@
       channgeType(e) {
         this.types = Number(e);
         this.typeValue = Number(e);
-        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide);
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types);
       },
 
       /**
@@ -216,7 +217,7 @@
       changeHide(e) {
         this.isHide = e;
         this.pageIndex = 1;
-        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide)
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types)
       },
 
       /**
@@ -226,7 +227,7 @@
       txListPages(val) {
         this.pageIndex = val;
         this.txListDataLoading = true;
-        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide)
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types)
       },
 
       /**

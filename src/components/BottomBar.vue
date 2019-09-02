@@ -113,10 +113,7 @@
       getHeaderInfo() {
         const url = localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')).urls : 'http://192.168.1.40:18003/';
         const params = {
-          "jsonrpc": "2.0",
-          "method": "getInfo",
-          "params": [chainID()],
-          "id": Math.floor(Math.random() * 1000)
+          "jsonrpc": "2.0", "method": "getInfo", "params": [chainID()], "id": Math.floor(Math.random() * 1000)
         };
         axios.post(url, params)
           .then((response) => {
@@ -153,9 +150,9 @@
                     item.balance = timesDecimals(response.result.balance);
                     item.consensusLock = timesDecimals(response.result.consensusLock);
                     item.totalReward = timesDecimals(response.result.totalReward);
-                    if(response.result.lastReward){
+                    if (response.result.lastReward) {
                       item.lastReward = timesDecimals(response.result.lastReward);
-                    }else {
+                    } else {
                       item.lastReward = 0;
                     }
                     item.tokens = [];

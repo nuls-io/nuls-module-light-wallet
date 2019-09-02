@@ -2,24 +2,35 @@
   <div class="import_address bg-gray">
     <div class="bg-white">
       <div class="w1200">
-        <BackBar
-                :backTitle="this.$route.query.address ? $t('address.address6') : $t('importAddress.importAddress0')"></BackBar>
+        <!--<BackBar :backTitle="this.$route.query.address ? $t('address.address6') : $t('importAddress.importAddress0')"></BackBar>-->
         <h3 class="title" v-if="this.$route.query.address">{{this.$route.query.address}}</h3>
         <h3 class="title" v-else>{{$t('importAddress.importAddress1')}}</h3>
       </div>
     </div>
     <div class="w1200 mt_20 bg-white">
-      <div class="radio" v-show="!this.$route.query.address">
-        <el-radio v-model="importRadio" label="importKeystore" v-show="RUN_PATTERN">
+      <div class="radio">
+        <el-radio v-model="importRadio" label="importKeystore">
           {{$t('importAddress.importAddress2')}}
         </el-radio>
-        <el-radio v-model="importRadio" label="importKey" v-show="RUN_PATTERN">
+        <el-radio v-model="importRadio" label="importKey">
           {{$t('importAddress.importAddress3')}}
         </el-radio>
       </div>
 
       <div class="btn mb_100" v-show="importRadio==='importKeystore'">
-        <el-button type="success" @click="importKeystore">{{$t('importAddress.importAddress4')}}</el-button>
+        <div>
+          <!--<el-upload drag class="upload-keystore" action="localhost" accept='.keystore,.txt'
+                     :on-change="handleChange"
+                     :multiple="false"
+                     :limit="1">
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          </el-upload>-->
+          <el-button type="success" @click="importKeystore">{{$t('importAddress.importAddress4')}}</el-button>
+        </div>
+        <div>
+          <el-button type="text" @click="toUrl('newAddress')">{{$t('importAddress.importAddress0')}}</el-button>
+        </div>
       </div>
 
       <div class="w630" :class="this.$route.query.address ? 'mzt_20' : ''" v-show="importRadio==='importKey'">
@@ -34,9 +45,12 @@
             <el-input type="password" v-model="importKeyForm.checkPass" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item class="form-next">
-            <el-button type="success" @click="submitForm('importKeyForm')">{{this.$route.query.address ?
-              '重置密码':$t('importAddress.importAddress8')}}
+            <el-button type="success" @click="submitForm('importKeyForm')">
+              {{this.$route.query.address ? $t('tab.tab20'):$t('importAddress.importAddress8')}}
             </el-button>
+            <div>
+              <el-button type="text" @click="toUrl('newAddress')">{{$t('importAddress.importAddress0')}}</el-button>
+            </div>
           </el-form-item>
         </el-form>
       </div>
@@ -87,7 +101,7 @@
       };
       return {
         prefix: '',//地址前缀
-        importRadio: this.$route.query.address ? 'importKey' : 'importKeystore', //选择导入方式
+        importRadio: 'importKeystore', //选择导入方式
         keystoreInfo: {},//keystore内容
         importKeyForm: {
           key: '',
@@ -116,16 +130,32 @@
         console.log(err);
         this.prefix = '';
       });
-
-      if (!RUN_PATTERN) {
-        this.importRadio = 'importKey';
-      }
     },
     components: {
       BackBar,
       Password
     },
     methods: {
+
+      /*  handleChange(file, fileList) {
+          console.log(file);
+          console.log("88888");
+          console.log(fileList);
+
+          const reader = new FileReader();
+          console.log(reader);
+          reader.addEventListener("load", () => {
+            console.log(reader.result);
+            /!*if (validateKeyStore(reader.result)) {
+              console.log(reader.result);
+              return;
+            }
+            file = null;*!/
+          });
+          reader.readAsText(file, "utf-8");
+          console.log(reader);
+          return false;
+        },*/
 
       /**
        * keystore 导入

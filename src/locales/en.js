@@ -401,6 +401,7 @@ const en = {
     "tab17": "Address cannot be empty",
     "tab18": "Please enter the correct address.",
     "tab19": "Address code",
+    "tab20": "Reset password",
   },
 
   "type": {

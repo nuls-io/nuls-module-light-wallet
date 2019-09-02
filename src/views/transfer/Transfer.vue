@@ -221,7 +221,7 @@
           fromAddress: '',
           toAddress: '',
           type: this.$route.query.accountType ? this.$route.query.accountType : 'NULS',
-          amount: '',
+          amount: 888,
           senior: false,
           gas: this.gasNumber,
           price: sdk.CONTRACT_MINIMUM_PRICE,
@@ -442,13 +442,53 @@
        **/
       async changeParameter() {
         //console.log(this.changeAssets);
+        /*if (this.transferForm.toAddress && this.transferForm.amount) { //转入地址及金额都有值
+          let fromAddress = nuls.verifyAddress(this.transferForm.fromAddress);
+          let toAddress = {};
+          await this.sleep(500); //休眠500毫秒
+          if (this.aliasToAddress) { //是否为别名转账
+            toAddress = nuls.verifyAddress(this.aliasToAddress);
+          } else {
+            toAddress = nuls.verifyAddress(this.transferForm.toAddress);
+          }
+          console.log(fromAddress);
+          console.log(toAddress);
+          if (fromAddress.chainId === toAddress.chainId && fromAddress.type === toAddress.type) { //from与to的chainId、type 相同: 普通交易及合约交易
+            if (this.changeAssets.type === 1) { //普通NULS转账交易
+              this.isCross = false;
+              this.fee = 0.001;
+              this.getSymbol();
+            } else { //合约转账交易
+              console.log(this.changeAssets.type);
+              console.log("合约转账交易");
+              this.transferForm.gas = sdk.CONTRACT_MAX_GASLIMIT;
+              this.$refs['transferForm'].validate((valid) => {
+                if (valid) {
+                  let gasLimit = sdk.CONTRACT_MAX_GASLIMIT;
+                  let price = this.transferForm.price;
+                  let contractAddress = this.contractInfo.contractAddress;
+                  let methodName = '_payable';
+                  let methodDesc = '';
+                  let args = [];
+                  this.validateContractCall(this.addressInfo.address, Number(Times(this.transferForm.amount, 100000000)), gasLimit, price, contractAddress, methodName, methodDesc, args);
+                } else {
+                  return false;
+                }
+              });
+            }
+          } else if (fromAddress.chainId === toAddress.chainId && fromAddress.type !== toAddress.type) { //from与to的chainId相同，type不相同: 向合约地址转(NULS、token)资产
+            console.log("from与to的chainId相同，type不相同 向合约地址转主网(NULS)资产");
+          } else if (fromAddress.chainId !== toAddress.chainId) { // from与to的chainId不相同:跨链交易
+            console.log("跨链交易")
+          }
+        }*/
         //判断转出地址是否为其他链地址 如果有就为跨链交易
-        if (this.transferForm.toAddress) {
+        if (this.transferForm.toAddress) { //转入地址有值
           this.contractInfo = {};
           let fromAddress = nuls.verifyAddress(this.transferForm.fromAddress);
           let toAddress = {};
           await this.sleep(500);
-          if (this.aliasToAddress) {
+          if (this.aliasToAddress) { //是否为别名转账
             toAddress = nuls.verifyAddress(this.aliasToAddress);
           } else {
             toAddress = nuls.verifyAddress(this.transferForm.toAddress);
