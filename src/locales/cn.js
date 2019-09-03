@@ -685,12 +685,14 @@ const cn = {
   },
 
   "importAddress": {
-    "importAddress0": "创建地址",
+    "importAddress0": "创建账户",
     "importAddress1": "导入钱包",
     "importAddress2": "Keystore 导入",
     "importAddress3": "私钥导入",
-    "importAddress4": "选择keystore文件",
-    "importAddress5": "请输入你的私钥:",
+    "importAddress4": "将文件拖到此处，或",
+    "importAddress41": "点击上传",
+    "importAddress42": "您的浏览器不支持FileReader,请使用最新版谷歌浏览器",
+    "importAddress5": "请输入你的私钥",
     "importAddress6": "密码",
     "importAddress7": "确认密码",
     "importAddress8": "导入钱包",

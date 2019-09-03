@@ -235,7 +235,7 @@
         this.txInfoLoading = true;
         this.$post('/', 'getTx', [hash])
           .then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               response.result.createTime = moment(getLocalTime(response.result.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
               response.result.fees = timesDecimals(response.result.fee.value);

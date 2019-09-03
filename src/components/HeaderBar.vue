@@ -188,7 +188,7 @@
       float: left;
     }
     .tool {
-      width: 340px;
+      width: 200px;
       margin: 10px 0 0 0;
       float: right;
       background-color: #e6a23c;

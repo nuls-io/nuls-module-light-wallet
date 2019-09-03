@@ -1,7 +1,9 @@
+import nuls from 'nuls-sdk-js'
 import {BigNumber} from 'bignumber.js'
 import copy from 'copy-to-clipboard'
 import {explorerUrl} from '@/config.js'
 import openner from "./opener-web";
+
 //import openner from "./opener-desktop";
 
 /**
@@ -69,6 +71,25 @@ export function Division(nu, arg) {
 export function timesDecimals(nu, decimals = 8) {
   let newNu = new BigNumber(Division(nu, Power(decimals)).toString());
   return newNu.toFormat().replace(/[,]/g, '');
+}
+
+/**
+ * @disc: 验证密码
+ * @params:  accountInfo
+ * @params:  password
+ * @params:  prefix
+ * @date: 2019-08-22 12:05
+ * @author: Wave
+ */
+export function passwordVerification(accountInfo, password, prefix) {
+  let aesPri = accountInfo.aesPri ? accountInfo.aesPri : accountInfo.encryptedPrivateKey;
+  const pri = nuls.decrypteOfAES(aesPri, password);
+  const newAddressInfo = nuls.importByKey(chainID(), pri, password, prefix);
+  if (newAddressInfo.address === accountInfo.address || nuls.addressEquals(accountInfo.address, newAddressInfo.address)) {
+    return {success: true, pri: pri, pub: accountInfo.pub, aesPri: aesPri};
+  } else {
+    return {success: false};
+  }
 }
 
 /**

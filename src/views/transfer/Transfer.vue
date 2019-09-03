@@ -221,7 +221,7 @@
           fromAddress: '',
           toAddress: '',
           type: this.$route.query.accountType ? this.$route.query.accountType : 'NULS',
-          amount: 888,
+          amount: '',
           senior: false,
           gas: this.gasNumber,
           price: sdk.CONTRACT_MINIMUM_PRICE,

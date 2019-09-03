@@ -142,7 +142,7 @@
         }, 200);
       } else {
         this.$router.push({
-          name: "importAddress"
+          name: "newAddress"
         })
       }
 

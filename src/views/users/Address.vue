@@ -78,7 +78,7 @@
 <script>
   import nuls from 'nuls-sdk-js'
   import Password from '@/components/PasswordBar'
-  import {timesDecimals, chainIdNumber, addressInfo,chainID} from '@/api/util'
+  import {timesDecimals, chainIdNumber, addressInfo, chainID} from '@/api/util'
   import {getPrefixByChainId} from '@/api/requestData'
 
   export default {
@@ -189,7 +189,7 @@
       backAddress(rowInfo) {
         this.selectAddressInfo = rowInfo;
         this.$router.push({
-          name: "newAddress",
+          name: "backupsAddress",
           query: {'backAddressInfo': rowInfo}
         })
       },
@@ -232,7 +232,7 @@
       passSubmit(password) {
         let newAddressInfo = addressInfo(0);
         const pri = nuls.decrypteOfAES(this.selectAddressInfo.aesPri, password);
-        const deleteAddressInfo = nuls.importByKey(this.selectAddressInfo.chainId, pri, password,this.prefix);
+        const deleteAddressInfo = nuls.importByKey(this.selectAddressInfo.chainId, pri, password, this.prefix);
         if (this.selectAddressInfo.address === deleteAddressInfo.address) {
           newAddressInfo.splice(newAddressInfo.findIndex(item => item.address === this.selectAddressInfo.address), 1);
           if (this.selectAddressInfo.selection && newAddressInfo.length !== 0) {
