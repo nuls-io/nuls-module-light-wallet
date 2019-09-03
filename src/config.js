@@ -9,7 +9,7 @@ export const RUN_DEV = true;
 //正式环境ChainId和资产ID
 export const MAIN_INFO = RUN_DEV ? {chainId: 1, assetsId: 1} : {chainId: 2, assetsId: 1};
 //运行模式（true:electron窗体模式，false:浏览器模式）
-export const RUN_PATTERN = false;
+export const RUN_PATTERN = true;
 //正式、测试网络的api
 export let API_URL = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/';
 setInterval(() => {
