@@ -1,12 +1,13 @@
 import {post} from './https'
 import {Plus, chainID} from './util'
+import {MAIN_INFO} from '@/config.js'
 
 /**
  * 判断是否为主网
  * @param chainId
  **/
 export function isMainNet(chainId) {
-  return chainId === 2;
+  return chainId === MAIN_INFO.chainId;
 }
 
 /**

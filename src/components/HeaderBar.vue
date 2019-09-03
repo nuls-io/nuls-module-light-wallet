@@ -215,7 +215,7 @@
     .w100 {
       display: block;
       float: left;
-      width: 180px;
+      width: 200px;
     }
   }
 </style>

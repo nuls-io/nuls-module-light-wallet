@@ -82,11 +82,10 @@ export function timesDecimals(nu, decimals = 8) {
  * @author: Wave
  */
 export function passwordVerification(accountInfo, password, prefix) {
-  let aesPri = accountInfo.aesPri ? accountInfo.aesPri : accountInfo.encryptedPrivateKey;
-  const pri = nuls.decrypteOfAES(aesPri, password);
+  const pri = nuls.decrypteOfAES(accountInfo.aesPri, password);
   const newAddressInfo = nuls.importByKey(chainID(), pri, password, prefix);
   if (newAddressInfo.address === accountInfo.address || nuls.addressEquals(accountInfo.address, newAddressInfo.address)) {
-    return {success: true, pri: pri, pub: accountInfo.pub, aesPri: aesPri};
+    return {success: true, pri: pri, pub: accountInfo.pub, aesPri: accountInfo.aesPri, address: newAddressInfo.address};
   } else {
     return {success: false};
   }

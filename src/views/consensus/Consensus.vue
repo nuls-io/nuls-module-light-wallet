@@ -9,7 +9,7 @@
       <div class="card-info left fl">
         <h5 class="card-title font18">
           {{$t('consensus.consensus0')}}
-          <span class="font14 fr">{{addressInfo.totalReward}}<font class="fCN"> NULS</font></span>
+          <span class="font14 fr">{{addressInfo.totalReward}}<font class="fCN"> {{addressInfo.symbol}}</font></span>
         </h5>
         <ul>
           <li>
@@ -17,7 +17,7 @@
             <label>
               <u class="click"
                  @click="toUrl('consensusList',addressInfo.consensusLock)">{{addressInfo.consensusLock}}</u>
-              <span class="fCN">{{agentAsset.agentAsset.symbol}}</span>
+              <span class="fCN">{{addressInfo.symbol}}</span>
             </label>
           </li>
           <li>
@@ -40,7 +40,7 @@
         <ul>
           <li>
             {{$t('consensus.consensus8')}}
-            <label>{{nulsCount.consensusTotal}}<span class="fCN">{{agentAsset.agentAsset.symbol}}</span></label>
+            <label>{{nulsCount.consensusTotal}}<span class="fCN">{{addressInfo.symbol}}</span></label>
           </li>
           <li>{{$t('consensus.consensus7')}} <label>{{nodeCount.totalCount}}</label></li>
           <li>{{$t('consensus.consensus6')}} <label>{{nodeCount.agentCount}}</label></li>
@@ -239,9 +239,9 @@
                   item.balance = timesDecimals(response.result.balance);
                   item.consensusLock = timesDecimals(response.result.consensusLock);
                   item.totalReward = timesDecimals(response.result.totalReward);
-                  if(response.result.lastReward){
+                  if (response.result.lastReward) {
                     item.lastReward = timesDecimals(response.result.lastReward);
-                  }else {
+                  } else {
                     item.lastReward = 0;
                   }
                   item.totalIn = timesDecimals(response.result.totalIn);
@@ -328,9 +328,9 @@
                 itme.totalDeposit = timesDecimals(itme.totalDeposit);
                 itme.totalReward = timesDecimals(itme.totalReward);
                 if (itme.agentAddress === this.addressInfo.address) {
-                  itme.isNew = true;//创建的节点
+                  this.isNew = true;//创建的节点
                 } else {
-                  itme.isNew = false;
+                  this.isNew = false;
                 }
               }
               this.allNodeData = response.result.list

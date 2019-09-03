@@ -209,6 +209,8 @@
         reader.addEventListener("load", () => {
           //console.log(JSON.parse(reader.result));
           this.keystoreInfo = JSON.parse(reader.result);
+          this.keystoreInfo.pub = this.keystoreInfo.pubKey;
+          this.keystoreInfo.aesPri = this.keystoreInfo.encryptedPrivateKey;
           this.$refs.password.showPassword(true);
         });
         reader.readAsText(file, "utf-8");
@@ -224,7 +226,7 @@
         let isPassword = passwordVerification(this.keystoreInfo, password);
         if (isPassword.success) {
           let keystoreAddressInfo = defaultAddressInfo;
-          keystoreAddressInfo.address = this.keystoreInfo.address;
+          keystoreAddressInfo.address = isPassword.address;
           keystoreAddressInfo.aesPri = isPassword.aesPri;
           keystoreAddressInfo.pub = isPassword.pub;
           localStorageByAddressInfo(keystoreAddressInfo);

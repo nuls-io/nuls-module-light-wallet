@@ -68,7 +68,6 @@
         this.prefix = '';
       });
       this.newAddressInfo = this.$route.query.backAddressInfo;
-      console.log(this.newAddressInfo);
     },
     mounted() {
     },
@@ -101,8 +100,7 @@
       passSubmit(password) {
         let that = this;
         const pri = nuls.decrypteOfAES(this.newAddressInfo.aesPri, password);
-        let chainid = this.$route.query.backAddressInfo ? this.$route.query.backAddressInfo.chainId : chainID();
-        const newAddressInfo = nuls.importByKey(chainid, pri, password, this.prefix);
+        const newAddressInfo = nuls.importByKey(chainID(), pri, password, this.prefix);
         if (newAddressInfo.address === this.newAddressInfo.address) {
           if (this.backType === 0) {
             const {dialog} = require('electron').remote;
@@ -117,7 +115,7 @@
                 let fileInfo = {
                   address: newAddressInfo.address,
                   encryptedPrivateKey: newAddressInfo.aesPri,
-                  pubKey: newAddressInfo.pubKey,
+                  pubKey: this.newAddressInfo.pub,
                   priKey: null
                 };
                 if (RUN_PATTERN) {

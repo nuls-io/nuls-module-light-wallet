@@ -172,7 +172,12 @@
                 item.createTime = moment(getLocalTime(item.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
                 item.txid = superLong(item.txHash, 8);
                 item.balance = timesDecimals(item.balance);
-                item.amount = timesDecimals(item.values);
+                if(item.type ===16){
+                  item.amount = timesDecimals(item.fee.value);
+                }else {
+                  item.amount = timesDecimals(item.values);
+                }
+
               }
               this.txListData = response.result.list;
               this.pageTotal = response.result.totalCount;
