@@ -73,6 +73,14 @@ export function timesDecimals(nu, decimals = 8) {
 }
 
 /**
+ * 数字乘以精度系数
+ */
+export function timesDecimals0(nu, decimals = 8) {
+  let newNu = new BigNumber(Times(nu, Power(decimals)).toString());
+  return Number(newNu);
+}
+
+/**
  * @disc: 验证密码
  * @params:  accountInfo
  * @params:  password

@@ -115,7 +115,7 @@
                 let fileInfo = {
                   address: newAddressInfo.address,
                   encryptedPrivateKey: newAddressInfo.aesPri,
-                  pubKey: this.newAddressInfo.pub,
+                  pubKey: that.newAddressInfo.pub,
                   priKey: null
                 };
                 if (RUN_PATTERN) {

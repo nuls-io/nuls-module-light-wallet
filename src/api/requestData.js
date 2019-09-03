@@ -75,7 +75,9 @@ export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
     newoutputAmount = transferInfo.amount - transferInfo.fee;
     //锁定三天
     newLockTime = (new Date()).valueOf() + 3600000 * 72;
-  } else {
+  } else if(type === 16){
+    newAmount = transferInfo.amount;
+  }else {
     //return {success: false, data: "No transaction type"}
   }
 
@@ -110,7 +112,7 @@ export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
     return {success: true, data: {inputs: inputs, outputs: outputs}};
   }
   if (type === 16) {
-    if (!transferInfo.toAddress) {
+    if (transferInfo.toAddress) {
       return {success: true, data: {inputs: inputs, outputs: outputs}};
     } else {
       newoutputAmount = transferInfo.value;
