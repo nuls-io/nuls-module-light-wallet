@@ -54,13 +54,15 @@
 </template>
 
 <script>
-  import logoSvg from './../assets/img/logo-beta.svg'
+  import logo from '@/assets/img/logo.svg'
+  import logoSvg from '@/assets/img/logo-beta.svg'
   import {superLong, chainIdNumber, addressInfo} from '@/api/util'
+  import {RUN_DEV} from '@/config.js'
 
   export default {
     data() {
       return {
-        logoSvg: logoSvg, //logo
+        logoSvg: RUN_DEV ? logo : logoSvg, //logo
         navActive: '/',//菜单选中
         addressList: [], //地址列表
         lang: 'cn', //语言选择
