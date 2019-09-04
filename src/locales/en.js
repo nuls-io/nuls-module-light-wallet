@@ -69,6 +69,7 @@ const en = {
     "choice": "Choice",
     "downloadUrl": "Url",
     "checkNetwork":"There is no available service node, please check the network!",
+    "resetAddress":"Reset address",
 
     "err": "Verify and broadcast transaction failure:",
     "err0": "Verify and broadcast transaction exceptions:",
@@ -418,6 +419,7 @@ const en = {
     "9": "Unregister node",
     "10": "Cross Trading",
     "11": "Cross Register",
+    "12": "Cross Cancellation",
     "15": "Contract creation",
     "16": "Call contract",
     "17": "Delete contract",

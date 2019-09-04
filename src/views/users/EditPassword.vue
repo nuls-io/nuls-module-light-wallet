@@ -3,12 +3,12 @@
     <div class="bg-white">
       <div class="w1200">
         <BackBar :backTitle="$t('address.address0')"></BackBar>
-        <h3 class="title">{{$t('editPassword.editPassword0')}}</h3>
+        <h3 class="title">{{$t('editPassword.editPassword0')}}: {{this.$route.query.address}}</h3>
       </div>
     </div>
     <div class="new w1200 mt_20 bg-white">
       <div class="w630">
-        <h3 class="tc mzt_20">{{this.$route.query.address}}</h3>
+        <h3 class="tc mzt_20"></h3>
         <el-form :model="passwordForm" status-icon :rules="passwordRules" ref="passwordForm" class="mb_20">
           <el-form-item :label="$t('editPassword.editPassword1')" prop="oldPass">
             <el-input type="password" v-model="passwordForm.oldPass" autocomplete="off"></el-input>
@@ -22,7 +22,7 @@
           <el-form-item class="form-next">
             <el-button type="success" @click="submitPasswordForm('passwordForm')">{{$t('editPassword.editPassword4')}}
             </el-button>
-            <div>{{$t('editPassword.editPassword5')}}<span class="click" @click="toUrl('importAddress')"> {{$t('public.re-import')}}</span>
+            <div>{{$t('editPassword.editPassword5')}}<span class="click" @click="toUrl('newAddress')"> {{$t('public.re-import')}}</span>
             </div>
           </el-form-item>
         </el-form>
@@ -158,7 +158,7 @@
        * @param name
        */
       toUrl(name) {
-        if (name === 'importAddress') {
+        if (name === 'newAddress') {
           this.$router.push({
             name: name,
             query: {address: this.$route.query.address}

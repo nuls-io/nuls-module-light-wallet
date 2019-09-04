@@ -52,7 +52,7 @@
       <el-tab-pane :label="$t('consensus.consensus9')" name="consensusFirst">
         <div class="filter">
           <SelectBar v-model="nodeStatusRegion" :typeOptions="nodeStatusOptions" typeName="nodeStatus"
-                     @change="changeNodeStatus">
+                     @change="changeNodeStatus" v-show="false">
           </SelectBar>
           <SelectBar v-model="nodeTypeRegion" :typeOptions="nodeTypeOptions" typeName="nodeType"
                      @change="changeNodeType">

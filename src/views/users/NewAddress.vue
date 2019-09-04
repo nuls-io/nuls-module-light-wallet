@@ -3,7 +3,7 @@
     <div class="bg-white"></div>
     <div style="">
       <el-tabs v-model="activeName" @tab-click="handleClick" class="new_import w1200">
-        <el-tab-pane :label="$t('importAddress.importAddress2')" name="keystoreImport">
+        <el-tab-pane :label="$t('importAddress.importAddress2')" name="keystoreImport" :disabled="resetAddress !=='0'">
           <div class="tc upload_keystore">
             <el-upload drag class="upload" action="localhost" accept='.keystore' v-if="!isfileReader"
                        :before-upload="handleUpload"
@@ -17,7 +17,11 @@
           </div>
         </el-tab-pane>
         <el-tab-pane :label="$t('importAddress.importAddress3')" name="keyImport">
+
           <div class="tab w1200 mt_30">
+            <div class="tc font18 mzt_20" v-if="resetAddress !=='0'">
+              {{$t('public.resetAddress')}}: {{resetAddress}}
+            </div>
             <el-form :model="importForm" :rules="importRules" ref="importForm" status-icon class="import-form w630">
               <el-form-item :label="$t('importAddress.importAddress5')" prop="keys">
                 <el-input type="textarea" v-model.trim="importForm.keys" autocomplete="off"></el-input>
@@ -35,26 +39,28 @@
             </el-form>
           </div>
         </el-tab-pane>
-        <el-tab-pane :label="$t('importAddress.importAddress0')" name="newAddress">
-          <el-form :model="newAddressForm" status-icon :rules="newAddressRules" ref="newAddressForm"
-                   class="new_address w630">
-            <el-form-item :label="$t('newAddress.newAddress6')" prop="pass">
-              <el-input type="password" v-model="newAddressForm.pass" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item :label="$t('newAddress.newAddress7')" prop="checkPass">
-              <el-input type="password" v-model="newAddressForm.checkPass" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="" prop="agreement">
-              <el-checkbox-group v-model="newAddressForm.agreement">
-                <el-checkbox :label="$t('newAddress.newAddress8')" name="agreement"></el-checkbox>
-              </el-checkbox-group>
-            </el-form-item>
-            <el-form-item class="form-bnt">
-              <el-button type="success" @click="newAddressSubmitForm('newAddressForm')">
-                {{$t('importAddress.importAddress0')}}
-              </el-button>
-            </el-form-item>
-          </el-form>
+        <el-tab-pane :label="$t('importAddress.importAddress0')" name="newAddress" :disabled="resetAddress !=='0'">
+          <div class="new_address">
+            <el-form :model="newAddressForm" status-icon :rules="newAddressRules" ref="newAddressForm"
+                     class="w630">
+              <el-form-item :label="$t('newAddress.newAddress6')" prop="pass">
+                <el-input type="password" v-model="newAddressForm.pass" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item :label="$t('newAddress.newAddress7')" prop="checkPass">
+                <el-input type="password" v-model="newAddressForm.checkPass" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="" prop="agreement">
+                <el-checkbox-group v-model="newAddressForm.agreement">
+                  <el-checkbox :label="$t('newAddress.newAddress8')" name="agreement"></el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item class="form-bnt">
+                <el-button type="success" @click="newAddressSubmitForm('newAddressForm')">
+                  {{$t('importAddress.importAddress0')}}
+                </el-button>
+              </el-form-item>
+            </el-form>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -128,6 +134,7 @@
         prefix: '',//地址前缀
         isfileReader: typeof FileReader === "undefined",//浏览器是否支持FileReader
         keystoreInfo: {},//keystore导入文本信息
+        resetAddress: this.$route.query.address ? this.$route.query.address : '0',//重置密码地址
         importForm: {
           keys: '',
           pass: '',
@@ -172,6 +179,8 @@
         console.log(err);
         this.prefix = '';
       });
+      console.log(this.resetAddress);
+      this.activeName = this.resetAddress !== '0' ? 'keyImport' : 'keystoreImport'
     },
     methods: {
 
@@ -357,7 +366,10 @@
           }
         }
         .new_address {
-          margin: 60px auto 100px;
+          border: 1px solid #E4E7ED;
+          .w630 {
+            margin: 60px auto 100px;
+          }
         }
       }
     }
