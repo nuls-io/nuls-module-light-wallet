@@ -1,7 +1,7 @@
 import nuls from 'nuls-sdk-js'
 import {BigNumber} from 'bignumber.js'
 import copy from 'copy-to-clipboard'
-import {explorerUrl} from '@/config.js'
+import {explorerUrl, RUN_DEV} from '@/config.js'
 //import openner from "./opener-web";
 import openner from "./opener-desktop";
 
@@ -103,7 +103,12 @@ export function passwordVerification(accountInfo, password, prefix) {
  * @returns {number}
  */
 export function chainID() {
-  return localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')).chainId : 2
+  let newUrl = localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')) : {};
+  if (newUrl) {
+    return newUrl.chainId
+  } else {
+    return RUN_DEV ? 1 : 2;
+  }
 }
 
 /**

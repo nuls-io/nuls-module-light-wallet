@@ -138,7 +138,7 @@
     getPrefixByChainId
   } from '@/api/requestData'
   import {MAIN_INFO} from '@/config.js'
-  import {Times, Power, Plus, Minus, timesDecimals,timesDecimals0, chainID, addressInfo} from '@/api/util'
+  import {Times, Power, Plus, Minus, timesDecimals, timesDecimals0, chainID, addressInfo} from '@/api/util'
   import Password from '@/components/PasswordBar'
 
   export default {
@@ -733,10 +733,11 @@
           //console.log(this.contractInfo.success);
           if (this.contractInfo.success) { //合约转账
             this.contractCallData.chainId = MAIN_INFO.chainId;
-            transferInfo['amount'] = Number(timesDecimals0(this.transferForm.amount, this.changeAssets.decimals));
-            transferInfo['fee'] = Number(Plus(this.transferForm.fee, Number(Times(this.transferForm.gas, this.transferForm.price))));
+            transferInfo['amount'] = Number(Plus(transferInfo.fee, Number(Times(this.transferForm.gas, this.transferForm.price))));
+            transferInfo['fee'] = Number(Plus(transferInfo.fee, Number(Times(this.transferForm.gas, this.transferForm.price))));
             transferInfo.toAddress = this.contractInfo.contractAddress;
             transferInfo.value = Number(timesDecimals0(this.transferForm.amount, this.changeAssets.decimals));
+            //console.log(transferInfo);
             inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 16);
             tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 16, this.contractCallData);
           } else {

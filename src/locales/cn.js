@@ -68,7 +68,7 @@ const cn = {
     "bookList":"通讯录",
     "choice":"选择",
     "downloadUrl":"下载地址",
-    "":"",
+    "checkNetwork":"没有可用服务节点，请检查网络!",
 
     "err": "验证并广播交易失败:",
     "err0": "验证并广播交易异常:",

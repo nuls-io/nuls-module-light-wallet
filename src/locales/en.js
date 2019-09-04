@@ -68,7 +68,7 @@ const en = {
     "bookList": "Book list",
     "choice": "Choice",
     "downloadUrl": "Url",
-    "": "",
+    "checkNetwork":"There is no available service node, please check the network!",
 
     "err": "Verify and broadcast transaction failure:",
     "err0": "Verify and broadcast transaction exceptions:",

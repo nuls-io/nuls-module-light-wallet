@@ -235,14 +235,16 @@
         }
         //没有选中的连接默认选中一个
         if (isUrl) {
-          let minNumber = Math.min.apply(Math, newData.map((o) => o.delay));
+          this.$message({message: this.$t('public.checkNetwork'), type: 'error', duration: 3000});
+          localStorage.removeItem("urls");
+          /*let minNumber = Math.min.apply(Math, newData.map((o) => o.delay));
           let minIndex = newData.map((o) => o.delay).findIndex((n) => n === minNumber);
           for (let item in newData) {
             if (Number(item) === minIndex) {
               newData[minIndex].selection = true;
               localStorage.setItem("urls", JSON.stringify(newData[minIndex]));
             }
-          }
+          }*/
         } else {
           for (let item of newData) {
             if (item.urls !== JSON.parse(localStorage.getItem('urls')).urls) {
