@@ -13,9 +13,16 @@
         <!--<p class="font16">{{$t('public.logInfo')}}: <span class="click" @click="seeLog">{{$t('public.see')}}</span></p>-->
         <ul>
           <li v-show="RUN_PATTERN"><span>{{$t('public.operatingSystem')}}:</span>{{system}}</li>
-          <li><span>{{$t('public.version')}}:</span>Beta-{{version}}</li>
+          <li>
+            <span>{{$t('public.version')}}:</span>
+            <font v-if="RUN_DEV">V {{version}}</font>
+            <font v-else>B {{version}}</font>
+          </li>
           <li v-show="RUN_PATTERN && system !== 'Darwin'"><span>{{$t('public.logInfo')}}:</span>{{logUrl}}</li>
-          <li v-show="system === 'Darwin'"><span>{{$t('public.downloadUrl')}}:</span>http://file.wallet.nuls.io/download/NULS-Wallet-{{version}}.dmg</li>
+          <li v-show="system === 'Darwin'">
+            <span>{{$t('public.downloadUrl')}}:</span>
+            <font >{{FILE_URL}}/NULS-Wallet-{{version}}.dmg</font>
+          </li>
         </ul>
         <el-button type="success" @click="checkUpdate" v-show="RUN_PATTERN && system !== 'Darwin'">{{$t('public.checkUpdates')}}</el-button>
       </div>
@@ -41,7 +48,7 @@
 
 <script>
   import packages from './../../../package'
-  import {RUN_PATTERN} from '@/config.js'
+  import {RUN_PATTERN,RUN_DEV,FILE_URL} from '@/config.js'
 
   export default {
     data() {
@@ -53,6 +60,8 @@
         system: '',
         version: packages.version,//版本号
         RUN_PATTERN:RUN_PATTERN,//运行模式
+        RUN_DEV:RUN_DEV,// 运行环境
+        FILE_URL:FILE_URL,//桌面程序下载路径
       };
     },
     created() {

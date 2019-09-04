@@ -1,6 +1,6 @@
 {
   "name": "NULS-Wallet",
-  "version": "3.2.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve src/main-web",
@@ -72,7 +72,7 @@
   "publish": [
     {
       "provider": "generic",
-      "url": "http://file.wallet.nuls.io/download/"
+      "url": "http://file.wallet.nuls.io/download/main"
     }
   ],
   "main": "background.js"

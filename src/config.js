@@ -10,6 +10,8 @@ export const RUN_DEV = true;
 export const MAIN_INFO = RUN_DEV ? {chainId: 1, assetsId: 1} : {chainId: 2, assetsId: 1};
 //运行模式（true:electron窗体模式，false:浏览器模式）
 export const RUN_PATTERN = true;
+//桌面程序下载路径（main：http://file.wallet.nuls.io/download/main  test：http://file.wallet.nuls.io/download/test）
+export const FILE_URL = RUN_DEV ? 'http://file.wallet.nuls.io/download/main' : 'http://file.wallet.nuls.io/download/test';
 //正式、测试网络的api
 export let API_URL = localStorage.hasOwnProperty("urls") ? JSON.parse(localStorage.getItem("urls")).urls : 'http://apitn1.nulscan.io/';
 setInterval(() => {
