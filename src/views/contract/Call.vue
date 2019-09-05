@@ -52,7 +52,7 @@
   import utils from 'nuls-sdk-js/lib/utils/utils'
   import {getNulsBalance, countFee, inputsOrOutputs, validateAndBroadcast, getPrefixByChainId} from '@/api/requestData'
   import Password from '@/components/PasswordBar'
-  import {getArgs, Times, Plus, addressInfo, chainID} from '@/api/util'
+  import {getArgs, timesDecimals0, Times, Plus, addressInfo, chainID} from '@/api/util'
 
   export default {
     data() {
@@ -238,11 +238,9 @@
        * @param formName
        **/
       submitForm(formName) {
-        console.log("3333");
-        console.log(this.selectionData);
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            console.log(this.selectionData);
+            //console.log(this.selectionData);
             if (!this.selectionData.view) { //上链方法调用
               if (this.selectionData.params.length !== 0) {
                 this.newArgs = getArgs(this.callForm.parameterList);
@@ -431,12 +429,11 @@
        **/
       async passSubmit(password) {
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(2, pri, password, this.prefix);
+        const newAddressInfo = nuls.importByKey(chainID(), pri, password, this.prefix);
         if (newAddressInfo.address === this.addressInfo.address) {
           //console.log(this.contractCallData);
           let pub = this.addressInfo.pub;
           let amount = Number(Times(this.callForm.gas, this.callForm.price));
-          amount = Number(Plus(this.callForm.values, amount));
           let transferInfo = {
             fromAddress: this.addressInfo.address,
             assetsChainId: chainID(),
@@ -444,9 +441,10 @@
             amount: amount,
             fee: 100000
           };
+          amount = Number(Plus(transferInfo.fee, amount));
           if (this.callForm.values > 0) {
             transferInfo.toAddress = this.contractAddress;
-            transferInfo.value = Number(Times(this.callForm.values, 100000000));
+            transferInfo.value = Number(timesDecimals0(this.callForm.values));
             transferInfo.amount = Number(Plus(transferInfo.value, amount))
           }
           let remark = '';

@@ -113,6 +113,15 @@ export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
   }
   if (type === 16) {
     if (transferInfo.toAddress) {
+      if (transferInfo.value) { //向合约地址转nuls
+        outputs = [{
+          address: transferInfo.toAddress,
+          assetsChainId: transferInfo.assetsChainId,
+          assetsId: transferInfo.assetsId,
+          amount: transferInfo.value,
+          lockTime: newLockTime
+        }];
+      }
       return {success: true, data: {inputs: inputs, outputs: outputs}};
     } else {
       newoutputAmount = transferInfo.value;
