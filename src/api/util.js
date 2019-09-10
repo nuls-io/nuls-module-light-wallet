@@ -2,8 +2,8 @@ import nuls from 'nuls-sdk-js'
 import {BigNumber} from 'bignumber.js'
 import copy from 'copy-to-clipboard'
 import {explorerUrl, RUN_DEV} from '@/config.js'
-//import openner from "./opener-web";
-import openner from "./opener-desktop";
+import openner from "./opener-web";
+//import openner from "./opener-desktop";
 
 /**
  * 10的N 次方
@@ -103,10 +103,10 @@ export function passwordVerification(accountInfo, password, prefix) {
  * @returns {number}
  */
 export function chainID() {
-  let newUrl = localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')) : {};
-  if (newUrl) {
+  if(localStorage.hasOwnProperty('url') && localStorage.getItem('url') !== 'undefined'){
+    let newUrl =  JSON.parse(localStorage.getItem('url'));
     return newUrl.chainId
-  } else {
+  }else {
     return RUN_DEV ? 1 : 2;
   }
 }

@@ -91,7 +91,7 @@
         assetsValue: "0",
         typeOptions: [
           {value: '0', label: '0'},
-          /* {value: '1', label: '1'},*/
+          {value: '1', label: '1'},
           {value: '2', label: '2'},
           {value: '3', label: '3'},
           {value: '4', label: '4'},
@@ -101,11 +101,21 @@
           {value: '8', label: '8'},
           {value: '9', label: '9'},
           {value: '10', label: '10'},
+          {value: '11', label: '11'},
+          {value: '12', label: '12'},
+          {value: '13', label: '13'},
+          {value: '14', label: '14'},
           {value: '15', label: '15'},
           {value: '16', label: '16'},
           {value: '17', label: '17'},
           {value: '18', label: '18'},
           {value: '19', label: '19'},
+          {value: '20', label: '20'},
+          {value: '21', label: '21'},
+          {value: '22', label: '22'},
+          {value: '23', label: '23'},
+          {value: '24', label: '24'},
+          {value: '25', label: '25'},
         ], //交易类型
         typeValue: '0',
         inAndOutOptions: [
@@ -139,12 +149,13 @@
       }
     },
     mounted() {
-      this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types);
+      setTimeout(() => {
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types);
+      }, 600);
       //10秒循环一次数据
       this.txListSetInterval = setInterval(() => {
         this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types);
       }, 10000);
-
     },
     //离开当前页面后执行
     destroyed() {
@@ -161,7 +172,6 @@
        * @param pageRows
        * @param address
        * @param type
-       * @param isHide
        **/
       getTxlistByAddress(pageSize, pageRows, address, type) {
         this.$post('/', 'getAccountTxs', [pageSize, pageRows, address, type, -1, -1])
@@ -172,9 +182,9 @@
                 item.createTime = moment(getLocalTime(item.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
                 item.txid = superLong(item.txHash, 8);
                 item.balance = timesDecimals(item.balance);
-                if(item.type ===16){
+                if (item.type === 16) {
                   item.amount = timesDecimals(item.fee.value);
-                }else {
+                } else {
                   item.amount = timesDecimals(item.values);
                 }
 

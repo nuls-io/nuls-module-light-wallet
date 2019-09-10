@@ -378,6 +378,7 @@ const cn = {
     "tab21": "官网",
     "tab22": "浏览器",
     "tab23": "文档",
+    "tab24": "完成备份",
   },
 
   "type": {
@@ -427,6 +428,7 @@ const cn = {
     "8": "红牌惩罚",
     "9": "注销节点",
     "11": "注册跨链",
+    "13": "新增跨链资产",
   },
 
   "addressType": {
@@ -479,6 +481,7 @@ const cn = {
     "8": "红牌惩罚锁定",
     "9": "注销节点锁定",
     "11": "注册跨链",
+    "13": "新增跨链资产",
   },
 
   "contractStatus": {
@@ -570,6 +573,7 @@ const cn = {
   "consensusList": {
     "consensusList0": "共识明细",
     "consensusList1": "加入时间",
+    "consensusList2": "节点ID",
   },
 
   "consensusInfo": {

@@ -16,7 +16,7 @@
         </el-table-column>
         <el-table-column prop="createTime" :label="$t('consensusList.consensusList1')" align="center">
         </el-table-column>
-        <el-table-column label="节点ID" align="center" min-width="200">
+        <el-table-column :label="$t('consensusList.consensusList2')" align="center" min-width="200">
           <template slot-scope="scope">
             <span class="click uppercase"
                   @click="toUrl('consensusInfo',scope.row.agentHash)">{{scope.row.agendID}}</span>
@@ -61,13 +61,13 @@
       };
     },
     created() {
-      this.totalAmount = Number(this.$route.query.consensusLock);
-      console.log(this.$route.query.consensusLock);
       this.addressInfo = addressInfo(1);
       setInterval(() => {
         this.addressInfo = addressInfo(1);
       }, 500);
-      this.getNodeDepositByHash(this.pageIndex, this.pageSize, this.addressInfo.address)
+      setTimeout(() => {
+        this.getNodeDepositByHash(this.pageIndex, this.pageSize, this.addressInfo.address)
+      },600);
     },
     components: {
       BackBar
