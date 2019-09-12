@@ -78,7 +78,6 @@
   export default {
     data() {
       let validateKeys = (rule, value, callback) => {
-        console.log(value.length);
         if (value === '') {
           callback(new Error(this.$t('importAddress.importAddress9')));
         } else if (value.length < 60 || value.length > 66) {
