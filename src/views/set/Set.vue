@@ -26,7 +26,7 @@
           <li v-show="RUN_PATTERN && system !== 'Darwin'"><span>{{$t('public.logInfo')}}:</span>{{logUrl}}</li>
           <li v-show="system === 'Darwin'">
             <span>{{$t('public.downloadUrl')}}:</span>
-            <font>{{FILE_URL}}/NULS-Wallet-{{version}}.dmg</font>
+            <font>{{FILE_URL}}/NULS-Wallet-{{newVersion}}.dmg</font>
           </li>
         </ul>
         <el-button type="success" @click="checkUpdate" v-show="RUN_PATTERN && system !== 'Darwin'">
