@@ -18,7 +18,7 @@
             <font v-if="RUN_DEV">V {{version}}</font>
             <font v-else>B {{version}}</font>
           </li>
-          <li>
+          <li v-show="RUN_PATTERN">
             <span>{{$t('public.version1')}}:</span>
             <font v-if="RUN_DEV">V {{newVersion}}</font>
             <font v-else>B {{newVersion}}</font>
