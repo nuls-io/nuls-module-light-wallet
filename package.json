@@ -1,6 +1,6 @@
 {
   "name": "NULS-Wallet",
-  "version": "2.0.1",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "serve": "cross-env NULS_ENV=prod vue-cli-service serve src/main-web",
@@ -9,7 +9,8 @@
     "build-beta": "cross-env NULS_ENV=beta vue-cli-service build src/main-web",
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
-    "electron:serve": "vue-cli-service electron:serve",
+    "electron:serve": "cross-env NULS_ENV=electron-prod vue-cli-service electron:serve",
+    "electron:serve-beta": "cross-env NULS_ENV=electron-beta vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
