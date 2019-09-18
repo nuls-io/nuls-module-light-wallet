@@ -7,9 +7,9 @@
         <i class="el-icon-plus click" @click="toUrl('newAddress')"></i>
       </div>
       <el-table :data="addressList" stripe border>
-        <el-table-column prop="address" :label="$t('address.address1')" align="center" min-width="200">
+        <el-table-column prop="address" :label="$t('address.address1')" align="center" min-width="330">
         </el-table-column>
-        <el-table-column prop="balance" :label="$t('address.address2')" align="center">
+        <el-table-column prop="balance" :label="$t('consensus.consensus2')" align="center">
         </el-table-column>
         <el-table-column :label="$t('address.address3')" align="center">
           <template slot-scope="scope">
@@ -28,7 +28,7 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('address.address5')" align="center" width="350">
+        <el-table-column :label="$t('address.address5')" align="center" min-width="300">
           <template slot-scope="scope">
             <label class="click tab_bn" @click="editPassword(scope.row)">{{$t('address.address6')}}</label>
             <span class="tab_line">|</span>
@@ -96,7 +96,6 @@
     },
     created() {
       getPrefixByChainId(chainID()).then((response) => {
-        //console.log(response);
         this.prefix = response
       }).catch((err) => {
         console.log(err);
