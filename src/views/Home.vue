@@ -19,7 +19,7 @@
       <div class="balance fl">
         <p>{{$t('public.usableBalance')}}</p>
         <h6>
-          {{addressNULSAssets.balance}}
+          <font>{{addressNULSAssets.balance}}</font>
           <el-button type="success" @click="toUrl('transfer',addressNULSAssets.account)">{{$t('nav.transfer')}}
           </el-button>
           <el-button @click="showCode(addressInfo.address)">{{$t('tab.tab27')}}</el-button>
@@ -28,7 +28,7 @@
       <div class="locking fl">
         <p>{{$t('tab.tab3')}}</p>
         <h6>
-          {{addressNULSAssets.locking}}
+          <font>{{addressNULSAssets.locking}}</font>
           <span class="font12 click" @click="toUrl('frozenList',addressNULSAssets)">{{$t('tab.tab28')}}</span>
         </h6>
       </div>
@@ -42,16 +42,17 @@
           </el-option>
         </el-select>
         <el-table :data="addressAssetsData" stripe border v-loading="assetsListLoading">
-          <el-table-column :label="$t('tab.tab0')" align="center">
+          <el-table-column :label="$t('nodeService.nodeService2')" align="center">
             <template slot-scope="scope">
             <span>
               {{ scope.row.account }}
-              <span v-if="scope.row.status ===3" class="gray">{{$t('public.unavailable')}}</span>
             </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('tab.tab1')" align="center" width="150">
-            <template slot-scope="scope"><span>{{ $t('assetsType.'+scope.row.type) }}</span></template>
+          <el-table-column :label="$t('contract.contract9')" align="center" width="180">
+            <template slot-scope="scope">
+              <span class="click td" @click="toUrl('contractsInfo',scope.row.contractAddress,1)">{{ scope.row.contractAddresss }}</span>
+            </template>
           </el-table-column>
           <el-table-column prop="balance" :label="$t('tab.tab4')">
           </el-table-column>
@@ -135,7 +136,7 @@
 <script>
   import axios from 'axios'
   import QRCode from 'qrcodejs2'
-  import {timesDecimals, copys, addressInfo, Times} from '@/api/util'
+  import {timesDecimals, copys, addressInfo, Times, superLong, connectToExplorer} from '@/api/util'
 
   export default {
     name: 'home',
@@ -309,7 +310,7 @@
             }
             this.addressInfo.balance = newAssetsList.balance;
             this.addressNULSAssets = newAssetsList;
-            this.getNULSUSDT(newAssetsList.total);
+            this.getNULSUSDT(Number(newAssetsList.total));
             this.overviewLoading = false;
             //this.addressAssetsData.push(newAssetsList);
             this.assetsListLoading = false;
@@ -324,10 +325,11 @@
       getNULSUSDT(number) {
         let news = 0.5;
         this.NULSUsdt = Number(Times(news, number)).toFixed(2);
+        axios.defaults.baseURL = '';
         axios.get("/market-api/nuls-price")
           .then((response) => {
-            console.log(response);
-            this.NULSUsdt = Number(Times(response.price, number)).toFixed(2)
+            //console.log(response.data);
+            this.NULSUsdt = Number(Times(Number(response.data.price), number)).toFixed(2)
           })
           .catch((error) => {
             console.log(error);
@@ -354,6 +356,7 @@
                 itme.total = timesDecimals(itme.balance, itme.decimals);
                 itme.locking = '--';
                 itme.balance = timesDecimals(itme.balance, itme.decimals);
+                itme.contractAddresss = superLong(itme.contractAddress, 8);
               }
               newAssetsList = response.result.list;
             }
@@ -420,31 +423,36 @@
        * 连接跳转
        * @param name
        * @param parms
+       * @param type 0:本网站跳转，1：跳转浏览器
        */
-      toUrl(name, parms) {
+      toUrl(name, parms, type = 0) {
         //console.log(name)
         //console.log(parms);
-        let newParms = {accountType: parms};
-        if (name === 'transfer') {
-          this.$router.push({
-            name: name,
-            query: newParms
-          })
-        } else if (name === 'frozenList') {
-          newParms = {accountInfo: parms};
-          this.$router.push({
-            name: name,
-            query: newParms
-          })
+        if (type === 1) {
+          connectToExplorer(name, parms)
         } else {
-          if (parms.type === 2) {
-            this.$router.push({
-              name: 'tokenTxList'
-            })
-          } else {
+          let newParms = {accountType: parms};
+          if (name === 'transfer') {
             this.$router.push({
               name: name,
+              query: newParms
             })
+          } else if (name === 'frozenList') {
+            newParms = {accountInfo: parms};
+            this.$router.push({
+              name: name,
+              query: newParms
+            })
+          } else {
+            if (parms.type === 2) {
+              this.$router.push({
+                name: 'tokenTxList'
+              })
+            } else {
+              this.$router.push({
+                name: name,
+              })
+            }
           }
         }
       },
@@ -477,9 +485,11 @@
         text-align: left;
         background-color: #f9fafd;
         line-height: 40px;
+        color: #475472;
         height: 40px;
-        font-size: 14px;
+        font-size: 20px;
         padding: 0 30px;
+        border-bottom: 1px solid #dfe4ef;
         font-weight: bold;
         span {
           font-size: 12px;
@@ -487,17 +497,24 @@
         }
       }
       p {
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 600;
+        color: #8794b1;
         padding: 20px 30px 5px;
       }
       h6 {
         font-weight: 600;
-        font-size: 16px;
+        font-size: 24px;
         padding: 0 30px;
+        color: #475472;
+        font {
+          padding: 0 20px 0 0;
+          font-size: 16px;
+          color: #8794b1;
+        }
       }
       .total {
-        width: 32%;
+        width: 360px;
         height: 90px;
         border-right: @BD1;
         margin: 10px auto;
@@ -508,20 +525,23 @@
         }
       }
       .balance {
-        width: 33%;
+        width: 38%;
         p {
           padding-left: 80px;
         }
         h6 {
           padding-left: 80px;
           .el-button {
-            padding: 5px 8px;
+            padding: 5px 15px;
             border-radius: 2px;
+          }
+          .el-button--default{
+            margin-left: 12px;
           }
         }
       }
       .locking {
-        width: 33%;
+        width: 31%;
         p {
           padding-left: 80px;
         }
