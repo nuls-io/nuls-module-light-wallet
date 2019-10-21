@@ -411,8 +411,11 @@ const en = {
     "tab24": "Complete backup",
     "tab25": "NRC20 Assets",
     "tab26": "Assets overview",
-    "tab27": "Invest",
-    "tab28": "Detailed",
+    "tab27": "Receive",
+    "tab28": "Detail",
+    "tab29": "After successful removal, the account information will be completely deleted. Please make sure you have backed up the account private key or keystore",
+    "tab30": "Go backup",
+    "tab31": "Send",
   },
 
   "type": {

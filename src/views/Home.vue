@@ -14,13 +14,13 @@
       </div>
       <div class="total fl">
         <p>{{$t('tab.tab2')}}</p>
-        <h6>{{addressNULSAssets.total}} <span class="font12"> ≈ $ {{NULSUsdt}}</span></h6>
+        <h6>{{addressNULSAssets.total}} <span class="font16"> ≈ $ {{NULSUsdt}}</span></h6>
       </div>
       <div class="balance fl">
         <p>{{$t('public.usableBalance')}}</p>
         <h6>
           <font>{{addressNULSAssets.balance}}</font>
-          <el-button type="success" @click="toUrl('transfer',addressNULSAssets.account)">{{$t('nav.transfer')}}
+          <el-button type="success" @click="toUrl('transfer',addressNULSAssets.account)">{{$t('tab.tab31')}}
           </el-button>
           <el-button @click="showCode(addressInfo.address)">{{$t('tab.tab27')}}</el-button>
         </h6>
@@ -29,7 +29,7 @@
         <p>{{$t('tab.tab3')}}</p>
         <h6>
           <font>{{addressNULSAssets.locking}}</font>
-          <span class="font12 click" @click="toUrl('frozenList',addressNULSAssets)">{{$t('tab.tab28')}}</span>
+          <span class="font14 click" @click="toUrl('frozenList',addressNULSAssets)">{{$t('tab.tab28')}}</span>
         </h6>
       </div>
     </div>
@@ -179,7 +179,7 @@
           this.getAddressInfoByNode(this.addressInfo.address);
           setTimeout(() => {
             this.getTokenListByAddress(this.pageNumber, this.pageSize, this.addressInfo.address)
-          }, 100);
+          }, 400);
         }, 600);
       } else {
         this.$router.push({
@@ -366,6 +366,8 @@
             this.addressInfo.tokens = this.addressAssetsData;
             //localStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
             this.assetsListLoading = false;
+          }).catch((error)=>{
+            console.log(error);
           })
       },
 
@@ -480,19 +482,18 @@
     .overview {
       border: @BD1;
       margin: -30px auto 0;
-      height: 150px;
+      height: 158px;
       .title {
         text-align: left;
         background-color: #f9fafd;
         line-height: 40px;
         color: #475472;
         height: 40px;
-        font-size: 20px;
+        font-size: 18px;
         padding: 0 30px;
         border-bottom: 1px solid #dfe4ef;
-        font-weight: bold;
         span {
-          font-size: 12px;
+          font-size: 14px;
           font-weight: normal;
         }
       }
@@ -505,19 +506,20 @@
       h6 {
         font-weight: 600;
         font-size: 24px;
-        padding: 0 30px;
         color: #475472;
+        padding: 0 30px;
         font {
           padding: 0 20px 0 0;
-          font-size: 16px;
-          color: #8794b1;
+          font-weight: 600;
+          font-size: 24px;
+          color: #475472;
         }
       }
       .total {
-        width: 360px;
+        width: 441px;
         height: 90px;
         border-right: @BD1;
-        margin: 10px auto;
+        margin: 14px auto;
         h6 {
           span {
             font-weight: normal;
@@ -525,12 +527,12 @@
         }
       }
       .balance {
-        width: 38%;
+        width: 40%;
         p {
-          padding-left: 80px;
+          padding: 34px 0 0 70px;
         }
         h6 {
-          padding-left: 80px;
+          padding: 4px 0 0 70px;
           .el-button {
             padding: 5px 15px;
             border-radius: 2px;
@@ -541,12 +543,12 @@
         }
       }
       .locking {
-        width: 31%;
+        width: 23%;
         p {
-          padding-left: 80px;
+          padding: 34px 0 0 80px;
         }
         h6 {
-          padding-left: 80px;
+          padding: 4px 0 0 80px;
           span {
             font-weight: normal;
           }
