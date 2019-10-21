@@ -207,7 +207,7 @@
        * @param rowInfo
        **/
       deleteAddress(rowInfo) {
-        this.$confirm(this.$t('tab.tab29'), '', {
+        this.$confirm(this.$t('tab.tab29'), this.$t('tab.tab32'), {
           confirmButtonText: this.$t('tab.tab30'),
           cancelButtonText: this.$t('nodeService.nodeService8'),
           type: 'warning',
@@ -328,6 +328,16 @@
               color: white;
             }
           }
+        }
+      }
+    }
+  }
+
+  .el-message-box__wrapper{
+    .el-message-box__content{
+      .el-message-box__message{
+        p{
+          color: red;
         }
       }
     }

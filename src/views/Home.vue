@@ -296,9 +296,9 @@
               newAssetsList.chainId = response.result[0].chainId;
               newAssetsList.assetId = response.result[0].assetId;
               newAssetsList.type = 1;
-              newAssetsList.total = timesDecimals(response.result[0].totalBalance);
-              newAssetsList.locking = timesDecimals(response.result[0].consensusLock + response.result[0].timeLock);
-              newAssetsList.balance = timesDecimals(response.result[0].balance);
+              newAssetsList.total = Number(timesDecimals(response.result[0].totalBalance)).toFixed(3);
+              newAssetsList.locking = Number(timesDecimals(response.result[0].consensusLock + response.result[0].timeLock)).toFixed(3);
+              newAssetsList.balance = Number(timesDecimals(response.result[0].balance)).toFixed(3);
             } else {
               newAssetsList.account = response.result.symbol;
               newAssetsList.chainId = response.result.chainId;
@@ -353,9 +353,9 @@
               for (let itme of response.result.list) {
                 itme.account = itme.tokenSymbol;
                 itme.type = 2;
-                itme.total = timesDecimals(itme.balance, itme.decimals);
+                itme.total = Number(timesDecimals(itme.balance, itme.decimals)).toFixed(3);
                 itme.locking = '--';
-                itme.balance = timesDecimals(itme.balance, itme.decimals);
+                itme.balance = Number(timesDecimals(itme.balance, itme.decimals)).toFixed(3);
                 itme.contractAddresss = superLong(itme.contractAddress, 8);
               }
               newAssetsList = response.result.list;
@@ -366,7 +366,8 @@
             this.addressInfo.tokens = this.addressAssetsData;
             //localStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
             this.assetsListLoading = false;
-          }).catch((error)=>{
+          }).catch((error) => {
+            this.getTokenListByAddress(this.pageNumber, this.pageSize, this.addressInfo.address)
             console.log(error);
           })
       },
@@ -527,23 +528,30 @@
         }
       }
       .balance {
-        width: 40%;
+        width: 35%;
         p {
           padding: 34px 0 0 70px;
         }
         h6 {
           padding: 4px 0 0 70px;
+          font {
+            display: block;
+            float: left;
+          }
           .el-button {
             padding: 5px 15px;
             border-radius: 2px;
+            display: block;
+            float: left;
+            margin-top: 2px;
           }
-          .el-button--default{
+          .el-button--default {
             margin-left: 12px;
           }
         }
       }
       .locking {
-        width: 23%;
+        width: 28%;
         p {
           padding: 34px 0 0 80px;
         }
