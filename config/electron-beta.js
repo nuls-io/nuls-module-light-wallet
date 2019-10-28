@@ -42,7 +42,7 @@ const electronData = [
     assetId: MAIN_INFO.assetId,
     decimals: 8,
     chainName: RUN_DEV ? 'NULS' : 'tNULS',
-    urls: RUN_DEV ? 'https://public1.nuls.io' : 'http://apitn1.nulscan.io',
+    urls: RUN_DEV ? 'https://public1.nuls.io' : 'http://beta.public1.nuls.io/',
     delay: '10ms',
     selection: false,
     isDelete: false
@@ -53,7 +53,7 @@ const electronData = [
     assetId: MAIN_INFO.assetId,
     decimals: 8,
     chainName: RUN_DEV ? 'NULS' : 'tNULS',
-    urls: RUN_DEV ? 'http://public2.nuls.io' : 'http://apitn2.nulscan.io',
+    urls: RUN_DEV ? 'http://public2.nuls.io' : 'http://beta.public2.nuls.io/',
     delay: '10ms',
     selection: false,
     isDelete: false
@@ -88,7 +88,7 @@ const explorerData = [
     assetId: MAIN_INFO.assetId,
     decimals: 8,
     chainName: RUN_DEV ? 'NULS' : 'tNULS',
-    urls: RUN_DEV ? 'https://public1.nuls.io' : 'http://apitn1.nulscan.io',
+    urls: RUN_DEV ? 'https://public1.nuls.io' : 'http://beta.public1.nuls.io/',
     delay: '10ms',
     selection: false,
     isDelete: false
@@ -99,7 +99,7 @@ const explorerData = [
     assetId: MAIN_INFO.assetId,
     decimals: 8,
     chainName: RUN_DEV ? 'NULS' : 'tNULS',
-    urls: RUN_DEV ? 'http://public2.nuls.io' : 'http://apitn2.nulscan.io',
+    urls: RUN_DEV ? 'http://public2.nuls.io' : 'http://beta.public2.nuls.io/',
     delay: '10ms',
     selection: false,
     isDelete: false
