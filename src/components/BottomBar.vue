@@ -10,8 +10,8 @@
         </div>
         <div class="right fr">
           {{$t('bottom.nodeHeight')}}:
-          <i v-show="heightInfo.networkHeight ===0 && heightInfo.localHeight===0 " class="el-icon-loading"></i>
-          <span v-show="heightInfo.networkHeight !==0 && heightInfo.localHeight !==0 ">
+          <i v-show="heightInfo.networkHeight === 0 && heightInfo.localHeight === 0" class="el-icon-loading"></i>
+          <span v-show="heightInfo.networkHeight !== 0 && heightInfo.localHeight !== 0">
             {{heightInfo.networkHeight}}/{{heightInfo.localHeight}}
           </span>
         </div>
@@ -81,6 +81,7 @@
 
       /**
        * 获取主网最新高度和本地高度
+       * Get the latest height and local height of the main network
        */
       getHeaderInfo() {
         const url = localStorage.hasOwnProperty("url") && localStorage.getItem('url') !== 'undefined' ? JSON.parse(localStorage.getItem('url')).urls : 'http://192.168.1.40:18003/';
@@ -109,6 +110,7 @@
 
       /**
        * 获取地址网络信息
+       * Get address network information
        **/
       async getAddressInfo() {
         let addressInfos = addressInfo(1);
@@ -142,6 +144,7 @@
 
       /**
        * 连接跳转
+       * Connection jump
        * @param name
        */
       toUrl(name) {
@@ -158,16 +161,16 @@
   @import "./../assets/css/style";
 
   .bottom {
-    height: 60px;
-    border-top: 1px solid @Dcolour;
-    position: fixed;
-    line-height: 60px;
-    bottom: 0;
     background-color: @Bcolour;
+    border-top: 1px solid @Dcolour;
+    bottom: 0;
+    height: 60px;
+    line-height: 60px;
+    position: fixed;
     width: 100%;
     @media screen and (max-width: 1000px) {
-      height: 4rem;
       font-size: 0.7rem;
+      height: 4rem;
       line-height: 1rem;
     }
     .w1200 {
@@ -175,29 +178,29 @@
         width: 50%;
         line-height: 60px;
         @media screen and (max-width: 1000px) {
-          width: 100%;
           margin: 0.5rem 0 0 0.5rem;
+          width: 100%;
           p {
-            margin: 0;
             float: none;
             display: block;
+            margin: 0;
           }
         }
       }
       .right {
-        width: 40%;
         line-height: 60px;
         text-align: right;
+        width: 40%;
         @media screen and (max-width: 1000px) {
-          width: 100%;
           float: none;
+          width: 100%;
         }
         label {
           padding: 0 10px;
           @media screen and (max-width: 1000px) {
-            padding: 0 0.5rem;
             font-size: 0.7rem;
             line-height: 1rem;
+            padding: 0 0.5rem;
           }
         }
       }
