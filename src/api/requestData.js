@@ -1,12 +1,13 @@
 import {post} from './https'
 import {Plus, chainID} from './util'
+import {MAIN_INFO} from '@/config.js'
 
 /**
  * 判断是否为主网
  * @param chainId
  **/
 export function isMainNet(chainId) {
-  return chainId === 2;
+  return chainId === MAIN_INFO.chainId;
 }
 
 /**
@@ -25,10 +26,24 @@ export function countFee(tx, signatrueCount) {
  * @param tx
  * @param signatrueCount 签名数量，默认为1
  **/
-export function countCtxFee(tx, signatrueCount) {
-  let txSize = tx.txSerialize().length;
-  txSize += signatrueCount * 110;
-  return 1000000 * Math.ceil(txSize / 1024);
+export async function countCtxFee(tx, signatrueCount) {
+  let resultValue = 0;
+  await post('/', 'getByzantineCount', [tx.txSerialize().toString('hex')])
+    .then((response) => {
+      //console.log(response);
+      if (response.hasOwnProperty("result")) {
+        let txSize = tx.txSerialize().length;
+        txSize += (signatrueCount + response.result.value) * 110;
+        resultValue = 1000000 * Math.ceil(txSize / 1024)
+      } else {
+        resultValue = -100
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      resultValue = -100
+    });
+  return resultValue;
 }
 
 /**
@@ -44,11 +59,6 @@ export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
   let newNonce = balanceInfo.nonce;
   let newoutputAmount = transferInfo.amount;
   let newLockTime = 0;
-  if (type !== 6 || type !== 2) {
-    if (balanceInfo.balance < newAmount) {
-      return {success: false, data: "Your balance is not enough."}
-    }
-  }
   if (type === 4) {
     newLockTime = -1;
   } else if (type === 5) {
@@ -64,7 +74,10 @@ export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
     newNonce = transferInfo.depositHash.substring(transferInfo.depositHash.length - 16);
     newoutputAmount = transferInfo.amount - transferInfo.fee;
     //锁定三天
-    newLockTime = (new Date()).valueOf() + 3600000 * 72;
+    //let times = (new Date()).valueOf() + 3600000 * 72;
+    let times = (new Date()).valueOf();
+    newLockTime = Number(times.toString().substr(0, times.toString().length - 3));
+    //newLockTime = times;
   } else {
     //return {success: false, data: "No transaction type"}
   }
@@ -100,11 +113,19 @@ export async function inputsOrOutputs(transferInfo, balanceInfo, type) {
     return {success: true, data: {inputs: inputs, outputs: outputs}};
   }
   if (type === 16) {
-    if (!transferInfo.toAddress) {
-      return {success: true, data: {inputs: inputs, outputs: outputs}};
-    } else {
-      newoutputAmount = transferInfo.value;
+    if (transferInfo.toAddress) {
+      if (transferInfo.value) { //向合约地址转nuls
+        inputs[0].amount = transferInfo.amount;
+        outputs = [{
+          address: transferInfo.toAddress,
+          assetsChainId: transferInfo.assetsChainId,
+          assetsId: transferInfo.assetsId,
+          amount: transferInfo.value,
+          lockTime: newLockTime
+        }];
+      }
     }
+    return {success: true, data: {inputs: inputs, outputs: outputs}};
   }
   outputs = [{
     address: transferInfo.toAddress ? transferInfo.toAddress : transferInfo.fromAddress,
@@ -239,4 +260,45 @@ export async function getContractConstructor(contractCodeHex) {
     .catch((error) => {
       return {success: false, data: error};
     });
+}
+
+/**
+ * 获取链ID对应的前缀
+ * @returns {Promise<any>}
+ */
+export async function getAllAddressPrefix() {
+  let newData = [
+    {chainId: 1, addressPrefix: 'NULS'},
+    {chainId: 2, addressPrefix: 'tNULS'},
+  ];
+  await post('/', 'getAllAddressPrefix', [])
+    .then((response) => {
+      //console.log(response);
+      if (response.hasOwnProperty("result")) {
+        if (sessionStorage.hasOwnProperty('prefixData')) {
+          sessionStorage.removeItem('prefixData')
+        }
+        sessionStorage.setItem('prefixData', JSON.stringify(response.result));
+      } else {
+        sessionStorage.setItem('prefixData', JSON.stringify(newData));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      sessionStorage.setItem('prefixData', JSON.stringify(newData));
+    });
+}
+
+//根据链ID获取前缀
+export async function getPrefixByChainId(chainId) {
+  await getAllAddressPrefix();
+  let prefixData = JSON.parse(sessionStorage.getItem('prefixData'));
+  if (prefixData) {
+    let newInfo = prefixData.find((v) => {
+      return v.chainId === chainId;
+    });
+    return newInfo.addressPrefix;
+  } else {
+    return '';
+  }
 }

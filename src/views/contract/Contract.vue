@@ -6,7 +6,7 @@
       <i class="iconfont icon-fuzhi clicks"></i>
     </h3>
     <el-tabs v-model="contractActive" class="w1200" @tab-click="handleClick">
-      <el-tab-pane :label="$t('contract.contract1')" name="contractFirst">
+      <el-tab-pane :label="$t('contract.contract1')" name="contractFirst" v-loading="myContractDataLoading">
         <div class="my_contract">
           <el-table :data="myContractData" stripe border>
             <el-table-column :label="$t('contract.contract2')" align="center" min-width="220">
@@ -31,7 +31,8 @@
                 <label class="tab_bn" v-if="scope.row.status ===3 || scope.row.status ===-1">--</label>
                 <label class="click tab_bn" v-else @click="toUrl('contractInfo',scope.row.contractAddress,0,'fourth')">{{$t('contract.contract4')}}</label>
                 <i class="el-icon-star-on font20 transparent" v-show="scope.row.creater === addressInfo.address"></i>
-                <el-tooltip :content="$t('public.cancelCollection')" placement="top" v-show="scope.row.creater !== addressInfo.address">
+                <el-tooltip :content="$t('public.cancelCollection')" placement="top"
+                            v-show="scope.row.creater !== addressInfo.address">
                   <i class="el-icon-star-on font20 clicks" @click="cancelCollection(scope.row.contractAddress)"></i>
                 </el-tooltip>
 
@@ -40,8 +41,8 @@
           </el-table>
           <div class="pages">
             <div class="page-total">
-              {{$t('public.display')}} {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
-              {{$t('public.total')}} {{pageTotal}}
+              {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
+              of {{pageTotal}}
             </div>
             <el-pagination v-show="pageTotal > pageSize" @current-change="myContractPages" class="fr"
                            :current-page="pageIndex"
@@ -56,13 +57,12 @@
       <el-tab-pane :label="$t('contract.contract5')" name="contractSecond">
         <div class="bg-white w1200 search">
           <div class="search-div">
-            <el-input :placeholder="$t('contract.contract6')" v-model="searchContract" class="search-input">
+            <el-input :placeholder="$t('contract.contract6')" v-model.trim="searchContract" class="search-input">
             </el-input>
             <el-button type="success" class="search-button" @click="searchContractByAddress">
               {{$t('contract.contract7')}}
             </el-button>
-            <u class="click td"
-               @click="toUrl('contracts','',1)">{{$t('contract.contract8')}}</u>
+            <u class="click td" @click="toUrl('contracts','',1)">{{$t('contract.contract8')}}</u>
           </div>
           <div class="contract-info bg-gray" v-show="contractInfo.contractAddress">
             <div class="contract-address font16">
@@ -87,7 +87,7 @@
                 <h6 class="fl font16 overflow">{{contractInfo.remark}}</h6>
               </div>
             </div>
-            <Call :modelList="modelData" :contractAddress="contractInfo.contractAddress">
+            <Call :modelList="modelData" :contractAddress="contractInfo.contractAddress" :decimals="decimals">
             </Call>
           </div>
         </div>
@@ -122,6 +122,8 @@
         isCollection: false,//是否收藏
         contractInfo: {},//合约详情
         modelData: [],//合约方法列表
+        decimals: 0,//合约精度系数
+        myContractDataLoading: true,//我的合约加载动画
       };
     },
     created() {
@@ -132,7 +134,9 @@
 
     },
     mounted() {
-      this.getMyContractByAddress(this.addressInfo.address);
+      setTimeout(() => {
+        this.getMyContractByAddress(this.addressInfo.address);
+      }, 600);
     },
     components: {
       Deploy,
@@ -150,7 +154,6 @@
       /**
        * tab 切换
        * @param tab
-       * @param event
        **/
       handleClick(tab) {
         //console.log(tab.name);
@@ -159,7 +162,7 @@
           this.isCollection = false;
           this.contractInfo = {};
           this.modelData = [];
-        }else if(tab.name === 'contractFirst'){
+        } else if (tab.name === 'contractFirst') {
           this.getMyContractByAddress(this.addressInfo.address);
         }
       },
@@ -169,8 +172,7 @@
        * @param address
        **/
       async getMyContractByAddress(address) {
-        //await this.$post('/', 'getContractList', [this.pageIndex, this.pageSize, false, false])
-        await this.$post('/', 'getAccountContractList', [this.pageIndex, this.pageSize, address, false, false])
+        await this.$post('/', 'getAccountContractList', [this.pageIndex, this.pageSize, address, -1, false])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -184,8 +186,13 @@
               } else {
                 this.getContractListById(this.pageIndex, this.pageSize, this.addressInfo.contractList.length, this.addressInfo.contractList);
               }
+              this.myContractDataLoading = false;
             } else {
-              this.$message({message: this.$t('contract.contract11') + response.error, type: 'error', duration: 1000});
+              this.$message({
+                message: this.$t('contract.contract11') + JSON.stringify(response.error),
+                type: 'error',
+                duration: 1000
+              });
             }
           })
           .catch((error) => {
@@ -239,6 +246,7 @@
               if (response.hasOwnProperty("result")) {
                 this.contractInfo = response.result;
                 this.modelData = response.result.methods;
+                this.decimals = response.result.decimals;
                 let contractList = this.addressInfo.contractList;
                 if (contractList.length !== 0 && contractList.includes(this.contractInfo.contractAddress)) {
                   this.isCollection = true;

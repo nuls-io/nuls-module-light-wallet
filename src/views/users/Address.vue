@@ -7,10 +7,14 @@
         <i class="el-icon-plus click" @click="toUrl('newAddress')"></i>
       </div>
       <el-table :data="addressList" stripe border>
-        <el-table-column prop="address" :label="$t('address.address1')" align="center" min-width="200">
+        <el-table-column prop="address" :label="$t('address.address1')" align="center" min-width="330">
         </el-table-column>
-        <el-table-column prop="balance" :label="$t('address.address2')" align="center">
+        <el-table-column prop="total" :label="$t('tab.tab2')" align="center" width="150">
         </el-table-column>
+        <el-table-column prop="balance" :label="$t('consensus.consensus2')" align="center" width="150">
+        </el-table-column>
+        <!-- <el-table-column prop="consensusLock" :label="$t('tab.tab3')" align="center" width="140">
+         </el-table-column>-->
         <el-table-column :label="$t('address.address3')" align="center">
           <template slot-scope="scope">
             <span v-show="scope.row.alias">{{scope.row.alias}}</span>
@@ -28,7 +32,7 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('address.address5')" align="center" width="350">
+        <el-table-column :label="$t('address.address5')" align="center" width="370">
           <template slot-scope="scope">
             <label class="click tab_bn" @click="editPassword(scope.row)">{{$t('address.address6')}}</label>
             <span class="tab_line">|</span>
@@ -78,7 +82,8 @@
 <script>
   import nuls from 'nuls-sdk-js'
   import Password from '@/components/PasswordBar'
-  import {timesDecimals, chainIdNumber, addressInfo} from '@/api/util'
+  import {timesDecimals, chainIdNumber, addressInfo, chainID, Plus} from '@/api/util'
+  import {getPrefixByChainId} from '@/api/requestData'
 
   export default {
     data() {
@@ -87,16 +92,25 @@
         selectAddressInfo: '', //操作的地址信息
         remarkDialog: false,//备注弹框
         remarkInfo: '',//备注信息
+        prefix: '',//地址前缀
       };
     },
     components: {
       Password,
     },
     created() {
-      this.getAddressList();
+      getPrefixByChainId(chainID()).then((response) => {
+        this.prefix = response
+      }).catch((err) => {
+        console.log(err);
+        this.prefix = '';
+      });
     },
     mounted() {
-      this.getAddressLists(this.addressList);
+      setTimeout(() => {
+        this.getAddressList();
+        this.getAddressLists(this.addressList);
+      }, 600);
     },
     methods: {
 
@@ -105,6 +119,9 @@
        */
       getAddressList() {
         this.addressList = addressInfo(0);
+        for (let item in this.addressList) {
+          this.addressList[item].total = Number(Plus(this.addressList[item].balance, this.addressList[item].consensusLock))
+        }
         //如果没有账户跳转到创建地址界面
         if (this.addressList.length === 0) {
           this.$router.push({
@@ -180,7 +197,7 @@
       backAddress(rowInfo) {
         this.selectAddressInfo = rowInfo;
         this.$router.push({
-          name: "newAddress",
+          name: "backupsAddress",
           query: {'backAddressInfo': rowInfo}
         })
       },
@@ -190,8 +207,21 @@
        * @param rowInfo
        **/
       deleteAddress(rowInfo) {
-        this.selectAddressInfo = rowInfo;
-        this.$refs.password.showPassword(true)
+        this.$confirm(this.$t('tab.tab29'), this.$t('tab.tab32'), {
+          confirmButtonText: this.$t('tab.tab30'),
+          cancelButtonText: this.$t('nodeService.nodeService8'),
+          type: 'warning',
+          showClose: false,
+          closeOnClickModal: false,
+          closeOnPressEscape: false,
+          center: true
+        }).then(() => {
+          this.backAddress(rowInfo);
+        }).catch(() => {
+          this.selectAddressInfo = rowInfo;
+          this.$refs.password.showPassword(true)
+        });
+
       },
 
       /**
@@ -223,8 +253,8 @@
       passSubmit(password) {
         let newAddressInfo = addressInfo(0);
         const pri = nuls.decrypteOfAES(this.selectAddressInfo.aesPri, password);
-        const deleteAddressInfo = nuls.importByKey(this.selectAddressInfo.chainId, pri, password);
-        if (deleteAddressInfo.address === this.selectAddressInfo.address) {
+        const deleteAddressInfo = nuls.importByKey(this.selectAddressInfo.chainId, pri, password, this.prefix);
+        if (this.selectAddressInfo.address === deleteAddressInfo.address) {
           newAddressInfo.splice(newAddressInfo.findIndex(item => item.address === this.selectAddressInfo.address), 1);
           if (this.selectAddressInfo.selection && newAddressInfo.length !== 0) {
             newAddressInfo[0].selection = true;
@@ -298,6 +328,16 @@
               color: white;
             }
           }
+        }
+      }
+    }
+  }
+
+  .el-message-box__wrapper{
+    .el-message-box__content{
+      .el-message-box__message{
+        p{
+          color: red;
         }
       }
     }

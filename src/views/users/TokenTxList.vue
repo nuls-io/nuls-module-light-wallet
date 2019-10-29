@@ -56,8 +56,8 @@
         </el-table>
         <div class="pages">
           <div class="page-total">
-            {{$t('public.display')}} {{pageIndex-1 === 0 ? 1 : (pageIndex-1) * pageSize}}-{{pageIndex * pageSize}}
-            {{$t('public.total')}} {{pageTotal}}
+            {{pageIndex-1 === 0 ? 1 : (pageIndex-1) * pageSize}}-{{pageIndex * pageSize}}
+            of {{pageTotal}}
           </div>
           <el-pagination v-show="pageTotal > pageSize" @current-change="txListPages" class="fr"
                          :current-page="pageIndex"
@@ -106,13 +106,14 @@
       }
     },
     mounted() {
-      this.getTokenListByAddress(1, 100, this.addressInfo.address);
-      this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.contractAddress);
+      setTimeout(() => {
+        this.getTokenListByAddress(1, 100, this.addressInfo.address);
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.contractAddress);
+      }, 600);
       //10秒循环一次数据
       this.txListSetInterval = setInterval(() => {
         this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.contractAddress);
       }, 10000);
-
     },
     //离开当前页面后执行
     destroyed() {
@@ -135,7 +136,7 @@
             //console.log(response);
             if (response.hasOwnProperty("result")) {
               this.tokenOptions = response.result.list;
-              let newArr ={
+              let newArr = {
                 contractAddress: "",
                 key: "EtDfvZuukDf2mVy",
                 tokenSymbol: this.$t('public.allToke')

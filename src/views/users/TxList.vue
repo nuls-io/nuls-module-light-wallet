@@ -20,14 +20,15 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <el-select :value="$t('budgetType.'+inAndOutValue)" @change="channgeInAndOut" :disabled="types !==2" v-if="false">
+          <el-select :value="$t('budgetType.'+inAndOutValue)" @change="channgeInAndOut" :disabled="types !==2"
+                     v-if="false">
             <el-option v-for="item in inAndOutOptions" :key="item.value" :label="$t('budgetType.'+item.value)"
                        :value="item.value">
             </el-option>
           </el-select>
           <el-switch v-model="isHide" active-text="" :inactive-text="$t('public.hideReward')" :width="35"
                      @change="changeHide"
-                     v-show="types===0">
+                     v-show="false">
           </el-switch>
         </div>
         <el-table :data="txListData" stripe border>
@@ -58,8 +59,8 @@
         </el-table>
         <div class="pages">
           <div class="page-total">
-            {{$t('public.display')}} {{pageIndex-1 === 0 ? 1 : (pageIndex-1) * pageSize}}-{{pageIndex * pageSize}}
-            {{$t('public.total')}} {{pageTotal}}
+            {{pageIndex-1 === 0 ? 1 : (pageIndex-1) * pageSize}}-{{pageIndex * pageSize}}
+            of {{pageTotal}}
           </div>
           <el-pagination v-show="pageTotal > pageSize" @current-change="txListPages" class="fr"
                          :current-page="pageIndex"
@@ -90,7 +91,6 @@
         assetsValue: "0",
         typeOptions: [
           {value: '0', label: '0'},
-          {value: '1', label: '1'},
           {value: '2', label: '2'},
           {value: '3', label: '3'},
           {value: '4', label: '4'},
@@ -100,11 +100,21 @@
           {value: '8', label: '8'},
           {value: '9', label: '9'},
           {value: '10', label: '10'},
+          {value: '11', label: '11'},
+          {value: '12', label: '12'},
+          {value: '13', label: '13'},
+          {value: '14', label: '14'},
           {value: '15', label: '15'},
           {value: '16', label: '16'},
           {value: '17', label: '17'},
           {value: '18', label: '18'},
           {value: '19', label: '19'},
+          {value: '20', label: '20'},
+          {value: '21', label: '21'},
+          {value: '22', label: '22'},
+          {value: '23', label: '23'},
+          {value: '24', label: '24'},
+          {value: '25', label: '25'},
         ], //交易类型
         typeValue: '0',
         inAndOutOptions: [
@@ -133,17 +143,18 @@
     watch: {
       addressInfo(val, old) {
         if (val.address !== old.address && old.address) {
-          this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide);
+          this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types);
         }
       }
     },
     mounted() {
-      this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide);
+      setTimeout(() => {
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types);
+      }, 600);
       //10秒循环一次数据
       this.txListSetInterval = setInterval(() => {
-        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide);
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types);
       }, 10000);
-
     },
     //离开当前页面后执行
     destroyed() {
@@ -160,18 +171,22 @@
        * @param pageRows
        * @param address
        * @param type
-       * @param isHide
        **/
-      getTxlistByAddress(pageSize, pageRows, address, type, isHide) {
-        this.$post('/', 'getAccountTxs', [pageSize, pageRows, address, type, isHide])
+      getTxlistByAddress(pageSize, pageRows, address, type) {
+        this.$post('/', 'getAccountTxs', [pageSize, pageRows, address, type, -1, -1])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
               for (let item of response.result.list) {
                 item.createTime = moment(getLocalTime(item.createTime * 1000)).format('YYYY-MM-DD HH:mm:ss');
                 item.txid = superLong(item.txHash, 8);
-                item.balance = timesDecimals(item.balance);
-                item.amount = timesDecimals(item.values);
+                item.balance = Number(timesDecimals(item.balance)).toFixed(3);
+                if (item.type === 16) {
+                  item.amount = Number(timesDecimals(item.fee.value)).toFixed(3);
+                } else {
+                  item.amount = Number(timesDecimals(item.values)).toFixed(3);
+                }
+
               }
               this.txListData = response.result.list;
               this.pageTotal = response.result.totalCount;
@@ -198,7 +213,7 @@
       channgeType(e) {
         this.types = Number(e);
         this.typeValue = Number(e);
-        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide);
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types);
       },
 
       /**
@@ -216,7 +231,7 @@
       changeHide(e) {
         this.isHide = e;
         this.pageIndex = 1;
-        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide)
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types)
       },
 
       /**
@@ -226,7 +241,7 @@
       txListPages(val) {
         this.pageIndex = val;
         this.txListDataLoading = true;
-        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types, this.isHide)
+        this.getTxlistByAddress(this.pageIndex, this.pageSize, this.addressInfo.address, this.types)
       },
 
       /**

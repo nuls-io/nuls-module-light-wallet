@@ -1,8 +1,8 @@
-//const IS_DEV = process.env.NODE_ENV !== 'production';//开发模式
-//const log4js = require('log4js');
-const log4js = {};
+const IS_DEV = process.env.NODE_ENV !== 'production';//开发模式
+const log4js = require('log4js');
+//const log4js = {};
 
-/*let fileUrl = IS_DEV ? 'wallet_web_log/data.log' : __dirname + '../../../wallet_web_log/data.log';
+let fileUrl = IS_DEV ? 'wallet_web_log/data.log' : __dirname + '../../../wallet_web_log/data.log';
 log4js.configure({
   appenders: {
     everything: {
@@ -19,10 +19,10 @@ log4js.configure({
     }
   }
 });
-*/
+
 
 //获取logger对象
-let logger = log4js.getLogger();
+let loggerDesktop = log4js.getLogger();
 
 /*logger.trace('Entering cheese testing');
 logger.debug('Got cheese.');
@@ -37,8 +37,8 @@ logger.fatal('Cheese was breeding ground for listeria.');*/
  * @param {any} data 日志数据
  */
 function trace(data) {
-  logger.level = 'trace';
-  logger.trace(data);
+  loggerDesktop.level = 'trace';
+  loggerDesktop.trace(data);
   console.log(data);
 }
 
@@ -48,8 +48,8 @@ function trace(data) {
  * @param {any} data 日志数据
  */
 function debug(data) {
-  logger.level = 'debug';
-  logger.debug(data);
+  loggerDesktop.level = 'debug';
+  loggerDesktop.debug(data);
   console.log(data);
 }
 
@@ -59,8 +59,8 @@ function debug(data) {
  * @param {any} data 日志数据
  */
 function info(data) {
-  logger.level = 'info';
-  logger.info(data);
+  loggerDesktop.level = 'info';
+  loggerDesktop.info(data);
   console.log(data);
 }
 
@@ -70,8 +70,8 @@ function info(data) {
  * @param {any} data 日志数据
  */
 function warn(data) {
-  logger.level = 'warn';
-  logger.warn(data);
+  loggerDesktop.level = 'warn';
+  loggerDesktop.warn(data);
   console.warn(data);
 }
 
@@ -81,8 +81,8 @@ function warn(data) {
  * @param {any} data 日志数据
  */
 function log(data) {
-  logger.level = 'log';
-  logger.log(data);
+  loggerDesktop.level = 'log';
+  loggerDesktop.log(data);
   console.log(data);
 }
 
@@ -92,8 +92,8 @@ function log(data) {
  * @param {any} data 日志数据
  */
 function error(data) {
-  logger.level = 'error';
-  logger.error(data);
+  loggerDesktop.level = 'error';
+  loggerDesktop.error(data);
   console.error(data);
 }
 
@@ -103,8 +103,8 @@ function error(data) {
  * @param {any} data 日志数据
  */
 function fatal(data) {
-  logger.level = 'fatal';
-  logger.fatal(data);
+  loggerDesktop.level = 'fatal';
+  loggerDesktop.fatal(data);
   console.log(data);
 }
 

@@ -44,11 +44,11 @@
           </el-form-item>
           <div v-if="deployForm.senior" class="senior-div bg-white">
             <el-form-item label="Gas Limit" prop="gas">
-              <el-input v-model="deployForm.gas">
+              <el-input v-model="deployForm.gas" disabled>
               </el-input>
             </el-form-item>
             <el-form-item label="Price" prop="price">
-              <el-input v-model="deployForm.price">
+              <el-input v-model="deployForm.price" disabled>
               </el-input>
             </el-form-item>
             <el-form-item :label="$t('public.contractInfo')" prop="addtion">
@@ -83,6 +83,7 @@
     getContractConstructor,
     validateTx,
     broadcastTx,
+    getPrefixByChainId
   } from '@/api/requestData'
   import Password from '@/components/PasswordBar'
   import {getArgs, chainID} from '@/api/util'
@@ -133,6 +134,7 @@
         isTestSubmit: false,//测试合约
         fileName: '',//jar文件名
         deployLoading: false,//获取参数加载动画
+        prefix: '',//地址前缀
       };
     },
     props: {
@@ -142,11 +144,19 @@
       Password,
     },
     created() {
+      getPrefixByChainId(chainID()).then((response) => {
+        //console.log(response);
+        this.prefix = response
+      }).catch((err) => {
+        console.log(err);
+        this.prefix = '';
+      });
       this.createAddress = this.addressInfo.address;
-      this.getBalanceByAddress(this.addressInfo.chainId, 1, this.createAddress);
     },
     mounted() {
-      //this.getTxInfoByHash(this.hash);
+      setTimeout(() => {
+        this.getBalanceByAddress(this.addressInfo.chainId, 1, this.createAddress);
+      }, 600);
     },
     watch: {
       addressInfo(val, old) {
@@ -177,8 +187,8 @@
           hex: '',
           parameterList: [],
           senior: false,
-          gas: '',
-          price: '',
+          gas: 1,
+          price: 25,
           addtion: '',
         };
       },
@@ -217,6 +227,7 @@
        **/
       changeParameter() {
         let newArgs = getArgs(this.deployForm.parameterList);
+        //console.log(newArgs);
         if (newArgs.allParameter) {
           this.validateContractCreate(this.createAddress, sdk.CONTRACT_MAX_GASLIMIT, sdk.CONTRACT_MINIMUM_PRICE, this.deployForm.hex, newArgs.args);
           this.deployForm.price = sdk.CONTRACT_MINIMUM_PRICE;
@@ -236,7 +247,7 @@
           .then((response) => {
             //console.log(response.result);
             if (response.result.success) {
-              this.imputedContractCreateGas(createAddress, contractCode, args, this.deployForm.alias);
+              this.imputedContractCreateGas(createAddress, contractCode, args);
             } else {
               this.$message({message: this.$t('deploy.deploy11') + response.error, type: 'error', duration: 1000});
             }
@@ -251,7 +262,6 @@
        * @param createAddress
        * @param contractCode
        * @param args
-       * @param alias
        */
       async imputedContractCreateGas(createAddress, contractCode, args) {
         return await this.$post('/', 'imputedContractCreateGas', [createAddress, contractCode, args])
@@ -261,10 +271,12 @@
               this.deployForm.gas = response.result.gasLimit;
               this.makeCreateData(response.result.gasLimit, createAddress, contractCode, args, this.deployForm.alias);
             } else {
+              this.deployForm.gas = 1;
               this.$message({message: this.$t('deploy.deploy13') + response.error, type: 'error', duration: 1000});
             }
           })
           .catch((error) => {
+            this.deployForm.gas = 1;
             this.$message({message: this.$t('deploy.deploy14') + error, type: 'error', duration: 1000});
           });
       },
@@ -313,6 +325,7 @@
           this.$message({message: this.$t('deploy.deploy15'), type: 'error', duration: 1000});
         } else {
           this.contractCreateTxData = contractCreate;
+          //console.log(this.contractCreateTxData);
         }
       },
 
@@ -390,7 +403,7 @@
        **/
       async passSubmit(password) {
         const pri = nuls.decrypteOfAES(this.addressInfo.aesPri, password);
-        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password);
+        const newAddressInfo = nuls.importByKey(this.addressInfo.chainId, pri, password, this.prefix);
         let amount = this.contractCreateTxData.gasLimit * this.contractCreateTxData.price;
         if (newAddressInfo.address === this.addressInfo.address) {
           let transferInfo = {
@@ -403,6 +416,10 @@
           let pub = this.addressInfo.pub;
           let remark = this.deployForm.addtion;
           let inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 15);
+          if (!inOrOutputs.success) {
+            this.$message({message: inOrOutputs.data, type: 'error', duration: 1000});
+          }
+          //console.log(this.contractCreateTxData);
           let tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, remark, 15, this.contractCreateTxData);
           let txhex = '';
           //获取手续费
@@ -428,19 +445,19 @@
                     name: "txList"
                   })
                 } else {
-                  this.$message({message: this.$t('public.err') + response.data, type: 'error', duration: 1000});
+                  this.$message({message: this.$t('public.err') + JSON.stringify(response.data), type: 'error', duration: 2000});
                 }
               }).catch((err) => {
-                this.$message({message: this.$t('public.err0') + err, type: 'error', duration: 1000});
+                this.$message({message: this.$t('public.err0') + JSON.stringify(err), type: 'error', duration: 2000});
               });
             } else {
-              this.$message({message: this.$t('public.err') + response.data, type: 'error', duration: 1000});
+              this.$message({message: this.$t('public.err') + JSON.stringify(response.data), type: 'error', duration: 2000});
             }
           }).catch((err) => {
-            this.$message({message: this.$t('public.err0') + err, type: 'error', duration: 1000});
+            this.$message({message: this.$t('public.err0') +JSON.stringify(err), type: 'error', duration: 2000});
           });
         } else {
-          this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
+          this.$message({message: this.$t('address.address13'), type: 'error', duration: 2000});
         }
       },
 
@@ -459,6 +476,7 @@
             //获取文件流
             let reader = new FileReader();
             reader.readAsDataURL(file);
+            _this.deployLoading = true;
             reader.onload = (() => {
               _this.$post('/', 'uploadContractJar', [reader.result])
                 .then((response) => {
@@ -467,10 +485,10 @@
                     _this.deployForm.hex = response.result.code;
                     _this.getParameter();
                   } else {
-                    this.$message({message: this.$t('deploy.deploy17'), type: 'error', duration: 1000});
+                    _this.$message({message: _this.$t('deploy.deploy17'), type: 'error', duration: 1000});
                   }
                 }).catch((err) => {
-                this.$message({message: this.$t('deploy.deploy18') + err, type: 'error', duration: 1000});
+                _this.$message({message: _this.$t('deploy.deploy18') + err, type: 'error', duration: 1000});
               })
             });
           }

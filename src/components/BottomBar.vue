@@ -9,7 +9,11 @@
           </p>
         </div>
         <div class="right fr">
-          {{$t('bottom.nodeHeight')}}: {{heightInfo.networkHeight}}/{{heightInfo.localHeight}}
+          {{$t('bottom.nodeHeight')}}:
+          <i v-show="heightInfo.networkHeight ===0 && heightInfo.localHeight===0 " class="el-icon-loading"></i>
+          <span v-show="heightInfo.networkHeight !==0 && heightInfo.localHeight !==0 ">
+            {{heightInfo.networkHeight}}/{{heightInfo.localHeight}}
+          </span>
         </div>
       </div>
     </div>
@@ -19,53 +23,27 @@
 <script>
   import nuls from 'nuls-sdk-js'
   import axios from 'axios'
-  import {defaultData} from '@/config.js'
   import {chainID, chainIdNumber, addressInfo, timesDecimals} from '@/api/util'
 
   export default {
     name: "bottom-bar",
     data() {
       return {
+        serviceUrls: {},//服务节点信息
         heightInfo: [],//高度信息
+        failedNu: 0,//失败请次数
       }
     },
     created() {
-      if (localStorage.hasOwnProperty('urlsData')) {
-        let newUrlsData = [];
-        let selectionUrl = '';
-        for (let item of JSON.parse(localStorage.getItem("urlsData"))) {
-          if (item.name !== 'Official') {
-            newUrlsData.push(item)
-          }
-          if (item.selection) {
-            selectionUrl = item.urls
-          }
-        }
-        for (let item of defaultData) {
-          if (item.urls === selectionUrl) {
-            item.selection = true
-          }
-        }
-        let urlsData = [...defaultData, ...newUrlsData];
-        for (let item of urlsData) {
-          if (item.selection) {
-            this.serviceUrls = item;
-          }
-        }
-        localStorage.removeItem('urlsData');
-        localStorage.setItem("urlsData", JSON.stringify(urlsData));
-      } else {
-        localStorage.setItem("urlsData", JSON.stringify(defaultData));
-        for (let item of defaultData) {
-          if (item.selection) {
-            localStorage.setItem("urls", JSON.stringify(item));
-            this.serviceUrls = item;
-          }
-        }
-      }
+      this.serviceUrls = {};
+      let newUrlData = this.$store.getters.getUrlData;
+      this.serviceUrls = newUrlData.filter(item => item.selection)[0];
+      localStorage.setItem('url', JSON.stringify(this.serviceUrls));
       this.getHeaderInfo();
       setInterval(() => {
-        this.serviceUrls = JSON.parse(localStorage.getItem("urls"));
+        let newUrlData = this.$store.getters.getUrlData;
+        this.serviceUrls = newUrlData.filter(item => item.selection)[0];
+        localStorage.setItem('url', JSON.stringify(this.serviceUrls));
       }, 500);
     },
     mounted() {
@@ -74,15 +52,43 @@
         this.getAddressInfo();
       }, 10000);
     },
-    watch: {},
+    watch: {
+      heightInfo(val) {
+        if (this.$route.path !== '/nodeService' && this.failedNu !== 5) {
+          if (val.localHeight === 0 && val.networkHeight === 0) {
+            this.failedNu = this.failedNu + 1
+          } else {
+            this.failedNu = 0
+          }
+          if (this.failedNu === 5) {
+            this.$confirm(this.$t('bottom.err0'), {
+              confirmButtonText: this.$t('bottom.err1'),
+              cancelButtonText: '',
+              type: 'error',
+              showClose: false,
+              showCancelButton: false,
+              closeOnClickModal: false,
+              closeOnPressEscape: false,
+            }).then(() => {
+              this.toUrl('nodeService');
+            }).catch(() => {
+            });
+          }
+        }
+      }
+    },
     methods: {
 
       /**
        * 获取主网最新高度和本地高度
        */
       getHeaderInfo() {
-        const url = localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')).urls : 'http://192.168.1.40:18003/';
-        const params = {"jsonrpc": "2.0", "method": "getInfo", "params": [chainID()], "id": 5898};
+        const url = localStorage.hasOwnProperty("url") && localStorage.getItem('url') !== 'undefined' ? JSON.parse(localStorage.getItem('url')).urls : 'http://192.168.1.40:18003/';
+        const params = {
+          "jsonrpc": "2.0", "method": "getInfo", "params": [chainID()], "id": Math.floor(Math.random() * 1000)
+        };
+        //console.log(url);
+        //console.log(params);
         axios.post(url, params)
           .then((response) => {
             //console.log(response.data);
@@ -118,6 +124,11 @@
                     item.balance = timesDecimals(response.result.balance);
                     item.consensusLock = timesDecimals(response.result.consensusLock);
                     item.totalReward = timesDecimals(response.result.totalReward);
+                    if (response.result.lastReward) {
+                      item.lastReward = timesDecimals(response.result.lastReward);
+                    } else {
+                      item.lastReward = 0;
+                    }
                     item.tokens = [];
                     item.chainId = nuls.verifyAddress(item.address).chainId;
                   }

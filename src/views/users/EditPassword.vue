@@ -3,12 +3,12 @@
     <div class="bg-white">
       <div class="w1200">
         <BackBar :backTitle="$t('address.address0')"></BackBar>
-        <h3 class="title">{{$t('editPassword.editPassword0')}}</h3>
+        <h3 class="title">{{$t('editPassword.editPassword0')}}: {{this.$route.query.address}}</h3>
       </div>
     </div>
     <div class="new w1200 mt_20 bg-white">
       <div class="w630">
-        <h3 class="tc mzt_20">{{this.$route.query.address}}</h3>
+        <h3 class="tc mzt_20"></h3>
         <el-form :model="passwordForm" status-icon :rules="passwordRules" ref="passwordForm" class="mb_20">
           <el-form-item :label="$t('editPassword.editPassword1')" prop="oldPass">
             <el-input type="password" v-model="passwordForm.oldPass" autocomplete="off"></el-input>
@@ -22,7 +22,7 @@
           <el-form-item class="form-next">
             <el-button type="success" @click="submitPasswordForm('passwordForm')">{{$t('editPassword.editPassword4')}}
             </el-button>
-            <div>{{$t('editPassword.editPassword5')}}<span class="click" @click="toUrl('importAddress')"> {{$t('public.re-import')}}</span>
+            <div>{{$t('editPassword.editPassword5')}}<span class="click" @click="toUrl('newAddress')"> {{$t('public.re-import')}}</span>
             </div>
           </el-form-item>
         </el-form>
@@ -35,7 +35,8 @@
 <script>
   import nuls from 'nuls-sdk-js'
   import BackBar from '@/components/BackBar'
-  import {addressInfo, chainIdNumber} from '@/api/util'
+  import {addressInfo, chainIdNumber,chainID} from '@/api/util'
+  import {getPrefixByChainId} from '@/api/requestData'
 
   export default {
     data() {
@@ -95,9 +96,17 @@
           ]
         },
         editAddressInfo: '',//新建的地址信息
+        prefix: '',//地址前缀
       };
     },
     created() {
+      getPrefixByChainId(chainID()).then((response) => {
+        //console.log(response);
+        this.prefix = response
+      }).catch((err) => {
+        console.log(err);
+        this.prefix = '';
+      });
     },
     mounted() {
     },
@@ -121,9 +130,9 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             const pri = nuls.decrypteOfAES(oldAddressInfo.aesPri, this.passwordForm.oldPass);
-            const newAddressInfo = nuls.importByKey(2, pri, this.passwordForm.oldPass);
+            const newAddressInfo = nuls.importByKey(chainID(), pri, this.passwordForm.oldPass,this.prefix);
             if (newAddressInfo.address === address) {
-              const importAddressInfo = nuls.importByKey(2, pri, this.passwordForm.newPass);
+              const importAddressInfo = nuls.importByKey(chainID(), pri, this.passwordForm.newPass,this.prefix);
               oldAddressInfo.aesPri = importAddressInfo.aesPri;
               oldAddressInfo.pub = importAddressInfo.pub;
               let addressList = addressInfo(0);
@@ -149,7 +158,7 @@
        * @param name
        */
       toUrl(name) {
-        if (name === 'importAddress') {
+        if (name === 'newAddress') {
           this.$router.push({
             name: name,
             query: {address: this.$route.query.address}

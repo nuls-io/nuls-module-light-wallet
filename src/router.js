@@ -82,9 +82,9 @@ export default new Router({
       component: resolve => require(['@/views/users/NewAddress.vue'], resolve)
     },
     {
-      path: '/importAddress',
-      name: 'importAddress',
-      component: resolve => require(['@/views/users/ImportAddress.vue'], resolve)
+      path: '/backupsAddress',
+      name: 'backupsAddress',
+      component: resolve => require(['@/views/users/BackupsAddress.vue'], resolve)
     },
     {
       path: '/setAlias',
@@ -105,6 +105,11 @@ export default new Router({
       path: '/set',
       name: 'seting',
       component: resolve => require(['@/views/set/Set.vue'], resolve)
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: resolve => require(['@/views/set/Contact.vue'], resolve)
     }
 
 

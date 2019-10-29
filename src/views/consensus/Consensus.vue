@@ -7,22 +7,26 @@
     </h3>
     <div class="card w1200">
       <div class="card-info left fl">
-        <h5 class="card-title font18">{{$t('consensus.consensus0')}}</h5>
+        <h5 class="card-title font18">
+          {{$t('consensus.consensus0')}}
+          <span class="font14 fr">{{Number(addressInfo.totalReward).toFixed(3)}}<font class="fCN"> {{addressInfo.symbol}}</font></span>
+        </h5>
         <ul>
-          <li>
-            {{$t('consensus.consensus3')}}
-            <label>{{addressInfo.totalReward}}<span class="fCN">{{addressInfo.symbol}}</span></label>
-          </li>
-          <li>
-            {{$t('consensus.consensus2')}}
-            <label>{{addressInfo.balance}}<span class="fCN">{{addressInfo.symbol}}</span></label>
-          </li>
           <li>
             {{$t('consensus.consensus1')}}
             <label>
-              <u class="click" @click="toUrl('consensusList')">{{addressInfo.consensusLock}}</u>
-              <span class="fCN">{{agentAsset.agentAsset.symbol}}</span>
+              <u class="click"
+                 @click="toUrl('consensusList',addressInfo.consensusLock)">{{Number(addressInfo.consensusLock).toFixed(3)}}</u>
+              <span class="fCN">{{addressInfo.symbol}}</span>
             </label>
+          </li>
+          <li>
+            {{$t('consensus.consensus2')}}
+            <label>{{Number(addressInfo.balance).toFixed(3)}}<span class="fCN">{{addressInfo.symbol}}</span></label>
+          </li>
+          <li>
+            {{$t('consensus.consensus3')}}
+            <label>{{Number(addressInfo.lastReward).toFixed(3)}}<span class="fCN">{{addressInfo.symbol}}</span></label>
           </li>
         </ul>
       </div>
@@ -36,10 +40,11 @@
         <ul>
           <li>
             {{$t('consensus.consensus8')}}
-            <label>{{nulsCount.consensusTotal}}<span class="fCN">{{agentAsset.agentAsset.symbol}}</span></label>
+            <label>{{Number(nulsCount.consensusTotal).toFixed(3)}}<span
+                    class="fCN">{{addressInfo.symbol}}</span></label>
           </li>
-          <li>{{$t('consensus.consensus7')}} <label>{{nodeCount.totalCount}}</label></li>
-          <li>{{$t('consensus.consensus6')}} <label>{{nodeCount.agentCount}}</label></li>
+          <li>{{$t('consensus.consensus7')}} <label>{{nodeCount.agentCount}}</label></li>
+          <li>{{$t('consensus.consensus6')}} <label>{{nodeCount.consensusCount}}</label></li>
         </ul>
       </div>
     </div>
@@ -48,7 +53,7 @@
       <el-tab-pane :label="$t('consensus.consensus9')" name="consensusFirst">
         <div class="filter">
           <SelectBar v-model="nodeStatusRegion" :typeOptions="nodeStatusOptions" typeName="nodeStatus"
-                     @change="changeNodeStatus">
+                     @change="changeNodeStatus" v-show="false">
           </SelectBar>
           <SelectBar v-model="nodeTypeRegion" :typeOptions="nodeTypeOptions" typeName="nodeType"
                      @change="changeNodeType">
@@ -58,7 +63,7 @@
             <i class="iconfont icon-search_icon fr click"></i>
           </el-input>
         </div>
-        <div class="node">
+        <div class="node" v-loading="allNodeLoading">
           <div class="node_info" v-for="item in searchData" :key="item.agentId">
             <h4 class="bg-gray">
               <i class="iconfont iconwo" v-show="item.isNew"></i>&nbsp;
@@ -66,7 +71,7 @@
               <i class="iconfont"
                  :class="item.status ===0 ? 'icondaigongshi fred' : 'icongongshizhong fCN'"></i>
               <i class="follow clicks" :class="item.isCollect ? 'el-icon-star-on fCN':'el-icon-star-off'"
-                 @click="collect(item.agentId)" v-show="false"></i>
+                 @click="collect(item)"></i>
             </h4>
             <ul class="bg-white click" @click="toUrl('consensusInfo',item.txHash)">
               <li>{{$t('public.alias')}}<span>{{item.agentAlias}}</span></li>
@@ -88,7 +93,8 @@
               <span class="uppercase">{{item.agentId}}</span>&nbsp;
               <i class="iconfont"
                  :class="item.status ===0 ? 'icondaigongshi fred' : 'icongongshizhong fCN'"></i>
-              <i class="follow el-icon-star-off" v-show="false"></i>
+              <i class="follow clicks" :class="item.isCollect ? 'el-icon-star-on fCN':'el-icon-star-off'"
+                 @click="collect(item)"></i>
             </h4>
             <ul class="bg-white click" @click="toUrl('consensusInfo',item.txHash)">
               <li>{{$t('public.alias')}}<span>{{item.agentAlias}}</span></li>
@@ -139,8 +145,9 @@
 
         searchValue: '',//搜索框
         allNodeData: [],//所有节点信息
+        allNodeLoading: true,//所有节点信息加载动画
         addressInfo: [], //账户信息
-        agentAsset:JSON.parse(sessionStorage.getItem('info')),//pocm合约单位等信息
+        agentAsset: JSON.parse(sessionStorage.getItem('info')),//pocm合约单位等信息
         isRed: false,//地址是否有红牌
         isNew: false,//账户是否已经创建了节点
         pageIndex: 1, //页码
@@ -158,17 +165,16 @@
       setInterval(() => {
         this.addressInfo = addressInfo(1);
       }, 500);
-      this.getConsensusNodeCount();
-      this.getCoinInfo();
     },
     mounted() {
-      this.getConsensusNodes(this.pageIndex, this.pageSize, this.nodeTypeRegion);
-      this.getConsensusInfoByAddress(this.pageIndex, this.pageSize, this.addressInfo.address);
-      this.getAddressInfoByNode(this.addressInfo);
-      this.getPunishByAddress(this.addressInfo.address);
-      /*this.setInterval = setInterval(() => {
-        //this.getAddressInfoByNode(this.addressInfo)
-      }, 10000)*/
+      setTimeout(() => {
+        this.getConsensusNodeCount();
+        this.getCoinInfo();
+        this.getConsensusNodes(this.pageIndex, this.pageSize, this.nodeTypeRegion);
+        //this.getConsensusInfoByAddress(this.pageIndex, this.pageSize, this.addressInfo.address);
+        this.getAddressInfoByNode(this.addressInfo);
+        this.getPunishByAddress(this.addressInfo.address);
+      }, 600);
     },
     destroyed() {
       clearInterval(this.setInterval);
@@ -232,15 +238,21 @@
               let newAddressInfo = addressInfo(0);
               for (let item of newAddressInfo) {
                 if (item.address === addressInfos.address) {
-                  item.alias = response.result.alias;
-                  item.symbol = response.result.symbol;
-                  item.balance = timesDecimals(response.result.balance);
-                  item.consensusLock = timesDecimals(response.result.consensusLock);
-                  item.totalReward = timesDecimals(response.result.totalReward);
-                  item.totalIn = timesDecimals(response.result.totalIn);
-                  item.totalOut = timesDecimals(response.result.totalOut);
+                  newAddressInfo.alias = response.result.alias;
+                  newAddressInfo.symbol = response.result.symbol;
+                  newAddressInfo.balance = timesDecimals(response.result.balance);
+                  newAddressInfo.consensusLock = timesDecimals(response.result.consensusLock);
+                  newAddressInfo.totalReward = timesDecimals(response.result.totalReward);
+                  if (response.result.lastReward) {
+                    newAddressInfo.lastReward = timesDecimals(response.result.lastReward);
+                  } else {
+                    newAddressInfo.lastReward = 0;
+                  }
+                  newAddressInfo.totalIn = timesDecimals(response.result.totalIn);
+                  newAddressInfo.totalOut = timesDecimals(response.result.totalOut);
                 }
               }
+              //newAddressInfo =
               localStorage.setItem(chainIdNumber(), JSON.stringify(newAddressInfo));
             }
           })
@@ -302,6 +314,7 @@
        * @param type
        **/
       getConsensusNodes(pageIndex, pageSize, type) {
+        this.allNodeLoading = true;
         this.$post('/', 'getConsensusNodes', [pageIndex, pageSize, type])
           .then((response) => {
             //console.log(response);
@@ -316,17 +329,18 @@
                   itme.isCollect = false;
                 }
                 itme.bozhengjin = itme.deposit;
-                itme.deposit = timesDecimals(itme.deposit);
-                itme.agentReward = timesDecimals(itme.agentReward);
-                itme.totalDeposit = timesDecimals(itme.totalDeposit);
-                itme.totalReward = timesDecimals(itme.totalReward);
+                itme.deposit = Number(timesDecimals(itme.deposit)).toFixed(3);
+                itme.agentReward = Number(timesDecimals(itme.agentReward)).toFixed(3);
+                itme.totalDeposit = Number(timesDecimals(itme.totalDeposit)).toFixed(3);
+                itme.totalReward = Number(timesDecimals(itme.totalReward)).toFixed(3);
                 if (itme.agentAddress === this.addressInfo.address) {
-                  itme.isNew = true;//创建的节点
+                  this.isNew = true;//创建的节点
                 } else {
-                  itme.isNew = false;
+                  this.isNew = false;
                 }
               }
-              this.allNodeData = response.result.list
+              this.allNodeData = response.result.list;
+              this.allNodeLoading = false;
             }
           })
           .catch((error) => {
@@ -337,29 +351,45 @@
 
       /**
        * 收藏功能
-       * @param agentId
+       * @param nodeInfo
        **/
-      collect(agentId) {
-        if (!this.addressInfo.collectList) {
-          this.addressInfo.collectList = [];
+      collect(nodeInfo) {
+        //console.log(nodeInfo);
+        if (!this.addressInfo.hasOwnProperty('collectList')) {
+          this.addressInfo.collectList = []
+        }
+        if (this.addressInfo.collectList.includes(nodeInfo.agentId)) {
+          //移除已收藏
+          this.addressInfo.collectList.splice(this.addressInfo.collectList.findIndex(v => v === nodeInfo.agentId), 1);
         } else {
-          if (this.addressInfo.collectList.includes(agentId)) {
-            //移除已收藏
-            this.addressInfo.collectList.splice(this.addressInfo.collectList.findIndex(v => v === agentId), 1);
-          } else {
-            this.addressInfo.collectList.push(agentId);
-          }
+          this.addressInfo.collectList.push(nodeInfo.agentId);
+        }
+
+        if (this.consensusActive === 'consensusFirst') {
           //循环是否收藏
-          for (let itme of this.allNodeData) {
-            if (this.addressInfo.collectList.includes(itme.agentId)) {
-              itme.isCollect = true;
+          for (let item of this.allNodeData) {
+            if (this.addressInfo.collectList.includes(item.agentId)) {
+              item.isCollect = true;
             } else {
-              itme.isCollect = false;
+              item.isCollect = false;
+            }
+          }
+        } else { //循环是否收藏
+          for (let item of this.myNodeData) {
+            if (this.addressInfo.collectList.includes(item.agentId)) {
+              item.isCollect = true;
+            } else {
+              item.isCollect = false;
             }
           }
         }
-        sessionStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
-        localStorage.setItem(this.addressInfo.address, JSON.stringify(this.addressInfo));
+        let newAddressList = addressInfo(0);
+        for (let item of newAddressList) {
+          if (item.address === this.addressInfo.address) {
+            item.collectList = this.addressInfo.collectList
+          }
+        }
+        localStorage.setItem(chainIdNumber(), JSON.stringify(newAddressList));
       },
 
       /**
@@ -374,10 +404,20 @@
             //console.log(response);
             if (response.hasOwnProperty("result")) {
               //循环获取节点列表判断是否有地址创建列表
+              let newAgentIdList = [];
               for (let item of response.result.list) {
-                item.deposit = timesDecimals(item.deposit);
-                item.totalDeposit = timesDecimals(item.totalDeposit);
-                item.totalReward = timesDecimals(item.totalReward);
+                if (!this.addressInfo.collectList) {
+                  this.addressInfo.collectList = [];
+                }
+                if (this.addressInfo.collectList.includes(item.agentId)) {
+                  item.isCollect = true;
+                } else {
+                  item.isCollect = false;
+                }
+                newAgentIdList.push(item.agentId);
+                item.deposit = Number(timesDecimals(item.deposit)).toFixed(3);
+                item.totalDeposit = Number(timesDecimals(item.totalDeposit)).toFixed(3);
+                item.totalReward = Number(timesDecimals(item.totalReward)).toFixed(3);
                 if (item.agentAddress === this.addressInfo.address) {
                   item.isNew = true;//创建的节点
                   this.isNew = true;
@@ -386,7 +426,15 @@
                   this.isNew = false;
                 }
               }
-              this.myNodeData = response.result.list;
+              let setnNewAgentIdList = new Set(newAgentIdList);
+              let setCollectList = new Set(this.addressInfo.collectList);
+              // 差集
+              let difference = new Set([...setCollectList].filter(x => !setnNewAgentIdList.has(x)));
+              let newCollectList = [];
+              for (let items of difference) {
+                newCollectList.push(this.allNodeData.filter(item => item.agentId === items)[0])
+              }
+              this.myNodeData = [...response.result.list, ...newCollectList];
             }
           })
           .catch((error) => {
@@ -463,7 +511,7 @@
         if (name === 'consensusInfo') {
           newQuery = {hash: params}
         } else {
-          newQuery = {}
+          newQuery = {consensusLock: params}
         }
         this.$router.push({
           name: name,

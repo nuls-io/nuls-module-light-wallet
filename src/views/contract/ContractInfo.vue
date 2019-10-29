@@ -23,7 +23,7 @@
           <li>
             {{$t('contractInfo.contractInfo3')}}
             <label>
-              <u class="click td" @click="toUrl('contractsInfo',contractInfo.creater,1)">
+              <u class="click td" @click="toUrl('address',contractInfo.creater,1)">
                 {{contractInfo.creater}}
               </u>
               at TxID
@@ -35,21 +35,23 @@
       </div>
       <div class="cb"></div>
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane :label="$t('home.home2')" name="first">
+        <el-tab-pane :label="$t('home.home2')" name="first" class="mb_100">
           <SelectBar v-model="contractsTypeRegion" :typeOptions="contractsStatusOptions" typeName="type"
                      @change="changeType">
           </SelectBar>
 
           <el-table :data="contractTxData" stripe border style="width: 100%;margin-top: 14px">
-            <el-table-column label="" width="30">
+            <el-table-column label="" width="20">
             </el-table-column>
-            <el-table-column prop="height" :label="$t('public.height')" width="180" align="left">
+            <el-table-column prop="height" :label="$t('public.height')" width="80" align="left">
               <template slot-scope="scope">
                 <span class="cursor-p click">{{ scope.row.blockHeight }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="height" :label="$t('contractInfo.contractInfo5')" width="180" align="left">
+            <el-table-column :label="$t('contractInfo.contractInfo5')" width="180" align="left">
               <template slot-scope="scope"><span>{{ $t('type.'+scope.row.type) }}</span></template>
+            </el-table-column>
+            <el-table-column prop="contractMethod" :label="$t('contractInfo.contractInfo51')" width="180" align="left">
             </el-table-column>
             <el-table-column label="TXID" min-width="280" align="left">
               <template slot-scope="scope">
@@ -66,8 +68,8 @@
           </el-table>
           <div class="pages">
             <div class="page-total">
-              {{$t('public.display')}} {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
-              {{$t('public.total')}} {{pageTotal}}
+              {{pageIndex-1 === 0 ? 1 : (pageIndex-1) *pageSize}}-{{pageIndex*pageSize}}
+              of {{pageTotal}}
             </div>
             <el-pagination v-show="pageTotal > pageSize" @current-change="contractTxPages" class="fr"
                            :current-page="pageIndex"
@@ -117,7 +119,7 @@
   import BackBar from '@/components/BackBar'
   import SelectBar from '@/components/SelectBar';
   import Call from './Call'
-  import {timesDecimals, getLocalTime, superLong, addressInfo,connectToExplorer} from '@/api/util'
+  import {timesDecimals, getLocalTime, superLong, addressInfo, connectToExplorer} from '@/api/util'
   import {getNulsBalance, inputsOrOutputs, validateAndBroadcast} from '@/api/requestData'
   import Password from '@/components/PasswordBar'
 
@@ -144,7 +146,7 @@
         pageTotal: 0,//总页数
         modeList: [],//合约方法列表
         modelData: [],//合约方法列表
-        decimals:0,//合约精度系数
+        decimals: 0,//合约精度系数
 
       };
     },
@@ -153,15 +155,14 @@
       setInterval(() => {
         this.addressInfo = addressInfo(1);
       }, 500);
-      this.getBalanceByAddress(this.addressInfo.chainId, 1, this.addressInfo.address);
+
     },
     mounted() {
-      this.contractInfoByAddress(this.contractAddress);
-      this.contractTxList(this.pageIndex, this.pageSize, 0, this.contractAddress);
-      //定时获取地址
-      this.contractAddressInterval = setInterval(() => {
-        //this.contractsAddress= this.$route.query.contractAddress;
-      }, 500)
+      setTimeout(() => {
+        this.getBalanceByAddress(this.addressInfo.chainId, 1, this.addressInfo.address);
+        this.contractInfoByAddress(this.contractAddress);
+        this.contractTxList(this.pageIndex, this.pageSize, 0, this.contractAddress);
+      }, 600);
     },
     beforeDestroy() {
       //离开界面清除定时器
@@ -186,12 +187,12 @@
     },
     methods: {
 
-      handleClick(tab, event) {
-        console.log(tab, event);
+      handleClick() {
+        //console.log(tab, event);
       },
 
       /**
-       * 合约详情根据合约地址
+       * 获取合约详情根据合约地址
        * @param address
        **/
       async contractInfoByAddress(address) {
@@ -202,6 +203,10 @@
               response.result.createTxHashs = superLong(response.result.createTxHash, 5);
               response.result.balance = timesDecimals(response.result.balance);
               this.contractInfo = response.result;
+              for (let item in response.result.methods) {
+                //console.log(response.result.methods[item].event);
+                response.result.methods[item].keys = item;
+              }
               this.modelData = response.result.methods;
               this.decimals = response.result.decimals;
               this.modeList = response.result.methods;
@@ -263,6 +268,7 @@
        **/
       contractTxPages(val) {
         this.pageIndex = val;
+        this.contractTxList(this.pageIndex, this.pageSize, 0, this.contractAddress);
       },
 
       /**
@@ -273,6 +279,7 @@
        **/
       getBalanceByAddress(assetChainId, assetId, address) {
         getNulsBalance(assetChainId, assetId, address).then((response) => {
+          //console.log(response);
           if (response.success) {
             this.balanceInfo = response.data;
           } else {
@@ -367,7 +374,7 @@
        * @param params
        * @param type
        */
-      toUrl(name,params, type = 0) {
+      toUrl(name, params, type = 0) {
         //console.log(name)
         if (type === 0) {
           let newQuery = {hash: params};
@@ -376,7 +383,7 @@
             query: newQuery
           })
         } else {
-          connectToExplorer(name,params)
+          connectToExplorer(name, params)
         }
       },
 

@@ -11,7 +11,9 @@
           </el-menu-item>
           <el-menu-item index="consensus" :disabled="addressList.length === 0">{{$t('nav.consensus')}}
           </el-menu-item>
-          <el-menu-item index="contract" :disabled="addressList.length === 0">{{$t('nav.contracts')}}</el-menu-item>
+          <el-menu-item index="contract" :disabled="addressList.length === 0 || !nodeServiceInfo.isRunSmartContract">
+            {{$t('nav.contracts')}}
+          </el-menu-item>
         </el-menu>
       </div>
       <div class="tool">
@@ -19,25 +21,34 @@
           <el-submenu index="address" class="user" :disabled="addressList.length === 0">
             <template slot="title"><i class="iconfont iconzhanghu"></i></template>
             <el-menu-item v-for="item of addressList" :key="item.address" :index="item.address">
-              <i class="iconfont iconwo" :class="item.selection ? '' : 'transparent' "></i>
-              <font v-show="!item.alias"> {{item.addresss}} | </font><span
-                    v-show="item.alias">{{item.alias}} | </span><span>{{item.balance}}</span>
+              <span :class="item.selection ? 'fCN' : '' ">
+                 <i class="iconfont iconwo ico" :class="item.selection ? 'fCN' : 'transparent' "></i>
+                <font v-if="item.alias" class="w100"> {{item.alias}}</font>
+                <font v-else-if="item.remark" class="w100"> {{item.remark}}</font>
+                <font v-else class="w100">{{item.addresss}}</font> |
+                <span>{{item.balance}}</span>
+              </span>
+
             </el-menu-item>
           </el-submenu>
           <el-submenu index="set">
             <template slot="title">{{$t('nav.set')}}</template>
             <el-menu-item index="address">{{$t('nav.addressList')}}</el-menu-item>
             <el-menu-item index="nodeService">{{$t('nav.nodeList')}}</el-menu-item>
+            <el-menu-item index="contact">{{$t('public.bookList')}}</el-menu-item>
             <el-menu-item index="seting">{{$t('public.about')}}</el-menu-item>
-            <el-menu-item index="address" v-show="false">通讯录</el-menu-item>
           </el-submenu>
           <el-submenu index="lang">
             <template slot="title">{{this.lang ==="en" ? "Eng":"中文"}}</template>
             <el-menu-item index="cn">中文</el-menu-item>
             <el-menu-item index="en">English</el-menu-item>
           </el-submenu>
-          <!-- <li class="el-menu-item">|</li>
-           <el-menu-item index="24" disabled>{{$t('nav.help')}}</el-menu-item>-->
+          <el-submenu index="more">
+            <template slot="title"><i class="el-icon-more"></i></template>
+            <el-menu-item index="official">{{$t('tab.tab21')}}</el-menu-item>
+            <el-menu-item index="explorer">{{$t('tab.tab22')}}</el-menu-item>
+            <el-menu-item index="docs">{{$t('tab.tab23')}}</el-menu-item>
+          </el-submenu>
         </el-menu>
 
       </div>
@@ -48,25 +59,49 @@
 </template>
 
 <script>
-  import logoSvg from './../assets/img/logo-beta.svg'
-  import {superLong, chainIdNumber, addressInfo} from '@/api/util'
+  import logo from '@/assets/img/logo.svg'
+  import logoSvg from '@/assets/img/logo-beta.svg'
+  import {superLong, chainIdNumber, addressInfo, connectToExplorer} from '@/api/util'
+  import {RUN_DEV} from '@/config.js'
 
   export default {
     data() {
       return {
-        logoSvg: logoSvg, //logo
+        logoSvg: RUN_DEV ? logo : logoSvg, //logo
         navActive: '/',//菜单选中
         addressList: [], //地址列表
         lang: 'cn', //语言选择
+        nodeServiceInfo: {},
       };
     },
     components: {},
     created() {
+      let type = navigator.appName;
+      let langs = '';
+      if (type === "Netscape") {
+        langs = navigator.language;//获取浏览器配置语言，支持非IE浏览器
+      } else {
+        langs = navigator.userLanguage;//获取浏览器配置语言，支持IE5+ == navigator.systemLanguage
+      }
+      let lang = langs.substr(0, 2);//获取浏览器配置语言前两位
+      if (lang === "zh") {
+        this.lang = 'cn';
+      } else {
+        this.lang = 'en';
+      }
+      this.$i18n.locale = this.lang;
+
       this.getAddressList();
     },
     mounted() {
       setInterval(() => {
         this.getAddressList();
+        if (sessionStorage.hasOwnProperty('info')) {
+          this.nodeServiceInfo = JSON.parse(sessionStorage.getItem('info'));
+        } else {
+          this.nodeServiceInfo.isRunCrossChain = false;
+          this.nodeServiceInfo.isRunSmartContract = false;
+        }
       }, 500)
     },
     methods: {
@@ -96,6 +131,16 @@
             })
           } else if (keyPath[0] === "lang") {
             this.selectLanguage(key)
+          } else if (keyPath[0] === "more") {
+            let newUrl = '';
+            if (keyPath[1] === 'official') {
+              newUrl = 'https://nuls.io/'
+            } else if (keyPath[1] === 'explorer') {
+              newUrl = RUN_DEV ? 'https://nulscan.io/' : 'http://beta.nulscan.io/'
+            } else if (keyPath[1] === 'docs') {
+              newUrl = 'https://docs.nuls.io/'
+            }
+            connectToExplorer('nuls', newUrl);
           }
         } else {
           this.$router.push({
@@ -175,17 +220,34 @@
       float: left;
     }
     .tool {
-      width: 340px;
+      width: 270px;
       margin: 10px 0 0 0;
       float: right;
       background-color: #e6a23c;
       .user {
         .el-submenu__title {
           .el-icon-arrow-down {
-            margin: 35px 0 0 -16px
+            margin: 35px 0 0 -16px;
+
           }
         }
       }
+    }
+  }
+
+  .el-menu--horizontal {
+    .ico {
+      float: left;
+      display: block;
+      width: 25px;
+    }
+    .fCN {
+      color: @Ncolour;
+    }
+    .w100 {
+      display: block;
+      float: left;
+      width: 200px;
     }
   }
 </style>

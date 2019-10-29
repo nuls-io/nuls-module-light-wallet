@@ -1,7 +1,9 @@
+import nuls from 'nuls-sdk-js'
 import {BigNumber} from 'bignumber.js'
-import {shell} from 'electron';
 import copy from 'copy-to-clipboard'
-import {RUN_PATTERN, explorerUrl} from '@/config.js'
+import {explorerUrl, RUN_DEV} from '@/config.js'
+import openner from "./opener-web";
+//import openner from "./opener-desktop";
 
 /**
  * 10的N 次方
@@ -71,11 +73,42 @@ export function timesDecimals(nu, decimals = 8) {
 }
 
 /**
+ * 数字乘以精度系数
+ */
+export function timesDecimals0(nu, decimals = 8) {
+  let newNu = new BigNumber(Times(nu, Power(decimals)).toString());
+  return Number(newNu);
+}
+
+/**
+ * @disc: 验证密码
+ * @params:  accountInfo
+ * @params:  password
+ * @params:  prefix
+ * @date: 2019-08-22 12:05
+ * @author: Wave
+ */
+export function passwordVerification(accountInfo, password, prefix) {
+  const pri = nuls.decrypteOfAES(accountInfo.aesPri, password);
+  const newAddressInfo = nuls.importByKey(chainID(), pri, password, prefix);
+  if (newAddressInfo.address === accountInfo.address || nuls.addressEquals(accountInfo.address, newAddressInfo.address)) {
+    return {success: true, pri: pri, pub: accountInfo.pub, aesPri: accountInfo.aesPri, address: newAddressInfo.address};
+  } else {
+    return {success: false};
+  }
+}
+
+/**
  * 获取链ID
  * @returns {number}
  */
 export function chainID() {
-  return localStorage.hasOwnProperty('urls') ? JSON.parse(localStorage.getItem('urls')).chainId : 2
+  if (localStorage.hasOwnProperty('url') && localStorage.getItem('url') !== 'undefined') {
+    let newUrl = JSON.parse(localStorage.getItem('url'));
+    return newUrl.chainId
+  } else {
+    return RUN_DEV ? 1 : 2;
+  }
 }
 
 /**
@@ -191,21 +224,22 @@ export function getArgs(parameterList) {
     //循环获取必填参数
     for (let itme of parameterList) {
       if (itme.required) {
-        if(itme.value){
+        if (itme.value) {
           allParameter = true;
           newArgs.push(itme.value)
-        }else{
-          allParameter = false;
+        } else {
+          return {allParameter: false, args: newArgs};
         }
-      }else{
-        newArgs.push(itme.value)
+      } else {
+        allParameter = true;
+        if (!itme.value) {
+          newArgs.push('')
+        } else {
+          newArgs.push(itme.value)
+        }
       }
     }
-    if (allParameter) {
-      return {allParameter: allParameter, args: newArgs};
-    } else {
-      return {allParameter: allParameter, args: newArgs};
-    }
+    return {allParameter: allParameter, args: newArgs};
   } else {
     return {allParameter: true, args: newArgs};
   }
@@ -235,13 +269,11 @@ export function connectToExplorer(name, parameter) {
   }
   else if (name === 'transactionInfo') {
     newUrl = explorerUrl + 'transaction/info?hash=' + parameter
+  } else if (name === 'nuls') {
+    newUrl = parameter
   }
   //console.log(newUrl);
-  if (RUN_PATTERN) {
-    shell.openExternal(newUrl);
-  } else {
-    window.open(newUrl, '_blank');
-  }
+  openner(newUrl);
 }
 
 //地址必须参数列表
