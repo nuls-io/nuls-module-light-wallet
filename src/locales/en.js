@@ -487,7 +487,7 @@ const en = {
     "tab22": "Explorer",
     "tab23": "Docs",
     "tab24": "Complete backup",
-    "tab25": "Contracts Assets",
+    "tab25": "Contracts assets",
     "tab26": "Assets overview",
     "tab27": "Receive",
     "tab28": "Detail",
