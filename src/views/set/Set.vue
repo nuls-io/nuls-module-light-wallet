@@ -26,7 +26,7 @@
           <li v-show="RUN_PATTERN && system !== 'Darwin'"><span>{{$t('public.logInfo')}}:</span>{{logUrl}}</li>
           <li v-show="system === 'Darwin'">
             <span>{{$t('public.downloadUrl')}}:</span>
-            <font>https://github.com/nuls-io/nuls-v2/releases</font>
+            <font>{{FILE_URL}}</font>
           </li>
         </ul>
         <el-button type="success" @click="checkUpdate" v-show="RUN_PATTERN && system !== 'Darwin'">
@@ -68,7 +68,7 @@
         logUrl: '',
         system: '',
         version: packages.version,//版本号
-        newVersion: '',//最新版本号
+        newVersion: '1.0.0',//最新版本号
         RUN_PATTERN: RUN_PATTERN,//运行模式
         RUN_DEV: RUN_DEV,// 运行环境
         FILE_URL: FILE_URL,//桌面程序下载路径
@@ -167,7 +167,6 @@
             padding-right: 0.5rem;
           }
         }
-
       }
       .el-button {
         margin: 1rem 0 0 0;
