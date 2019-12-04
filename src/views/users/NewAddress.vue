@@ -41,6 +41,9 @@
         <el-tab-pane label="扫描导入" name="scanImport">
           <div class="scan tc">
             <div id="qrcode" class="qrcode"></div>
+            <div class="font12" style="margin: 5px 0 0 0">
+              (<span class="click td" @click="toUrl('https://www.denglu1.cn/',1)">登录易</span>)
+            </div>
           </div>
         </el-tab-pane>
         <el-tab-pane :label="$t('importAddress.importAddress0')" name="newAddress" :disabled="resetAddress !=='0'">
@@ -83,7 +86,8 @@
     passwordVerification,
     getRamNumber,
     timesDecimals,
-    Plus
+    Plus,
+    connectToExplorer
   } from '@/api/util'
   import {getPrefixByChainId} from '@/api/requestData'
   import Password from '@/components/PasswordBar'
@@ -194,6 +198,7 @@
           ],
         },
         newAddressInfo: {},//创建地址信息
+        scanImportInterval: null,
       };
     },
     components: {
@@ -211,6 +216,9 @@
     mounted() {
       this.ramNumber();
     },
+    beforeDestroy() {
+      clearInterval(this.scanImportInterval);
+    },
     methods: {
 
       /**
@@ -227,13 +235,6 @@
           send: this.importRandomString,//字符串，随机生成，作为应用发送数据的标识
         };
         console.log(this.importRandomString);
-        /* let scanInfo = {
-           address: "NULSd6HgjWhwf2mAaKY8jc44G5ZaYWA8VCVzv",
-           encryptedPrivateKey: "2e81d0d21adffa3f534c265c4aa4208f62fd9c9381fda59ed02c6a4d710f0e17bf03015db6e3d5b22c043fd712c6ad2d",
-           alias: "",
-           pubKey: "0266bdbf85e7756fb9af0573f8887353e339fe6c129675fe20bf704697000d9c63",
-         };*/
-
         let qrcode = new QRCode('qrcode', {
           width: 300,
           height: 300,
@@ -260,8 +261,9 @@
           this.newAddressInfo = {};
           this.$refs['newAddressForm'].resetFields();
         } else if (tab.name === 'scanImport') {
-          //this.ramNumber();
-          this.getScanImport(this.importRandomString);
+          this.scanImportInterval = setInterval(() => {
+            this.getScanImport(this.importRandomString);
+          }, 3000);
         } else {
           this.keystoreInfo = {};
           this.importAddressInfo = {};
@@ -350,7 +352,7 @@
        * @author: Wave
        */
       async keystoreImportPassSubmit(password) {
-        let isPassword = passwordVerification(this.keystoreInfo, password);
+        let isPassword = passwordVerification(this.keystoreInfo, password, this.prefix);
         if (isPassword.success) {
           let keystoreAddressInfo = defaultAddressInfo;
           keystoreAddressInfo.address = isPassword.address;
@@ -359,7 +361,7 @@
           localStorageByAddressInfo(keystoreAddressInfo);
           this.toUrl('address')
         } else {
-          this.$message({message: "密码错误，请输入正确的密码!", type: 'error', duration: 2000});
+          this.$message({message: this.$t('address.address13'), type: 'error', duration: 3000});
         }
       },
 
@@ -416,10 +418,14 @@
        * @date: 2019-09-02 11:12
        * @author: Wave
        */
-      toUrl(name) {
-        this.$router.push({
-          name: name
-        })
+      toUrl(name, type = 0) {
+        if (type === 0) {
+          this.$router.push({
+            name: name
+          })
+        } else {
+          connectToExplorer('nuls', name);
+        }
       },
     }
   }
