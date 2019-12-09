@@ -791,13 +791,8 @@
           if (this.contractInfo.success) { //合约转账
             this.contractCallData.chainId = MAIN_INFO.chainId;
             transferInfo['amount'] = Number(Plus(transferInfo.fee, Number(Times(this.transferForm.gas, this.transferForm.price))));
-            //transferInfo['fee'] = transferInfo.fee;
-            //transferInfo.toAddress = this.contractInfo.contractAddress;
             transferInfo.value = Number(timesDecimals0(this.transferForm.amount, this.changeAssets.decimals));
-            //console.log(transferInfo);
             inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 16);
-            //console.log(inOrOutputs);
-            //console.log(this.contractCallData);
             tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 16, this.contractCallData);
           } else {
             if (this.changeAssets.type === 1 && !this.isCross) { //NULS普通转账交易
@@ -808,12 +803,10 @@
               //交易组装
               tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 2);
             } else if (this.changeAssets.type === 1 && this.isCross) { //跨链转账交易
-              //console.log("跨链交易");
               transferInfo['toAddress'] = this.transferForm.toAddress;
               transferInfo['amount'] = Number(Times(this.transferForm.amount, 100000000).toString());
               transferInfo['remark'] = this.transferForm.remarks;
               transferInfo.fee = 1000000;
-              //console.log(transferInfo);
               crossTxHex = await this.crossTxhexs(pri, this.addressInfo.pub, this.addressInfo.chainId, transferInfo);
               //console.log(crossTxHex);
             } else {
@@ -849,9 +842,7 @@
               txhex = await nuls.transactionSerialize(nuls.decrypteOfAES(this.addressInfo.aesPri, password), this.addressInfo.pub, tAssemble);
             }
           }
-          //console.log(txhex);
           if (this.isCross) { //跨链交易
-            //console.log("跨链交易");
             await this.$post('/', 'sendCrossTx', [txhex])
               .then((response) => {
                 //console.log(response);
@@ -869,7 +860,7 @@
               .catch((error) => {
                 console.log(error);
                 this.transferLoading = false;
-                this.$message({message: this.$t('public.err4') + error, type: 'error', duration: 5000});
+                this.$message({message: this.$t('public.err4') + error, type: 'error', duration: 3000});
               });
           } else { //其他交易验证并广播交易
             //console.log("其他交易");

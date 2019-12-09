@@ -175,6 +175,9 @@
         await this.$post('/', 'getAccountContractList', [this.pageIndex, this.pageSize, address, -1, false])
           .then((response) => {
             //console.log(response);
+            if (!this.addressInfo.contractList) {
+              this.addressInfo.contractList = [];
+            }
             if (response.hasOwnProperty("result")) {
               if (response.result.list.length !== 0) {
                 let myContractList = [];
