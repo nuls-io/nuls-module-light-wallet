@@ -295,7 +295,7 @@ const en = {
     "cm_2005": "Asset ID already exists",
     "cm_2006": "Asset name cannot be empty",
     "cm_2007": "The asset name must be less than 20",
-    "cm_2008": "The deposit amount must be 2000000",
+    "cm_2008": "The deposit amount must be 200000",
     "cm_2009": "Asset initialization number must be greater than 10000",
     "cm_2010": "Asset initialization number must be less than 100000000",
     "cm_2011": "The number of decimal places must be greater than 4",
