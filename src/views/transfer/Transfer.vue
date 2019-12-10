@@ -726,23 +726,41 @@
           fromAddress: this.transferForm.fromAddress,
           assetsChainId: this.changeAssets.chainId,
           assetsId: this.changeAssets.assetId,
-          fee: 100000,
-          toAddress: this.aliasToAddress ? this.aliasToAddress : this.transferForm.toAddress,
-          amount: Number(Times(this.transferForm.amount, 100000000).toString()),
+          fee: 100000
         };
-        let inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 2);
-        if (!inOrOutputs.success) {
-          this.$message({
-            message: this.$t('public.err1') + JSON.stringify(inOrOutputs.data),
-            type: 'error',
-            duration: 3000
-          });
-          return {success: false}
+        let inOrOutputs = {};
+        let tAssemble = [];
+        if (this.contractInfo.success) { //合约转账
+          this.contractCallData.chainId = MAIN_INFO.chainId;
+          transferInfo['amount'] = Number(Plus(transferInfo.fee, Number(Times(this.transferForm.gas, this.transferForm.price))));
+          transferInfo.value = Number(timesDecimals0(this.transferForm.amount, this.changeAssets.decimals));
+          inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 16);
+          if (!inOrOutputs.success) {
+            this.$message({
+              message: this.$t('public.err1') + JSON.stringify(inOrOutputs.data),
+              type: 'error',
+              duration: 3000
+            });
+            return {success: false}
+          }
+          tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 16, this.contractCallData);
+        } else {
+          transferInfo['toAddress'] = this.aliasToAddress ? this.aliasToAddress : this.transferForm.toAddress;
+          transferInfo['amount'] = Number(Times(this.transferForm.amount, 100000000).toString());
+          inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 2);
+          if (!inOrOutputs.success) {
+            this.$message({
+              message: this.$t('public.err1') + JSON.stringify(inOrOutputs.data),
+              type: 'error',
+              duration: 3000
+            });
+            return {success: false}
+          }
+          tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 2);
         }
-        let data = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 2);
         return {
           success: true,
-          data: data
+          data: tAssemble
         };
       },
 

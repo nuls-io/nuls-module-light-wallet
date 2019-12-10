@@ -230,11 +230,11 @@
               this.myContractData = response.result.list;
               this.pageTotal = response.result.totalCount;
             } else {
-              this.$message({message: this.$t('contract.contract11') + response.error, type: 'error', duration: 1000});
+              this.$message({message: this.$t('contract.contract11') + response.error, type: 'error', duration: 3000});
             }
           })
           .catch((error) => {
-            this.$message({message: this.$t('contract.contract12') + error, type: 'error', duration: 1000});
+            this.$message({message: this.$t('contract.contract12') + error, type: 'error', duration: 3000});
           });
       },
 
