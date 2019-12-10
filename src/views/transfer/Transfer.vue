@@ -677,6 +677,10 @@
           return;
         }
         if (this.addressInfo.aesPri === '') {
+          if (this.contractInfo.success || this.isCross) {
+            this.$message({message: "暂不支持扫码合约转账、跨链交易", type: 'warning', duration: 2000});
+            return;
+          }
           this.getTransferRandomString = await getRamNumber(16);
           this.sendTransferRandomString = await getRamNumber(16);
           let assembleHex = await this.transferAssemble();
@@ -730,8 +734,8 @@
         };
         let inOrOutputs = {};
         let tAssemble = [];
-        if (this.contractInfo.success) { //合约转账
-          this.contractCallData.chainId = MAIN_INFO.chainId;
+        if (!this.contractInfo.success) {
+          /*this.contractCallData.chainId = MAIN_INFO.chainId;
           transferInfo['amount'] = Number(Plus(transferInfo.fee, Number(Times(this.transferForm.gas, this.transferForm.price))));
           transferInfo.value = Number(timesDecimals0(this.transferForm.amount, this.changeAssets.decimals));
           inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 16);
@@ -744,7 +748,7 @@
             return {success: false}
           }
           tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 16, this.contractCallData);
-        } else {
+        } else {*/
           transferInfo['toAddress'] = this.aliasToAddress ? this.aliasToAddress : this.transferForm.toAddress;
           transferInfo['amount'] = Number(Times(this.transferForm.amount, 100000000).toString());
           inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 2);
