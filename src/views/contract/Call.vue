@@ -50,9 +50,16 @@
   import nuls from 'nuls-sdk-js'
   import sdk from 'nuls-sdk-js/lib/api/sdk'
   import utils from 'nuls-sdk-js/lib/utils/utils'
-  import {getNulsBalance, countFee, inputsOrOutputs, validateAndBroadcast, getPrefixByChainId} from '@/api/requestData'
+  import {
+    getNulsBalance,
+    countFee,
+    inputsOrOutputs,
+    validateAndBroadcast,
+    getPrefixByChainId,
+    commitData
+  } from '@/api/requestData'
   import Password from '@/components/PasswordBar'
-  import {getArgs, timesDecimals0, Times, Plus, addressInfo, chainID,getRamNumber} from '@/api/util'
+  import {getArgs, timesDecimals0, Times, Plus, addressInfo, chainID, getRamNumber} from '@/api/util'
 
   export default {
     data() {
@@ -262,12 +269,20 @@
                     this.signDataKeyRandom = await getRamNumber(16);
                     let assembleHex = await this.getAssemble();
                     if (!assembleHex.success) {
+                      this.$message({message: this.$t('tips.tips3'), type: 'error', duration: 3000});
                       return;
                     }
-                    let txHex = assembleHex.data.getHash().toString('hex');
-                    console.log(txHex);
-                    this.commitData(this.txHexRandom, assembleHex.data);
-                  }else {
+                    let commitDatas = await commitData(this.txHexRandom, this.signDataKeyRandom, assembleHex.data);
+                    if (!commitDatas.success) {
+                      this.$message({
+                        message: this.$t('tips.tips4') + JSON.stringify(commitDatas.data),
+                        type: 'error',
+                        duration: 3000
+                      });
+                      return;
+                    }
+                    this.$refs.password.showScan(commitDatas.data.txInfo, commitDatas.data.assembleHex);
+                  } else {
                     this.$refs.password.showPassword(true);
                   }
                 } else {
@@ -291,7 +306,7 @@
         });
       },
 
-      async getAssemble(){
+      async getAssemble() {
         let amount = Number(Times(this.callForm.gas, this.callForm.price));
         let transferInfo = {
           fromAddress: this.addressInfo.address,
@@ -329,31 +344,6 @@
           tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, remark, 16, this.contractCallData);
         }
         return {success: true, data: tAssemble}
-      },
-
-      /**
-       * @disc: 发送消息到后台
-       * @params: key,value
-       * @date: 2019-12-02 16:39
-       * @author: Wave
-       */
-      async commitData(key, assembleHex) {
-        await this.$post('/', 'commitMsg', [key, assembleHex.getHash().toString('hex')])
-          .then((response) => {
-            //console.log(response);
-            if (response.hasOwnProperty("result")) {
-              let txInfo = {
-                url: "http://192.168.1.68:18003/",
-                get: this.txHexRandom,
-                send: this.signDataKeyRandom,
-              };
-              console.log(txInfo);
-              this.$refs.password.showScan(txInfo, assembleHex);
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
       },
 
       /**

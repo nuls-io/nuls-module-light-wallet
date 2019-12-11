@@ -135,7 +135,8 @@
     countFee,
     inputsOrOutputs,
     validateAndBroadcast,
-    getPrefixByChainId
+    getPrefixByChainId,
+    commitData
   } from '@/api/requestData'
   import {MAIN_INFO} from '@/config.js'
   import {
@@ -678,46 +679,29 @@
         }
         if (this.addressInfo.aesPri === '') {
           if (this.contractInfo.success || this.isCross) {
-            this.$message({message: "暂不支持扫码合约转账、跨链交易", type: 'warning', duration: 2000});
+            this.$message({message: this.$t('tips.tips2'), type: 'warning', duration: 2000});
             return;
           }
           this.getTransferRandomString = await getRamNumber(16);
           this.sendTransferRandomString = await getRamNumber(16);
           let assembleHex = await this.transferAssemble();
           if (!assembleHex.success) {
+            this.$message({message: this.$t('tips.tips3'), type: 'error', duration: 3000});
             return;
           }
-          let txHex = assembleHex.data.getHash().toString('hex');
-          console.log(txHex);
-          this.commitData(this.getTransferRandomString, assembleHex.data);
+          let commitDatas = await commitData(this.getTransferRandomString, this.sendTransferRandomString, assembleHex.data);
+          if (!commitDatas.success) {
+            this.$message({
+              message: this.$t('tips.tips4') + JSON.stringify(commitDatas.data),
+              type: 'error',
+              duration: 3000
+            });
+            return;
+          }
+          this.$refs.password.showScan(commitDatas.data.txInfo, commitDatas.data.assembleHex);
         } else {
           this.$refs.password.showPassword(true);
         }
-      },
-
-      /**
-       * @disc: 发送消息到后台
-       * @params: key,value
-       * @date: 2019-12-02 16:39
-       * @author: Wave
-       */
-      async commitData(key, assembleHex) {
-        await this.$post('/', 'commitMsg', [key, assembleHex.getHash().toString('hex')])
-          .then((response) => {
-            //console.log(response);
-            if (response.hasOwnProperty("result")) {
-              let txInfo = {
-                url: "http://192.168.1.68:18003/",
-                get: this.getTransferRandomString,//字符串，随机生成，作为应用获取数据的标识
-                send: this.sendTransferRandomString,//字符串，随机生成，作为应用发送数据的标识
-              };
-              console.log(txInfo);
-              this.$refs.password.showScan(txInfo, assembleHex);
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
       },
 
       /**
@@ -820,7 +804,6 @@
             if (this.changeAssets.type === 1 && !this.isCross) { //NULS普通转账交易
               transferInfo['toAddress'] = this.aliasToAddress ? this.aliasToAddress : this.transferForm.toAddress;
               transferInfo['amount'] = Number(Times(this.transferForm.amount, 100000000).toString());
-              console.log(transferInfo);
               inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 2);
               //交易组装
               tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, this.transferForm.remarks, 2);
@@ -902,6 +885,7 @@
         } else {
           this.$message({message: this.$t('address.address13'), type: 'error', duration: 1000});
         }
+
       },
 
       /**
