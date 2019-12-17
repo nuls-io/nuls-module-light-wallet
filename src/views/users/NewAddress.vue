@@ -38,11 +38,11 @@
             </el-form>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="扫描导入" name="scanImport">
+        <el-tab-pane :label="$t('tips.tips10')" name="scanImport">
           <div class="scan tc">
             <div id="qrcode" class="qrcode"></div>
             <div class="font12" style="margin: 5px 0 0 0">
-              (<span class="click td" @click="toUrl('https://www.denglu1.cn/',1)">登录易</span>)
+              (<span class="click td" @click="toUrl('https://www.denglu1.cn/',1)">{{$t('tips.tips11')}}</span>)
             </div>
           </div>
         </el-tab-pane>

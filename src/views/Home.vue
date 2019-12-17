@@ -130,28 +130,30 @@
 
     <el-dialog title="" :visible.sync="qrcodeDialog" width="22.5rem" center class="payee_dialog">
       <el-tabs v-model="activeName" @tab-click="payeeHandleClick">
-        <el-tab-pane label="收款信息" name="payeeInfo">
+        <el-tab-pane :label="$t('tips.tips12')" name="payeeInfo">
           <el-form :model="payeeForm" class="payee_form">
             <el-form-item label="">
-              <el-input v-model="payeeForm.amount" autocomplete="off" placeholder="请填写收款金额"></el-input>
+              <el-input v-model="payeeForm.amount" autocomplete="off" :placeholder="$t('tips.tips13')">
+              </el-input>
             </el-form-item>
             <el-form-item label="">
-              <el-select v-model="payeeForm.currency" placeholder="请选择币种">
-                <el-option label="NULS" value="NULS"></el-option>
+              <el-select v-model="payeeForm.currency" :placeholder="$t('tips.tips14')">
+                <el-option label="NULS" value="NULS">
+                </el-option>
               </el-select>
             </el-form-item>
             <div class="tc ">
-              <el-button @click="payeeNext(0)">跳过</el-button>
-              <el-button type="success" @click="payeeNext(1)">下一步</el-button>
+              <el-button @click="payeeNext(0)">{{$t('tips.tips15')}}</el-button>
+              <el-button type="success" @click="payeeNext(1)">{{$t('public.next')}}</el-button>
             </div>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="生成二维码" name="payeeScan">
+        <el-tab-pane :label="$t('tips.tips16')" name="payeeScan">
           <div id="qrcode" class="qrcode"></div>
           <div class="font12 tc" style="margin: 5px 0 0 0">
-            (<span class="click td" style="color: #608fff; font-size: 12px"
+            (<span class="click td" style="color: #608fff; font-size: 12px;margin: 10px 0 0 0"
                    @click="toUrl('nuls','https://www.denglu1.cn/',1)">
-            登录易
+            {{$t('tips.tips11')}}
           </span>)
           </div>
         </el-tab-pane>
@@ -269,8 +271,8 @@
        * @date: 2019-12-11 13:44
        * @author: Wave
        */
-      payeeNext(type){
-        if(type ===1){
+      payeeNext(type) {
+        if (type === 1) {
           console.log(type)
         }
         this.activeName = 'payeeScan';
@@ -292,12 +294,12 @@
         });
 
         let qrcodeInfo = {
-          "address":address,
-          "chainId":1,
-          "assetId":1,
-          "contractAddress":"",
-          "amount":this.payeeForm.amount,
-          "payer":""
+          "address": address,
+          "chainId": 1,
+          "assetId": 1,
+          "contractAddress": "",
+          "amount": this.payeeForm.amount,
+          "payer": ""
         };
         console.log(qrcodeInfo);
         qrcode.makeCode(JSON.stringify(qrcodeInfo))
@@ -493,12 +495,14 @@
 
       /**
        * @disc: tab 切换
-       * @params: tab, event
+       * @params: tab
        * @date: 2019-12-04 11:38
        * @author: Wave
        */
-      payeeHandleClick(tab, event) {
-        console.log(tab, event);
+      payeeHandleClick(tab) {
+        if (tab.name === 'payeeScan') {
+          this.qrcode(this.addressInfo.address);
+        }
       },
 
       /**

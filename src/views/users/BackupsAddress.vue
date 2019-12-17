@@ -21,7 +21,7 @@
           <!--<el-button type="success" @click="backKeystore" v-if="RUN_PATTERN">{{$t('newAddress.newAddress16')}}
           </el-button>-->
           <el-button type="success" @click="backKeystore">{{$t('newAddress.newAddress16')}}</el-button>
-          <el-button type="success" @click="backScan">二维码备份</el-button>
+          <el-button type="success" @click="backScan">{{$t('tips.tips8')}}</el-button>
           <el-button type="success" @click="backKey">{{$t('newAddress.newAddress17')}}</el-button>
           <el-button @click="toUrl('home')">{{$t('tab.tab24')}}</el-button>
         </div>
@@ -44,7 +44,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="备份二维码" :visible.sync="scanDialog" width="450px" center @close="scanDialogClose"
+    <el-dialog :title="$t('tips.tips9')" :visible.sync="scanDialog" width="450px" center @close="scanDialogClose"
                class="scan_dialog">
       <div>
         <div id="qrcode" class="qrcode"></div>
