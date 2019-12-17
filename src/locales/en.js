@@ -981,6 +981,7 @@ const en = {
     "tips14":"Please choose your currency",
     "tips15":"Skip",
     "tips16":"Generate qr code",
+    "tips17":"Scan the signature",
     "tips":"tips",
   },
   ...enLocale

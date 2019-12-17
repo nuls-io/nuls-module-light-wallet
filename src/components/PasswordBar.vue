@@ -1,11 +1,11 @@
 <template>
   <div class="password">
     <div class="scan">
-      <el-dialog title="扫描签名" :visible.sync="scanDialog" width="500px" center @close="scanDialogClose" >
+      <el-dialog :title="$t('tips.tips17')" :visible.sync="scanDialog" width="500px" center @close="scanDialogClose" >
         <div class="tc">
           <div id="qrcode" class="qrcode"></div>
           <div class="font12 tc" style="margin: 5px 0 0 0">
-            (<span class="click td" style="color: #608fff; font-size: 12px" @click="toUrl('https://www.denglu1.cn/',1)">登录易</span>)
+            (<span class="click td" style="color: #608fff; font-size: 12px" @click="toUrl('https://www.denglu1.cn/',1)">{{$t('tips.tips11')}}</span>)
           </div>
         </div>
       </el-dialog>

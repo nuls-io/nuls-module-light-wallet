@@ -272,7 +272,7 @@
                       this.$message({message: this.$t('tips.tips3'), type: 'error', duration: 3000});
                       return;
                     }
-                    let commitDatas = await commitData(this.txHexRandom, this.signDataKeyRandom,this.addressInfo.address, assembleHex.data);
+                    let commitDatas = await commitData(this.txHexRandom, this.signDataKeyRandom, this.addressInfo.address, assembleHex.data);
                     if (!commitDatas.success) {
                       this.$message({
                         message: this.$t('tips.tips4') + JSON.stringify(commitDatas.data),
@@ -446,11 +446,11 @@
                 args: newArgs
               };
             } else {
-              this.$message({message: this.$t('call.call4') + response, type: 'error', duration: 1000});
+              this.$message({message: this.$t('call.call4') + JSON.stringify(response), type: 'error', duration: 3000});
             }
           })
           .catch((error) => {
-            this.$message({message: this.$t('call.call5') + error, type: 'error', duration: 1000});
+            this.$message({message: this.$t('call.call5') + JSON.stringify(error), type: 'error', duration: 3000});
           });
       },
 

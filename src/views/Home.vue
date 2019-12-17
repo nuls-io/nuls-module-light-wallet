@@ -151,7 +151,7 @@
         <el-tab-pane :label="$t('tips.tips16')" name="payeeScan">
           <div id="qrcode" class="qrcode"></div>
           <div class="font12 tc" style="margin: 5px 0 0 0">
-            (<span class="click td" style="color: #608fff; font-size: 12px;margin: 10px 0 0 0"
+            (<span class="click td" style="color: #608fff;"
                    @click="toUrl('nuls','https://www.denglu1.cn/',1)">
             {{$t('tips.tips11')}}
           </span>)
@@ -501,6 +501,9 @@
        */
       payeeHandleClick(tab) {
         if (tab.name === 'payeeScan') {
+          if (document.getElementById('qrcode')) {
+            document.getElementById('qrcode').innerHTML = '';
+          }
           this.qrcode(this.addressInfo.address);
         }
       },
@@ -674,6 +677,10 @@
             margin: 0 auto;
             width: 300px;
             height: 300px;
+          }
+          .font12 {
+            height: 20px;
+            margin: 10px 0 0 0;
           }
         }
       }

@@ -325,7 +325,7 @@
         }
         contractCreate.contractAddress = sdk.getStringContractAddress(chainID());
         if (!contractCreate.chainId || !contractCreate.contractAddress || !contractCreate.contractCode || !contractCreate.gasLimit || !contractCreate.price || !contractCreate.sender) {
-          this.$message({message: this.$t('deploy.deploy15'), type: 'error', duration: 1000});
+          this.$message({message: this.$t('deploy.deploy15'), type: 'error', duration: 3000});
         } else {
           this.contractCreateTxData = contractCreate;
           //console.log(this.contractCreateTxData);

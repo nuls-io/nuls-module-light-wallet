@@ -1157,11 +1157,11 @@
                 args: newArgs
               };
             } else {
-              this.$message({message: this.$t('call.call4'), type: 'error', duration: 1000});
+              this.$message({message: this.$t('call.call4') + JSON.stringify(response), type: 'error', duration: 3000});
             }
           })
           .catch((error) => {
-            this.$message({message: this.$t('call.call5') + error, type: 'error', duration: 1000});
+            this.$message({message: this.$t('call.call5') + JSON.stringify(error), type: 'error', duration: 3000});
           });
       },
 

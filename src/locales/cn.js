@@ -985,6 +985,7 @@ const cn = {
     "tips14":"请选择币种",
     "tips15":"跳过",
     "tips16":"生成二维码",
+    "tips17":"扫描签名",
     "tips":"tips",
   },
   ...zhLocale
