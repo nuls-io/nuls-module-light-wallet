@@ -38,11 +38,6 @@
             </el-form>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="扫描导入" name="scanImport">
-          <div class="scan tc">
-            <div id="qrcode" class="qrcode"></div>
-          </div>
-        </el-tab-pane>
         <el-tab-pane :label="$t('importAddress.importAddress0')" name="newAddress" :disabled="resetAddress !=='0'">
           <div class="new_address">
             <el-form :model="newAddressForm" status-icon :rules="newAddressRules" ref="newAddressForm"
@@ -75,13 +70,11 @@
 
 <script>
   import nuls from 'nuls-sdk-js'
-  import QRCode from 'qrcodejs2'
   import {
     chainID,
     defaultAddressInfo,
     localStorageByAddressInfo,
     passwordVerification,
-    getRamNumber,
     timesDecimals,
     Plus
   } from '@/api/util'
@@ -209,39 +202,9 @@
       this.activeName = this.resetAddress !== '0' ? 'keyImport' : 'keystoreImport';
     },
     mounted() {
-      this.ramNumber();
+
     },
     methods: {
-
-      /**
-       * @disc: 生成扫描登录的二维码
-       * @date: 2019-12-02 16:38
-       * @author: Wave
-       */
-      async ramNumber() {
-        if (!this.importRandomString) {
-          this.importRandomString = await getRamNumber(16);
-        }
-        let scanInfo = {
-          url: "http://192.168.1.68:18003/",
-          send: this.importRandomString,//字符串，随机生成，作为应用发送数据的标识
-        };
-        console.log(this.importRandomString);
-        /* let scanInfo = {
-           address: "NULSd6HgjWhwf2mAaKY8jc44G5ZaYWA8VCVzv",
-           encryptedPrivateKey: "2e81d0d21adffa3f534c265c4aa4208f62fd9c9381fda59ed02c6a4d710f0e17bf03015db6e3d5b22c043fd712c6ad2d",
-           alias: "",
-           pubKey: "0266bdbf85e7756fb9af0573f8887353e339fe6c129675fe20bf704697000d9c63",
-         };*/
-
-        let qrcode = new QRCode('qrcode', {
-          width: 300,
-          height: 300,
-          colorDark: "#000000",
-          colorLight: "#ffffff",
-        });
-        qrcode.makeCode(JSON.stringify(scanInfo))
-      },
 
       /**
        * @disc: tab选择
@@ -269,25 +232,6 @@
         }
       },
 
-      /**
-       * @disc: 获取扫描导入后的信息
-       * @params: importRandomString
-       * @date: 2019-12-02 16:39
-       * @author: Wave
-       */
-      async getScanImport(importRandomString) {
-        await this.$post('/', 'getMsg', [importRandomString])
-          .then((response) => {
-            //console.log(response);
-            if (response.hasOwnProperty("result")) {
-              let addressInfo = {address: response.result.address, aesPri: '', pub: ''};
-              this.getAddressInfo(addressInfo);
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      },
 
       /**
        * 获取地址NULS资产信息

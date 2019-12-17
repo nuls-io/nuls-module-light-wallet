@@ -764,25 +764,21 @@
               txhex = await nuls.transactionSerialize(nuls.decrypteOfAES(this.addressInfo.aesPri, password), this.addressInfo.pub, tAssemble);
             }
           }
-          //console.log(txhex);
+          console.log(txhex);
           if (this.isCross) { //跨链交易
-            //console.log("跨链交易");
             await this.$post('/', 'sendCrossTx', [txhex])
               .then((response) => {
-                //console.log(response);
+                console.log(response);
                 this.transferLoading = false;
                 if (response.hasOwnProperty("result")) {
                   this.toUrl("txList");
                 } else {
                   this.$message({
-                    message: this.$t('public.err4') + 'code:' + response.error.message + ' ' + response.error.message,
-                    type: 'error',
-                    duration: 3000
+                    message: this.$t('public.err4') + JSON.stringify(response.error), type: 'error', duration: 3000
                   });
                 }
               })
               .catch((error) => {
-                console.log(error);
                 this.transferLoading = false;
                 this.$message({message: this.$t('public.err4') + error, type: 'error', duration: 5000});
               });
@@ -1061,7 +1057,7 @@
               this.gasNumber = response.result.gasLimit;
               this.oldGasNumber = response.result.gasLimit;
               this.transferForm.gas = response.result.gasLimit;
-              let contractConstructorArgsTypes = this.getContractMethodArgsTypes(contractAddress, methodName);
+              let contractConstructorArgsTypes = this.getContractMethodArgsTypes(contractAddress, methodName, methodDesc);
               let newArgs = utils.twoDimensionalArray(args, contractConstructorArgsTypes);
               this.contractCallData = {
                 chainId: MAIN_INFO.chainId,
@@ -1087,10 +1083,11 @@
        * 获取合约指定函数的参数类型
        * @param contractAddress
        * @param methodName
+       * @param methodDesc
        * @returns
        */
-      async getContractMethodArgsTypes(contractAddress, methodName) {
-        return await this.$post('/', 'getContractMethodArgsTypes', [contractAddress, methodName])
+      async getContractMethodArgsTypes(contractAddress, methodName, methodDesc) {
+        return await this.$post('/', 'getContractMethodArgsTypes', [contractAddress, methodName, methodDesc])
           .then((response) => {
             if (response.hasOwnProperty("result")) {
               return {success: true, data: response.result};
