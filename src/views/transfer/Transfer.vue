@@ -764,11 +764,11 @@
               txhex = await nuls.transactionSerialize(nuls.decrypteOfAES(this.addressInfo.aesPri, password), this.addressInfo.pub, tAssemble);
             }
           }
-          console.log(txhex);
+          //console.log(txhex);
           if (this.isCross) { //跨链交易
             await this.$post('/', 'sendCrossTx', [txhex])
               .then((response) => {
-                console.log(response);
+                //console.log(response);
                 this.transferLoading = false;
                 if (response.hasOwnProperty("result")) {
                   this.toUrl("txList");
@@ -780,7 +780,7 @@
               })
               .catch((error) => {
                 this.transferLoading = false;
-                this.$message({message: this.$t('public.err4') + error, type: 'error', duration: 5000});
+                this.$message({message: this.$t('public.err4') + JSON.stringify(error), type: 'error', duration: 5000});
               });
           } else { //其他交易验证并广播交易
             //console.log("其他交易");
@@ -1003,13 +1003,13 @@
         }
         bw.writeBytesWithLength(pubHex);
         bw.writeBytesWithLength(ctxSign);
-        if (!isMainNet(chainId)) {
+        /*if (!isMainNet(chainId)) {
           // mainCtx.txData = tAssemble.getHash();
           //console.log(mainCtx);
           mainCtxSign = nuls.transactionSignature(pri, mainCtx);
           bw.writeBytesWithLength(pubHex);
           bw.writeBytesWithLength(mainCtxSign);
-        }
+        }*/
         tAssemble.signatures = bw.getBufWriter().toBuffer();
         return tAssemble.txSerialize().toString('hex');
       },
