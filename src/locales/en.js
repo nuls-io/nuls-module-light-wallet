@@ -957,7 +957,7 @@ const en = {
 
   "TipsType": {
     "undefined": "",
-    "1": "Check for update errors",
+    "1": "To check for an update error, please go to https://github.com/nuls-io/nuls-v2/releases to manually download the update",
     "2": "Checking for updates...",
     "3": "A new version has been detected and is being downloaded...",
     "4": "Now the latest version is in use, no updates are needed.",

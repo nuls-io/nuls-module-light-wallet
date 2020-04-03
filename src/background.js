@@ -1,5 +1,5 @@
 'use strict';
-import {app, protocol, BrowserWindow, ipcMain, Menu,ipcRenderer} from 'electron'
+import {app, protocol, BrowserWindow, ipcMain, Menu, ipcRenderer} from 'electron'
 import {createProtocol, installVueDevtools} from 'vue-cli-plugin-electron-builder/lib'
 import {autoUpdater} from 'electron-updater'
 
@@ -103,6 +103,7 @@ if (isDevelopment) {
     updateNotAva: {type: 4, info: '现在使用的就是最新版本，不用更新'},
   };
   // 下载地址，不加后面的**.exe
+  //const uploadUrl = "http://47.252.86.42:9083/download/main";
   const uploadUrl = "http://file.wallet.nuls.io/download/main";
   autoUpdater.setFeedURL(uploadUrl);
 
