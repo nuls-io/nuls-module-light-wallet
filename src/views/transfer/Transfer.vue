@@ -615,13 +615,20 @@
        * 资产类型选择
        * @param type
        **/
-      changeType(type) {
+      async changeType(type) {
         //console.log(type);
         this.changeParameter();
         if (type.type === 1) {
           this.transferForm.gas = 5000;
           this.transferForm.price = 25;
         } else {
+          let contractInfo = await this.$post('/', 'invokeView', [type.contractAddress, "balanceOf", "", [this.transferForm.fromAddress]]);
+          // console.log(contractInfo);
+          if (contractInfo.hasOwnProperty('result')) {
+            type.balance = Number(timesDecimals(contractInfo.result.result, type.decimals))
+          } else {
+            type.balance = 0
+          }
           this.transferForm.gas = 0;
           this.transferForm.price = sdk.CONTRACT_MINIMUM_PRICE;
         }
@@ -633,7 +640,7 @@
        *  默认资产类型
        * @param type 0：首次进入加载 1：填写地址以后判断默认为nuls
        **/
-      changeNuls(type = 1) {
+      async changeNuls(type = 1) {
         let defaultType = sessionStorage.hasOwnProperty('info') ? JSON.parse(sessionStorage.getItem('info')).defaultAsset.symbol : 'NULS';
         if (type === 0) {
           if (this.$route.query.accountType) {
@@ -650,6 +657,13 @@
           } else {
             if (item.contractAddress === defaultType) {
               this.changeAssets = item;
+              let contractInfo = await this.$post('/', 'invokeView', [this.changeAssets.contractAddress, "balanceOf", "", [this.transferForm.fromAddress]]);
+              //console.log(contractInfo);
+              if (contractInfo.hasOwnProperty('result')) {
+                this.changeAssets.balance = Number(timesDecimals(contractInfo.result.result, this.changeAssets.decimals))
+              } else {
+                this.changeAssets.balance = 0
+              }
               this.transferForm.type = item.symbol;
             }
           }
@@ -1136,13 +1150,16 @@
        */
       async imputedContractCallGas(sender, value, contractAddress, methodName, methodDesc, args) {
         return await this.$post('/', 'imputedContractCallGas', [sender, value, contractAddress, methodName, methodDesc, args])
-          .then((response) => {
+          .then(async (response)  => {
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               this.gasNumber = response.result.gasLimit;
               this.oldGasNumber = response.result.gasLimit;
               this.transferForm.gas = response.result.gasLimit;
-              let contractConstructorArgsTypes = this.getContractMethodArgsTypes(contractAddress, methodName, methodDesc);
-              let newArgs = utils.twoDimensionalArray(args, contractConstructorArgsTypes);
+              let contractConstructorArgsTypes = await this.getContractMethodArgsTypes(contractAddress, methodName, methodDesc);
+              //console.log(contractConstructorArgsTypes);
+              let newArgs = await utils.twoDimensionalArray(args, contractConstructorArgsTypes.data);
+              //console.log(newArgs);
               this.contractCallData = {
                 chainId: MAIN_INFO.chainId,
                 sender: sender,
@@ -1159,6 +1176,7 @@
             }
           })
           .catch((error) => {
+            console.log(error);
             this.$message({message: this.$t('call.call5') + JSON.stringify(error), type: 'error', duration: 3000});
           });
       },
@@ -1173,6 +1191,7 @@
       async getContractMethodArgsTypes(contractAddress, methodName, methodDesc) {
         return await this.$post('/', 'getContractMethodArgsTypes', [contractAddress, methodName, methodDesc])
           .then((response) => {
+            //console.log(response);
             if (response.hasOwnProperty("result")) {
               return {success: true, data: response.result};
             } else {
