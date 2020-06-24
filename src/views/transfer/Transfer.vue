@@ -206,7 +206,7 @@
                 callback()
               }
             } else {
-              if (value > this.changeAssets.balance) {
+              if (Number(value) > Number(this.changeAssets.balance)) {
                 callback(new Error(this.$t('transfer.transfer14')))
               } else {
                 callback()
