@@ -23,8 +23,8 @@
             <font v-if="RUN_DEV">{{newVersion}}</font>
             <font v-else>Beta-{{newVersion}}</font>
           </li>
-          <li v-show="RUN_PATTERN && system !== 'Darwin'"><span>{{$t('public.logInfo')}}:</span>{{logUrl}}</li>
-          <li v-show="system === 'Darwin'">
+          <li class="cb" v-show="RUN_PATTERN && system !== 'Darwin'"><span>{{$t('public.logInfo')}}:</span>{{logUrl}}</li>
+          <li class="cb" v-show="system === 'Darwin'">
             <span>{{$t('public.downloadUrl')}}:</span>
             <font>https://github.com/nuls-io/nuls-v2/releases</font>
           </li>
