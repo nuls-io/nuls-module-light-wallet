@@ -238,7 +238,7 @@
           url: localStorage.hasOwnProperty('url') ? JSON.parse(localStorage.getItem('url')).urls : 'https://beta.wallet.nuls.io/api',
           send: this.importRandomString,
         };
-        //console.log(this.importRandomString);
+        console.log(this.importRandomString);
         let qrcode = new QRCode('qrcode', {
           width: 250,
           height: 250,

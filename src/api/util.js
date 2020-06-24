@@ -87,7 +87,7 @@ export function timesDecimals0(nu, decimals) {
     return nu
   }
   let newNu = new BigNumber(Times(nu, Power(newDecimals)).toString());
-  return Number(newNu);
+  return newNu;
 }
 
 /**

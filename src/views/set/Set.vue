@@ -20,7 +20,7 @@
           </li>
           <li v-show="RUN_PATTERN">
             <span>{{$t('public.version1')}}:</span>
-            <font v-if="RUN_DEV">{{newVersion}} &nbsp;</font>
+            <font v-if="RUN_DEV">{{newVersion}}</font>
             <font v-else>Beta-{{newVersion}}</font>
           </li>
           <li v-show="RUN_PATTERN && system !== 'Darwin'"><span>{{$t('public.logInfo')}}:</span>{{logUrl}}</li>
@@ -131,18 +131,15 @@
           this.logUrl = str.slice(0, num) + '/wallet_web_log';
           updateUrl = this.FILE_URL + '/latest-mac.yml'
         }
-        console.log(updateUrl);
-        axios.get(updateUrl + "?q=1", {})
+        axios.get(updateUrl, {})
           .then((response) => {
-            //console.log(response);
+            //console.log(response.data.substr(9,5));
             this.newVersion = response.data.substr(9, 5);
           })
           .catch((error) => {
             console.log(error);
-            this.newVersion = "https://github.com/nuls-io/nuls-v2/releases";
           });
       }
-
     }
   }
 </script>
