@@ -14,7 +14,8 @@
       </div>
       <div class="total fl">
         <p>{{$t('tab.tab2')}}</p>
-        <h6>{{addressNULSAssets.total}}
+        <h6>
+          {{addressNULSAssets.total}}
           <span class="font16" v-show="symbol.toLocaleUpperCase() ==='NULS'"> ≈ $ {{NULSUsdt}}</span>
         </h6>
       </div>
@@ -108,7 +109,7 @@
           </el-table-column>
           <el-table-column fixed="right" :label="$t('public.operation')" align="center" min-width="120">
             <template slot-scope="scope">
-              <label class="click tab_bn" @click="toUrl('transfer',scope.row.symbol)">{{$t('nav.transfer')}}</label>
+              <label class="click tab_bn" @click="toUrl('transfer', {type: 1, tokenSymbol: scope.row.symbol})">{{$t('nav.transfer')}}</label>
               <span class="tab_line">|</span>
               <label class="click tab_bn" @click="toUrl('txList',scope.row)">{{$t('home.home2')}}</label>
             </template>
@@ -465,9 +466,11 @@
             this.crossLinkDataLoading = false;
             if (response.hasOwnProperty("result")) {
               for (let item of response.result) {
-                item.totalBalance = timesDecimals(item.totalBalance);
-                item.balance = timesDecimals(item.balance);
-                item.locking = timesDecimals(item.consensusLock + item.timeLock);
+                item.totalBalance = timesDecimals(item.totalBalance, item.decimals);
+                item.balance = timesDecimals(item.balance, item.decimals);
+                item.timeLock = timesDecimals(item.timeLock, item.decimals);
+                item.consensusLock = timesDecimals(item.consensusLock, item.decimals);
+                item.locking = Plus(item.consensusLock, item.timeLock).toString();
               }
               this.crossLinkData = response.result;
               this.txListDataLoading = false;
