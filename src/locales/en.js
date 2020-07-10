@@ -61,7 +61,7 @@ const en = {
     "see": "See",
     "version": "Current Version",
     "version1": "Latest Version",
-    "checkUpdates": "Check Updates",
+    "checkUpdates": "View the latest version",
     "operatingSystem": "System",
     "into": "Enter",
     "re-import": "Re-import",

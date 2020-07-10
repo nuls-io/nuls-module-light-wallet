@@ -61,7 +61,7 @@ const cn = {
     "see": "查看",
     "version": "当前版本",
     "version1": "最新版本",
-    "checkUpdates": "检查更新",
+    "checkUpdates": "查看最新版本",
     "operatingSystem": "操作系统",
     "into": "进入",
     "re-import": "重新导入",

@@ -133,11 +133,12 @@
   import {MAIN_INFO} from '@/config.js'
   import {
     Times,
-    Power,
     Plus,
+    Division,
     Minus,
     timesDecimals,
     timesDecimals0,
+    timesDecimalsBig,
     addressInfo,
     passwordVerification,
     htmlEncode
@@ -177,7 +178,7 @@
       let validateAmount = (rule, value, callback) => {
         let patrn = new RegExp("^([1-9][\\d]{0,20}|0)(\\.[\\d]{1," + this.assetsInfo.decimals + "})?$");
         this.available = Number(this.assetsInfo.balance);
-        if (this.assetsInfo.type === 1) {
+        if (this.assetsInfo.type === 1 && this.assetsInfo.symbol === 'NULS') {
           this.available = Number(Minus(this.assetsInfo.balance, this.transferForm.fee))
         }
         if (value === '') {
@@ -241,6 +242,7 @@
         aliasToAddress: '',//别名地址
         contractCallData: {},//合约信息
         gasInfo: {number: 0, oldNumber: 0},//gas信息
+        contractFee: 0,//调用合约手续费
         bookDialog: false,//通讯录弹框
         bookData: [],//通讯录数据
         transferDiolog: false,//确认弹框
@@ -502,7 +504,7 @@
         let contractAddress = this.assetsInfo.contractAddress;
         let methodName = 'transfer';
         let methodDesc = '';
-        let args = [this.aliasToAddress ? this.aliasToAddress : this.transferForm.toAddress, Number(Times(this.transferForm.amount, Number(Power(this.assetsInfo.decimals))))];
+        let args = [this.aliasToAddress ? this.aliasToAddress : this.transferForm.toAddress, timesDecimalsBig(this.transferForm.amount, this.assetsInfo.decimals).toString()];
         this.validateContractCall(this.addressInfo.address, 0, gasLimit, price, contractAddress, methodName, methodDesc, args);
       },
 
@@ -542,7 +544,11 @@
       submitTransferForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            if (this.toAddressInfo.transferType === 2) {
+              this.transferForm.fee = this.contractFee;
+            }
             this.transferDiolog = true;
+
           } else {
             return false;
           }
@@ -588,10 +594,10 @@
         console.log(this.toAddressInfo.transferType);*/
         if (this.toAddressInfo.transferType === 1) { //1:NULS转账
           inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 2);
-          //console.log(inOrOutputs);
           tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, htmlEncode(this.transferForm.remarks), 2);
         } else if (this.toAddressInfo.transferType === 2) { //2：token转账
           transferInfo.amount = Number(Plus(0, Number(Times(this.transferForm.gas, this.transferForm.price)))).toString();
+          //console.log(transferInfo);
           inOrOutputs = await inputsOrOutputs(transferInfo, this.balanceInfo, 16);
           tAssemble = await nuls.transactionAssemble(inOrOutputs.data.inputs, inOrOutputs.data.outputs, htmlEncode(this.transferForm.remarks), 16, this.contractCallData);
         } else if (this.toAddressInfo.transferType === 3) { //3：向合约转NULS
@@ -626,6 +632,7 @@
         }
         //console.log(inOrOutputs);
         txHex = await nuls.transactionSerialize(passwordInfo.pri, passwordInfo.pub, tAssemble);
+        //console.log(txHex);
         let broadcastResult = await validateAndBroadcast(txHex);
         //console.log(broadcastResult);
         if (!broadcastResult.success) {
@@ -693,6 +700,7 @@
        * @param args
        */
       async validateContractCall(sender, value, gasLimit, price, contractAddress, methodName, methodDesc, args) {
+        //console.log(sender, value, gasLimit, price, contractAddress, methodName, methodDesc, args);
         return await this.$post('/', 'validateContractCall', [sender, value, gasLimit, price, contractAddress, methodName, methodDesc, args])
           .then((response) => {
             //console.log(response);
@@ -720,20 +728,18 @@
       async imputedContractCallGas(sender, value, contractAddress, methodName, methodDesc, args) {
         return await this.$post('/', 'imputedContractCallGas', [sender, value, contractAddress, methodName, methodDesc, args])
           .then(async (response) => {
-            //console.log(response);
             if (response.hasOwnProperty("result")) {
               this.gasInfo.number = response.result.gasLimit;
               this.gasInfo.oldNumber = response.result.gasLimit;
               this.transferForm.gas = response.result.gasLimit;
-              this.transferForm.fee = Number(timesDecimals(Number(Times(this.transferForm.gas, this.transferForm.price)), 8));
+              this.transferForm.fee = Number(Plus(Number(Division(Number(Times(this.transferForm.gas, this.transferForm.price)), 10000000)), 0.001));
+              this.contractFee = this.transferForm.fee;
               let contractConstructorArgsTypes = await this.getContractMethodArgsTypes(contractAddress, methodName);
               if (!contractConstructorArgsTypes.success) {
-                console.log(contractConstructorArgsTypes.data);
+                console.log(JSON.stringify(contractConstructorArgsTypes.data));
                 return;
               }
-              //console.log(contractConstructorArgsTypes);
               let newArgs = utils.twoDimensionalArray(args, contractConstructorArgsTypes.data);
-              //console.log(newArgs);
               this.contractCallData = {
                 chainId: MAIN_INFO.chainId,
                 sender: sender,
@@ -750,7 +756,6 @@
             }
           })
           .catch((error) => {
-            console.log(error);
             this.$message({message: this.$t('call.call5') + error, type: 'error', duration: 1000});
           });
       },
@@ -884,8 +889,8 @@
             });
           }
         }
-        /*console.log(inputs);
-        console.log(outputs);*/
+        //console.log(inputs);
+        //console.log(outputs);
 
         let tAssemble = await nuls.transactionAssemble(inputs, outputs, transferInfo.remark, 10);//交易组装
         let ctxSign = "";//本链协议交易签名
@@ -899,6 +904,7 @@
         //console.log(isMainNet(chainId));
         if (isMainNet(chainId)) {
           await countCtxFee(tAssemble, 1).then((result) => {
+            ///console.log(result);
             newFee = result;
           }).catch((err) => {
             this.$message({message: this.$t('newConsensus.newConsensus7'), type: 'error', duration: 3000});
@@ -948,32 +954,39 @@
         //console.log(transferInfo.fee !== newFee);
         //如果手续费发生改变，重新组装CoinData
         if (transferInfo.fee !== newFee) {
+          //console.log(transferInfo);
+          //console.log(chainId === transferInfo.assetsChainId && transferInfo.assetsId === 1);
           if (chainId === transferInfo.assetsChainId && transferInfo.assetsId === 1) {
-            if (balanceInfo.data.balance < transferInfo.amount + newFee) {
+            if (balanceInfo.data.balance <  Number(Plus(transferInfo.amount, newFee))) {
               this.$message({message: this.$t('newConsensus.newConsensus7'), type: 'error', duration: 3000});
               return;
             }
-            inputs[0].amount = transferInfo.amount + newFee;
+            inputs[0].amount =  Number(Plus(transferInfo.amount, newFee));
             if (!isMainNet(chainId)) {
               inputs[1].amount = newFee;
             }
           } else {
+            //console.log(localBalanceInfo.data.balance < transferInfo.fee);
             if (localBalanceInfo.data.balance < transferInfo.fee) {
               this.$message({message: this.$t('transfer.transfer20'), type: 'error', duration: 3000});
               return;
             }
+            //console.log(transferInfo.assetsChainId === MAIN_INFO.chainId && transferInfo.assetsId === 1);
             if (transferInfo.assetsChainId === MAIN_INFO.chainId && transferInfo.assetsId === 1) {
-              if (mainNetBalanceInfo.data.balance < transferInfo.amount + newFee) {
+              if (mainNetBalanceInfo.data.balance < Number(Plus(transferInfo.amount, newFee))) {
                 this.$message({message: this.$t('newConsensus.newConsensus7'), type: 'error', duration: 3000});
                 return;
               }
-              inputs[0].amount = transferInfo.amount + newFee;
+              inputs[0].amount = Number(Plus(transferInfo.amount, newFee));
               inputs[1].amount = newFee;
             } else {
+              //console.log(inputs);
+              inputs[0].amount = Number(transferInfo.amount);
               inputs[1].amount = newFee;
-              inputs[2].amount = newFee;
             }
           }
+          //console.log(inputs);
+          //console.log(outputs);
           tAssemble = await nuls.transactionAssemble(inputs, outputs, transferInfo.remark, 10);
           ctxSign = nuls.transactionSignature(pri, tAssemble);
         } else {
@@ -989,6 +1002,7 @@
           bw.writeBytesWithLength(mainCtxSign);
         }
         tAssemble.signatures = bw.getBufWriter().toBuffer();
+        //console.log(tAssemble.txSerialize().toString('hex'));
         return tAssemble.txSerialize().toString('hex');
       },
 
@@ -1069,11 +1083,11 @@
           margin: 5px 0 0 0;
         }
         .all {
-          margin: -47px -28px 0 0;
+          margin: -45px -26px 0 0;
           line-height: 20px;
           z-index: 88;
           position: relative;
-          font-size: 12px;
+          font-size: 10px;
         }
         .senior_value {
           height: 20px;
