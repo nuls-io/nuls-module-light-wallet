@@ -61,7 +61,7 @@ const cn = {
     "see": "查看",
     "version": "当前版本",
     "version1": "最新版本",
-    "checkUpdates": "查看最新版本",
+    "checkUpdates": "检查更新",
     "operatingSystem": "操作系统",
     "into": "进入",
     "re-import": "重新导入",
@@ -622,6 +622,7 @@ const cn = {
     "home0": "主网资产",
     "home1": "跨链资产",
     "home2": "交易记录",
+    "home3": "跨链资产",
   },
 
   "frozenList": {
@@ -958,7 +959,7 @@ const cn = {
     "Backstage": "后台运行",
     "err0": "钱包无法连接当前的节点服务，与交易相关功能将无法正常使用，请前往节点服务列表切换至可用节点', '节点服务连接失败",
     "err1": "前往节点服务列表",
-    "": ""
+    "err2": "刷新"
   },
 
   "TipsType": {

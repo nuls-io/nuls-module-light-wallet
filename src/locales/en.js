@@ -19,7 +19,7 @@ const en = {
     "display": "Display",
     "total": "Total",
     "hideReward": "Hide Consensus Reward",
-    "usableBalance": "Usable balance",
+    "usableBalance": "Balance",
     "fee": "Fee",
     "next": "Next",
     "basicData": "Basic data",
@@ -61,7 +61,7 @@ const en = {
     "see": "See",
     "version": "Current Version",
     "version1": "Latest Version",
-    "checkUpdates": "View the latest version",
+    "checkUpdates": "Check Updates",
     "operatingSystem": "System",
     "into": "Enter",
     "re-import": "Re-import",
@@ -621,6 +621,7 @@ const en = {
     "home0": "Main assets",
     "home1": "Cross assets",
     "home2": "Transaction record",
+    "home3": "Across assets",
   },
 
   "frozenList": {
@@ -954,7 +955,7 @@ const en = {
     "Backstage": "Background operation",
     "err0": "The wallet is unable to connect to the current node service, and the transaction-related functions will not work properly. Please go to the node service list and switch to the available node','Node service connection failed'.",
     "err1": "To Node Service List",
-    "": ""
+    "err2": "Refresh"
   },
 
   "TipsType": {

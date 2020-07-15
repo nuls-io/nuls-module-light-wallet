@@ -18,7 +18,7 @@
             <font v-if="RUN_DEV"> {{version}}</font>
             <font v-else>Beta-{{version}}</font>
           </li>
-          <!--<li v-show="RUN_PATTERN">
+          <li v-show="false">
             <span>{{$t('public.version1')}}:</span>
             <font v-if="RUN_DEV">{{newVersion}}</font>
             <font v-else>Beta-{{newVersion}}</font>
@@ -27,9 +27,9 @@
           <li v-show="system === 'Darwin'">
             <span>{{$t('public.downloadUrl')}}:</span>
             <font>{{FILE_URL}}</font>
-          </li>-->
+          </li>
         </ul>
-        <el-button type="success" v-show="RUN_PATTERN" @click="checkUpdate">
+        <el-button type="success" @click="checkUpdate" v-show="RUN_PATTERN && system !== 'Darwin'">
           {{$t('public.checkUpdates')}}
         </el-button>
       </div>
@@ -157,7 +157,7 @@
         li {
           line-height: 1.6rem;
           width: 40rem;
-          margin: 0 0 0 30%;
+          margin: 0 0 0 39%;
           text-align: left;
           font-size: 12px;
           span {
@@ -173,7 +173,7 @@
       .el-button {
         margin: 1rem 0 0 0;
         padding: 0.5rem;
-        width: 23rem;
+        width: 15rem;
       }
     }
   }
