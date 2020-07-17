@@ -285,7 +285,8 @@
               }
 
               if (response.result.type === 16) {
-                response.result.txData.resultInfo.price = timesDecimals(response.result.txData.resultInfo.price);
+                //response.result.txData.resultInfo.price = timesDecimals(response.result.txData.resultInfo.price);
+                //response.result.txData.resultInfo.price = response.result.txData.resultInfo.price;
                 if (response.result.txData.resultInfo.nulsTransfers.length !== 0) {
                   for (let item of response.result.txData.resultInfo.nulsTransfers) {
                     item.value = timesDecimals(item.value);
