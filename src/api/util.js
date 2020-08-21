@@ -3,6 +3,7 @@ import {BigNumber} from 'bignumber.js'
 import copy from 'copy-to-clipboard'
 import {explorerUrl, RUN_DEV} from '@/config.js'
 //import openner from "./opener-web";
+
 import openner from "./opener-desktop";
 
 /**
@@ -87,7 +88,7 @@ export function timesDecimals0(nu, decimals) {
   if (decimals === 0) {
     return nu
   }
-  let newNu = new BigNumber(Times(nu, Power(newDecimals)).toString());
+  let newNu = new BigNumber(Times(nu, Power(newDecimals)));
   return newNu;
 }
 
@@ -458,5 +459,25 @@ export function htmlRestore(str) {
   s = s.replace(/&#39;/g, "/\\'");
   s = s.replace(/&quot;/g, "/\"");
   return s;
+}
+
+/**
+ * @disc: 判断pc和手机端
+ * @date: 2020-05-29 16:51
+ * @author: Wave
+ */
+export function IsPC() {
+  let userAgentInfo = navigator.userAgent;
+  let Agents = ["Android", "iPhone",
+    "SymbianOS", "Windows Phone",
+    "iPad", "iPod"];
+  let flag = true;
+  for (let v = 0; v < Agents.length; v++) {
+    if (userAgentInfo.indexOf(Agents[v]) > 0) {
+      flag = false;
+      break;
+    }
+  }
+  return flag;
 }
 
