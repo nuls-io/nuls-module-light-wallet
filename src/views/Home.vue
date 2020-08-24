@@ -61,10 +61,9 @@
           </el-table-column>
           <el-table-column :label="$t('tab.tab3')" width="230">
             <template slot-scope="scope">
-             <!-- <span class="click" @click="toUrl('frozenList',scope.row)"
+            <span class="click" @click="toUrl('frozenList',scope.row)"
                     v-show="scope.row.locking !== '&#45;&#45;' && scope.row.locking !==0 ">{{scope.row.locking}}</span>
-              <span v-show="scope.row.locking === '&#45;&#45;' || scope.row.locking ===0">{{scope.row.locking}}</span>-->
-              <span>{{scope.row.locking}}</span>
+              <span v-show="scope.row.locking === '&#45;&#45;' || scope.row.locking ===0">{{scope.row.locking}}</span>
             </template>
           </el-table-column>
           <el-table-column fixed="right" :label="$t('public.operation')" align="center" min-width="120">
@@ -99,9 +98,10 @@
           </el-table-column>
           <el-table-column :label="$t('tab.tab3')" width="230">
             <template slot-scope="scope">
-              <span v-show="scope.row.locking !== '--' && scope.row.locking !==0 ">
+              <!--<span v-show="scope.row.locking !== '&#45;&#45;' && scope.row.locking !==0 ">
                 {{scope.row.locking}}
-              </span>
+              </span>-->
+              <span>{{scope.row.locking}}</span>
             </template>
           </el-table-column>
           <el-table-column fixed="right" :label="$t('public.operation')" align="center" min-width="120">
@@ -404,8 +404,10 @@
               for (let itme of response.result.list) {
                 itme.account = itme.tokenSymbol;
                 itme.type = 2;
+                console.log(itme.lockedBalance, '====lock===')
                 //锁定
                 itme.locking = itme.lockedBalance ? Number(timesDecimals(itme.lockedBalance, itme.decimals)).toString() : 0;
+                console.log(itme.locking, '====locking===')
                 /*itme.balance = Number(timesDecimals(itme.balance, itme.decimals)).toString();
                 itme.total = Number(Plus(itme.balance, itme.locking)).toString();*/
                 //总额
