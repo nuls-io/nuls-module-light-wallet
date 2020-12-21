@@ -83,8 +83,8 @@ const en = {
     "err3": "Obtain account balance exceptions:",
     "err4": "Cross-Chain Trading Failure: ",
 
-    "developers":"Developers：",
-    "sponsoredAddress":"Sponsored Address：",
+    "developers": "Developers：",
+    "sponsoredAddress": "Sponsored Address：",
 
   },
 
@@ -606,6 +606,7 @@ const en = {
 
   "lockType": {
     "undefined": "",
+    "2": "Time Lock",
     "4": "Create Node Lock",
     "5": "Join consensus lock-in",
     "8": "Red card penalty lock-in",
@@ -635,6 +636,11 @@ const en = {
     "home1": "Cross assets",
     "home2": "Transaction record",
     "home3": "Across assets",
+    "home4": "NRC20 Assets",
+    "home5": "NRC721 Assets",
+    "home6": "Send ",
+    "home7": "To address",
+    "home8": "Send",
   },
 
   "frozenList": {
@@ -999,10 +1005,20 @@ const en = {
     "tips15": "Skip",
     "tips16": "Generate qr code",
     "tips17": "Scan signature",
+    "tips171": "The lottery is ready",
     "tips18": "Open",
+    "tips181": "Preparing for the next round, please wait a moment..",
     "tips19": "Scan login",
+    "tips191": "Please select a number",
     "tips20": "Scan backup",
+    "tips201": "The balance of this account is insufficient, please recharge or import again!",
     "tips21": "Scan transactions",
+    "tips211": "Please import or create an account",
+    "tips22": "The asset is not an NRC20 contract asset or is not registered for a cross-chain transaction",
+    "tips23": "There is no transferCrossChain method for this asset",
+    "tips24": "The application does not support the test network",
+    "tips25": "Please enter the correct address!",
+    "tips26": "Please select the ID of the transaction",
     "tips": "tips",
   },
 
@@ -1065,29 +1081,29 @@ const en = {
     "locking15": "Please enter the correct amount (up to eight decimal places)"
   },
 
-  "oneTo":{
-    "oneTo0":"oneTo",
-    "oneTo1":"You can go to multiple addresses",
-    "oneTo2":"Subtotal",
-    "oneTo3":"Confirmation of transfer information",
-    "oneTo4":"Error: format error!",
-    "oneTo5":"Error: Wrong address type (NULS master network addresses only supported)!",
-    "oneTo6":"Error: not long enough!",
-    "oneTo7":"Error: the amount can only be a number with a maximum of eight decimal places",
-    "oneTo8":"Collection address/amount",
-    "oneTo9":"Can't be empty",
-    "oneTo10":"Sorry, your balance is not enough!",
-    "oneTo":"oneTo",
+  "oneTo": {
+    "oneTo0": "oneTo",
+    "oneTo1": "You can go to multiple addresses",
+    "oneTo2": "Subtotal",
+    "oneTo3": "Confirmation of transfer information",
+    "oneTo4": "Error: format error!",
+    "oneTo5": "Error: Wrong address type (NULS master network addresses only supported)!",
+    "oneTo6": "Error: not long enough!",
+    "oneTo7": "Error: the amount can only be a number with a maximum of eight decimal places",
+    "oneTo8": "Collection address/amount",
+    "oneTo9": "Can't be empty",
+    "oneTo10": "Sorry, your balance is not enough!",
+    "oneTo": "oneTo",
   },
 
   "application": {
     "application0": "Team development",
     "application1": "Community development",
-    "application2": "Community governance",
+    "application2": "Community Governance",
     "application3": "NULS Community Governance tool. 1NULS=1 vote",
     "application4": "Go",
     "application5": "SCO platform, new project Token dug with NULS",
-    "application6": "Browser",
+    "application6": "Explorer",
     "application7": "Everything you want to see on the NULS network can be found here",
     "application8": "NULS Mobile Wallet (downloadable for Google Play users)",
     "application9": "NULS Mobile Wallet (downloadable for all Android users)",

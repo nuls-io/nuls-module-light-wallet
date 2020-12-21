@@ -3,7 +3,6 @@ import {BigNumber} from 'bignumber.js'
 import copy from 'copy-to-clipboard'
 import {explorerUrl, RUN_DEV} from '@/config.js'
 //import openner from "./opener-web";
-
 import openner from "./opener-desktop";
 
 /**
@@ -76,7 +75,7 @@ export function timesDecimals(nu, decimals) {
   }
   let fmt = {groupSeparator: ',',};
   BigNumber.config({FORMAT: fmt});
-  return Number(Division(nu,Number(Power(newDecimals))))
+  return Number(Division(nu, Number(Power(newDecimals))))
 }
 
 /**
@@ -93,7 +92,6 @@ export function divisionDecimals(nu, decimals = '') {
   // console.log(newNu, nu,'===--===',decimals)
   // return newNu.toFormat().replace(/[,]/g, '');
 }
-
 
 /**
  * 数字乘以精度系数

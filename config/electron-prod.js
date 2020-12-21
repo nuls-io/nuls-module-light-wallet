@@ -6,7 +6,7 @@
 //链ID
 export const API_CHAIN_ID = localStorage.hasOwnProperty('chainID') ? Number(localStorage.getItem('chainID')) : 1;
 //燃烧地址的公钥
-export const API_BURNING_ADDRESS_PUB = '000000000000000000000000000000000000000000000000000000000000000000';
+export const black_address = 'NULSd6HgWSU1iR6BfNoQi85mAMT52JMFzpnok';
 //运行环境（true:正式环境，false:测试环境）
 export const RUN_DEV = true;
 //ChainId和资产ID
@@ -111,3 +111,5 @@ export const defaultData = RUN_PATTERN ? electronData : explorerData;
 export const defaultUrl = RUN_PATTERN ? electronData[0] : explorerData[0];
 //默认浏览器地址（跳转地址）
 export const explorerUrl = 'http://www.nulscan.io/';
+//默认钱包地址（跳转地址）
+export const walletUrl = 'https://wallet.nuls.io/';

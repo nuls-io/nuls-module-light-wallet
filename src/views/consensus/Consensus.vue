@@ -63,7 +63,7 @@
             <i class="iconfont icon-search_icon fr click"></i>
           </el-input>
         </div>
-        <div class="node" v-loading="allNodeLoading">
+        <div class="node" v-loading="allNodeLoading" element-loading-spinner="el-icon-loading">
           <div class="node_info" v-for="item in searchData" :key="item.agentId">
             <h4 class="bg-gray">
               <i class="iconfont iconwo" v-show="item.isNew"></i>&nbsp;
@@ -333,10 +333,9 @@
                 itme.agentReward = Number(timesDecimals(itme.agentReward)).toFixed(3);
                 itme.totalDeposit = Number(timesDecimals(itme.totalDeposit)).toFixed(3);
                 itme.totalReward = Number(timesDecimals(itme.totalReward)).toFixed(3);
+                //console.log(this.addressInfo.address);
                 if (itme.agentAddress === this.addressInfo.address) {
                   this.isNew = true;//创建的节点
-                } else {
-                  this.isNew = false;
                 }
               }
               this.allNodeData = response.result.list;
